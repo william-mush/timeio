@@ -2,10 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, User } from 'lucide-react';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import Image from 'next/image';
 
 export const Navigation = () => {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   const isActive = (path: string) => pathname === path;
 
@@ -37,10 +40,39 @@ export const Navigation = () => {
             ))}
           </div>
           
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <div className="text-sm text-gray-500">
               {new Date().toLocaleTimeString()}
             </div>
+
+            {session ? (
+              <div className="flex items-center space-x-4">
+                {session.user.image ? (
+                  <Image
+                    src={session.user.image}
+                    alt={session.user.name || 'User'}
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <User className="h-8 w-8 text-gray-400" />
+                )}
+                <button
+                  onClick={() => signOut()}
+                  className="text-sm text-gray-500 hover:text-gray-700"
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => signIn('google')}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              >
+                Sign in
+              </button>
+            )}
           </div>
         </div>
       </div>
