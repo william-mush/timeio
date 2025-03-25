@@ -2,80 +2,85 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings, User } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, Sun } from 'lucide-react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
-export const Navigation = () => {
-  const pathname = usePathname();
-  const { data: session } = useSession();
+const TimeDisplay = () => {
+  const [time, setTime] = useState<string>('');
 
-  const isActive = (path: string) => pathname === path;
-
-  const links = [
-    { href: '/', label: 'Time', icon: Clock },
-    { href: '/world-map', label: 'World Map', icon: MapPin },
-    { href: '/alarms', label: 'Alarms', icon: Bell },
-    { href: '/settings', label: 'Settings', icon: Settings },
-  ];
+  useEffect(() => {
+    const updateTime = () => {
+      setTime(new Date().toLocaleTimeString());
+    };
+    
+    updateTime(); // Initial update
+    const interval = setInterval(updateTime, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <nav className="bg-white shadow-sm border-b">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between h-16">
-          <div className="flex space-x-8">
-            {links.map(({ href, label, icon: Icon }) => (
+    <div className="text-sm text-gray-500">
+      {time}
+    </div>
+  );
+};
+
+const navItems = [
+  { href: '/', label: 'Home', icon: Clock },
+  { href: '/alarms', label: 'Alarms', icon: Bell },
+  { href: '/world-clock', label: 'World Clock', icon: Clock },
+  { href: '/world-map', label: 'World Map', icon: MapPin },
+  { href: '/solar-clock', label: 'Solar Clock 2D', icon: Sun },
+  { href: '/solar-clock-3d', label: 'Solar Clock 3D', icon: Sun },
+  { href: '/settings', label: 'Settings', icon: Settings },
+];
+
+export function Navigation() {
+  const pathname = usePathname();
+  const { data: session, status } = useSession();
+
+  return (
+    <nav className="fixed left-0 top-16 w-full bg-white/60 backdrop-blur-xl border-b border-gray-200/50 z-40">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-8">
+            {navItems.map((item) => (
               <Link
-                key={href}
-                href={href}
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  isActive(href)
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                key={item.href}
+                href={item.href}
+                className={`text-sm transition-colors flex items-center gap-2 ${
+                  pathname === item.href
+                    ? 'text-blue-500 font-medium'
+                    : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <Icon className="h-5 w-5 mr-1.5" />
-                {label}
+                <item.icon className="w-4 h-4" />
+                {item.label}
               </Link>
             ))}
           </div>
           
           <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-500">
-              {new Date().toLocaleTimeString()}
-            </div>
+            <TimeDisplay />
 
-            {session ? (
-              <div className="flex items-center space-x-4">
-                {session.user.image ? (
-                  <Image
-                    src={session.user.image}
-                    alt={session.user.name || 'User'}
-                    width={32}
-                    height={32}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <User className="h-8 w-8 text-gray-400" />
-                )}
-                <button
-                  onClick={() => signOut()}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  Sign out
-                </button>
+            {status === 'authenticated' && session?.user?.image && (
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name || 'User profile'}
+                  width={32}
+                  height={32}
+                  className="object-cover"
+                  priority
+                />
               </div>
-            ) : (
-              <button
-                onClick={() => signIn('google')}
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-              >
-                Sign in
-              </button>
             )}
           </div>
         </div>
       </div>
     </nav>
   );
-}; 
+} 

@@ -2,78 +2,74 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { TimezoneGroup, Timezone, TIMEZONE_GROUPS } from '@/lib/timezones';
 
 interface TimeDisplayProps {
-  format24Hour?: boolean;
   showMilliseconds?: boolean;
+  initialFormat24Hour?: boolean;
 }
 
-export const TimeDisplay = ({ 
-  format24Hour = false, 
-  showMilliseconds = false 
+export const TimeDisplay = ({
+  showMilliseconds = false,
+  initialFormat24Hour = false
 }: TimeDisplayProps) => {
-  const [time, setTime] = useState(new Date());
-  const [isVisible, setIsVisible] = useState(true);
+  const [mounted, setMounted] = useState(false);
+  const [timeString, setTimeString] = useState('');
+  const [format24Hour, setFormat24Hour] = useState(initialFormat24Hour);
+  const [showTimezoneModal, setShowTimezoneModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTime(new Date());
-      setIsVisible(true);
-    }, showMilliseconds ? 10 : 1000);
+    setMounted(true);
+    
+    const updateTime = () => {
+      const now = new Date();
+      const options: Intl.DateTimeFormatOptions = {
+        hour: format24Hour ? '2-digit' : '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: !format24Hour
+      };
+      
+      let time = now.toLocaleTimeString(undefined, options);
+      if (showMilliseconds) {
+        time = time.replace(' ', ':' + now.getMilliseconds().toString().padStart(3, '0') + ' ');
+      }
+      setTimeString(time);
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, showMilliseconds ? 1 : 1000);
 
     return () => clearInterval(interval);
-  }, [showMilliseconds]);
+  }, [showMilliseconds, format24Hour]);
 
-  const hours = format24Hour 
-    ? time.getHours() 
-    : time.getHours() % 12 || 12;
-  const minutes = time.getMinutes().toString().padStart(2, '0');
-  const seconds = time.getSeconds().toString().padStart(2, '0');
-  const milliseconds = time.getMilliseconds().toString().padStart(3, '0');
-  const period = time.getHours() >= 12 ? 'PM' : 'AM';
+  const getTimezoneDisplay = (timezone: string) => {
+    const currentGroup = TIMEZONE_GROUPS.find((group: TimezoneGroup) => 
+      group.timezones.some((tz: Timezone) => tz.name === timezone)
+    );
+    return currentGroup ? `${currentGroup.name} - ${timezone.replace(/_/g, ' ')}` : timezone.replace(/_/g, ' ');
+  };
+
+  // Don't render anything on the server or before mounting
+  if (!mounted) return null;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[300px] p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center"
-      >
-        <div className="flex items-baseline justify-center space-x-2">
-          <span className="text-8xl font-bold tracking-tighter">
-            {hours}:{minutes}
-          </span>
-          <motion.span 
-            key={seconds}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-4xl text-gray-600"
-          >
-            :{seconds}
-          </motion.span>
-          {showMilliseconds && (
-            <motion.span 
-              key={milliseconds}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-2xl text-gray-400"
-            >
-              .{milliseconds}
-            </motion.span>
-          )}
-          {!format24Hour && (
-            <span className="text-2xl text-gray-500 ml-2">{period}</span>
-          )}
-        </div>
-        <div className="mt-4 text-gray-500">
-          {time.toLocaleDateString(undefined, { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-          })}
-        </div>
-      </motion.div>
+    <div className="flex flex-col items-center space-y-4">
+      <div className="flex items-baseline justify-center space-x-2">
+        <span className="text-8xl font-bold tracking-tighter text-gray-500/90 backdrop-blur-2xl bg-white/60 rounded-xl px-8 py-4">
+          {timeString}
+        </span>
+      </div>
+      
+      <div className="flex space-x-4">
+        <button
+          onClick={() => setFormat24Hour(!format24Hour)}
+          className="px-4 py-2 text-sm text-gray-600 bg-white/40 hover:bg-white/60 rounded-lg transition-colors"
+        >
+          {format24Hour ? '12-hour' : '24-hour'}
+        </button>
+      </div>
     </div>
   );
 }; 
