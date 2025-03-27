@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { CITIES } from '@/data/cities';
 
 interface TimeZone {
   id: string;
@@ -12,43 +13,31 @@ interface TimeZone {
   region: string;
 }
 
-const WORLD_TIMEZONES: TimeZone[] = [
-  // North America
-  { id: 'ny', name: 'America/New_York', offset: -4, city: 'New York', country: 'USA', region: 'North America' },
-  { id: 'la', name: 'America/Los_Angeles', offset: -7, city: 'Los Angeles', country: 'USA', region: 'North America' },
-  { id: 'ch', name: 'America/Chicago', offset: -5, city: 'Chicago', country: 'USA', region: 'North America' },
-  { id: 'to', name: 'America/Toronto', offset: -4, city: 'Toronto', country: 'Canada', region: 'North America' },
-  { id: 'mx', name: 'America/Mexico_City', offset: -5, city: 'Mexico City', country: 'Mexico', region: 'North America' },
-  { id: 'vc', name: 'America/Vancouver', offset: -7, city: 'Vancouver', country: 'Canada', region: 'North America' },
+interface TimeSettings {
+  format24Hour: boolean;
+  showSeconds: boolean;
+  showMilliseconds: boolean;
+  timeZone: string;
+  dateFormat: string;
+}
 
-  // Europe
-  { id: 'ld', name: 'Europe/London', offset: 1, city: 'London', country: 'UK', region: 'Europe' },
-  { id: 'pr', name: 'Europe/Paris', offset: 2, city: 'Paris', country: 'France', region: 'Europe' },
-  { id: 'br', name: 'Europe/Berlin', offset: 2, city: 'Berlin', country: 'Germany', region: 'Europe' },
-  { id: 'rm', name: 'Europe/Rome', offset: 2, city: 'Rome', country: 'Italy', region: 'Europe' },
-  { id: 'md', name: 'Europe/Madrid', offset: 2, city: 'Madrid', country: 'Spain', region: 'Europe' },
-  { id: 'am', name: 'Europe/Amsterdam', offset: 2, city: 'Amsterdam', country: 'Netherlands', region: 'Europe' },
+const WORLD_TIMEZONES: TimeZone[] = CITIES.map(city => ({
+  id: city.id,
+  name: `${city.city.replace(/\s+/g, '_')}`,
+  offset: city.offset,
+  city: city.city,
+  country: city.country,
+  region: getRegion(city.coordinates[1])
+}));
 
-  // Asia
-  { id: 'tk', name: 'Asia/Tokyo', offset: 9, city: 'Tokyo', country: 'Japan', region: 'Asia' },
-  { id: 'sg', name: 'Asia/Singapore', offset: 8, city: 'Singapore', country: 'Singapore', region: 'Asia' },
-  { id: 'hk', name: 'Asia/Hong_Kong', offset: 8, city: 'Hong Kong', country: 'China', region: 'Asia' },
-  { id: 'db', name: 'Asia/Dubai', offset: 4, city: 'Dubai', country: 'UAE', region: 'Asia' },
-  { id: 'bk', name: 'Asia/Bangkok', offset: 7, city: 'Bangkok', country: 'Thailand', region: 'Asia' },
-  { id: 'sl', name: 'Asia/Seoul', offset: 9, city: 'Seoul', country: 'South Korea', region: 'Asia' },
-
-  // Oceania
-  { id: 'sy', name: 'Australia/Sydney', offset: 10, city: 'Sydney', country: 'Australia', region: 'Oceania' },
-  { id: 'ml', name: 'Australia/Melbourne', offset: 10, city: 'Melbourne', country: 'Australia', region: 'Oceania' },
-  { id: 'ak', name: 'Pacific/Auckland', offset: 12, city: 'Auckland', country: 'New Zealand', region: 'Oceania' },
-  { id: 'br', name: 'Australia/Brisbane', offset: 10, city: 'Brisbane', country: 'Australia', region: 'Oceania' },
-
-  // South America
-  { id: 'sp', name: 'America/Sao_Paulo', offset: -3, city: 'São Paulo', country: 'Brazil', region: 'South America' },
-  { id: 'ba', name: 'America/Buenos_Aires', offset: -3, city: 'Buenos Aires', country: 'Argentina', region: 'South America' },
-  { id: 'st', name: 'America/Santiago', offset: -4, city: 'Santiago', country: 'Chile', region: 'South America' },
-  { id: 'li', name: 'America/Lima', offset: -5, city: 'Lima', country: 'Peru', region: 'South America' },
-];
+function getRegion(latitude: number): string {
+  if (latitude > 66.5) return 'Arctic';
+  if (latitude > 23.5) return 'Northern Temperate';
+  if (latitude > 0) return 'Northern Tropical';
+  if (latitude > -23.5) return 'Southern Tropical';
+  if (latitude > -66.5) return 'Southern Temperate';
+  return 'Antarctic';
+}
 
 export const WorldClock = () => {
   const [selectedZones, setSelectedZones] = useState<TimeZone[]>(WORLD_TIMEZONES.slice(0, 3));
@@ -56,14 +45,49 @@ export const WorldClock = () => {
   const [showAddZone, setShowAddZone] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [format24Hour, setFormat24Hour] = useState(false);
+  const [showSeconds, setShowSeconds] = useState(true);
+  const [showMilliseconds, setShowMilliseconds] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Load settings and listen for changes
+  useEffect(() => {
+    const loadSettings = () => {
+      const savedSettings = localStorage.getItem('timeSettings');
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          if (settings.format24Hour !== undefined) setFormat24Hour(settings.format24Hour);
+          if (settings.showSeconds !== undefined) setShowSeconds(settings.showSeconds);
+          if (settings.showMilliseconds !== undefined) setShowMilliseconds(settings.showMilliseconds);
+        } catch (e) {
+          console.error('Failed to parse saved settings:', e);
+        }
+      }
+    };
+
+    const handleSettingsChange = (event: CustomEvent<TimeSettings>) => {
+      const { format24Hour, showSeconds, showMilliseconds } = event.detail;
+      if (format24Hour !== undefined) setFormat24Hour(format24Hour);
+      if (showSeconds !== undefined) setShowSeconds(showSeconds);
+      if (showMilliseconds !== undefined) setShowMilliseconds(showMilliseconds);
+    };
+
+    loadSettings();
+    window.addEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+    setMounted(true);
+    return () => {
+      window.removeEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 1000);
+    }, showMilliseconds ? 16 : 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [showMilliseconds]);
 
   const getTimeInZone = (offset: number) => {
     const localTime = currentTime.getTime();
@@ -73,12 +97,32 @@ export const WorldClock = () => {
   };
 
   const formatTime = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true,
-    }).format(date);
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const ms = date.getMilliseconds().toString().padStart(3, '0');
+    
+    let period = '';
+    if (!format24Hour) {
+      period = hours >= 12 ? ' PM' : ' AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // Convert 0 to 12
+    }
+    
+    const timeStr = [
+      hours.toString().padStart(2, '0'),
+      minutes
+    ];
+
+    if (showSeconds) {
+      timeStr.push(seconds);
+    }
+
+    if (showMilliseconds) {
+      timeStr.push(ms);
+    }
+
+    return timeStr.join(':') + (!format24Hour ? period : '');
   };
 
   const addTimeZone = (zone: TimeZone) => {
@@ -103,6 +147,8 @@ export const WorldClock = () => {
 
   const uniqueRegions = Array.from(new Set(WORLD_TIMEZONES.map(zone => zone.region)));
 
+  if (!mounted) return null;
+
   return (
     <div className="w-full max-w-4xl mx-auto p-6">
       <motion.div
@@ -111,10 +157,10 @@ export const WorldClock = () => {
         className="space-y-8"
       >
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">World Clock</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">World Clock</h2>
           <button
             onClick={() => setShowAddZone(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            className="bg-primary-600 dark:bg-primary-400 text-white px-4 py-2 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-500 transition-colors"
           >
             + Add City
           </button>
@@ -126,25 +172,25 @@ export const WorldClock = () => {
               key={zone.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white rounded-lg shadow-sm p-6"
+              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6"
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-semibold">{zone.city}</h3>
-                  <p className="text-gray-500">{zone.country}</p>
-                  <p className="text-gray-400 text-sm">{zone.region}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{zone.city}</h3>
+                  <p className="text-gray-500 dark:text-gray-400">{zone.country}</p>
+                  <p className="text-gray-400 dark:text-gray-500 text-sm">{zone.region}</p>
                 </div>
                 <button
                   onClick={() => removeTimeZone(zone.id)}
-                  className="text-gray-400 hover:text-red-500"
+                  className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
                 >
                   Remove
                 </button>
               </div>
-              <div className="text-3xl font-mono">
+              <div className="text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
                 {formatTime(getTimeInZone(zone.offset))}
               </div>
-              <div className="text-sm text-gray-500 mt-2">
+              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
               </div>
             </motion.div>
@@ -157,12 +203,12 @@ export const WorldClock = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           >
-            <div className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Add City</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Add City</h3>
                 <button
                   onClick={() => setShowAddZone(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
                   ✕
                 </button>
@@ -175,12 +221,12 @@ export const WorldClock = () => {
                     placeholder="Search cities..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                   />
                   <select
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
-                    className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                   >
                     <option value="all">All Regions</option>
                     {uniqueRegions.map(region => (
@@ -195,14 +241,14 @@ export const WorldClock = () => {
                   <button
                     key={zone.id}
                     onClick={() => addTimeZone(zone)}
-                    className="flex justify-between items-center p-4 rounded-lg hover:bg-gray-50 transition-colors border"
+                    className="flex justify-between items-center p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-600 text-left"
                   >
                     <div>
-                      <div className="font-medium">{zone.city}</div>
-                      <div className="text-sm text-gray-500">{zone.country}</div>
-                      <div className="text-xs text-gray-400">{zone.region}</div>
+                      <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
+                      <div className="text-xs text-gray-400 dark:text-gray-500">{zone.region}</div>
                     </div>
-                    <div className="text-gray-500">
+                    <div className="text-gray-500 dark:text-gray-400">
                       GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
                     </div>
                   </button>

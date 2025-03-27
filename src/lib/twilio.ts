@@ -21,7 +21,7 @@ export const sendVerificationCode = async (phoneNumber: string) => {
 
     // Send SMS via Twilio
     await client.messages.create({
-      body: `Your time.io verification code is: ${code}`,
+      body: `Your time.IO verification code is: ${code}`,
       to: phoneNumber,
       from: process.env.TWILIO_PHONE_NUMBER
     });

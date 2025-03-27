@@ -13,11 +13,43 @@ interface AlarmTime {
 }
 
 export const AlarmManager = () => {
+  const [mounted, setMounted] = useState(false);
   const [alarms, setAlarms] = useState<AlarmTime[]>([]);
   const [showNewAlarm, setShowNewAlarm] = useState(false);
   const [activeAlarm, setActiveAlarm] = useState<AlarmTime | null>(null);
 
+  // Load alarms from localStorage on mount
   useEffect(() => {
+    const loadAlarms = () => {
+      const savedAlarms = localStorage.getItem('alarms');
+      if (savedAlarms) {
+        try {
+          const parsed = JSON.parse(savedAlarms);
+          setAlarms(parsed);
+        } catch (e) {
+          console.error('Failed to load alarms:', e);
+        }
+      }
+    };
+
+    loadAlarms();
+    setMounted(true);
+  }, []);
+
+  // Save alarms to localStorage whenever they change
+  useEffect(() => {
+    if (!mounted) return;
+
+    try {
+      localStorage.setItem('alarms', JSON.stringify(alarms));
+    } catch (e) {
+      console.error('Failed to save alarms:', e);
+    }
+  }, [alarms, mounted]);
+
+  useEffect(() => {
+    if (!mounted) return;
+
     const checkAlarms = () => {
       const now = new Date();
       const currentHours = now.getHours();
@@ -35,32 +67,45 @@ export const AlarmManager = () => {
 
     const interval = setInterval(checkAlarms, 1000);
     return () => clearInterval(interval);
-  }, [alarms]);
+  }, [alarms, mounted]);
 
-  const triggerAlarm = (alarm: AlarmTime) => {
-    setActiveAlarm(alarm);
-    alarmSoundService.playSound(alarm.sound);
+  const triggerAlarm = async (alarm: AlarmTime) => {
+    try {
+      setActiveAlarm(alarm);
+      await alarmSoundService?.playSound(alarm.sound);
+    } catch (e) {
+      console.error('Failed to trigger alarm:', e);
+    }
   };
 
   const stopAlarm = () => {
-    alarmSoundService.stopSound();
-    setActiveAlarm(null);
+    try {
+      alarmSoundService?.stopSound();
+      setActiveAlarm(null);
+    } catch (e) {
+      console.error('Failed to stop alarm:', e);
+    }
   };
 
   const addAlarm = (alarm: AlarmTime) => {
-    setAlarms([...alarms, alarm]);
+    setAlarms(prev => [...prev, alarm]);
     setShowNewAlarm(false);
   };
 
   const toggleAlarm = (index: number) => {
-    const newAlarms = [...alarms];
-    newAlarms[index].enabled = !newAlarms[index].enabled;
-    setAlarms(newAlarms);
+    setAlarms(prev => {
+      const newAlarms = [...prev];
+      newAlarms[index] = { ...newAlarms[index], enabled: !newAlarms[index].enabled };
+      return newAlarms;
+    });
   };
 
   const deleteAlarm = (index: number) => {
-    setAlarms(alarms.filter((_, i) => i !== index));
+    setAlarms(prev => prev.filter((_, i) => i !== index));
   };
+
+  // Don't render anything on the server or before mounting
+  if (!mounted) return null;
 
   return (
     <div className="w-full max-w-2xl mx-auto p-6">
@@ -166,6 +211,15 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
   const [minutes, setMinutes] = useState(0);
   const [label, setLabel] = useState('');
   const [selectedSound, setSelectedSound] = useState<AlarmSound>(ALARM_SOUNDS[0]);
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.5);
+
+  useEffect(() => {
+    return () => {
+      // Clean up any playing sounds when component unmounts
+      alarmSoundService.stopSound();
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,16 +227,31 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
       hours,
       minutes,
       enabled: true,
-      label,
+      label: label || 'Alarm',
       sound: selectedSound,
     });
   };
 
   const previewSound = () => {
-    alarmSoundService.playSound(selectedSound);
-    setTimeout(() => {
+    if (isPreviewPlaying) {
       alarmSoundService.stopSound();
-    }, 2000);
+      setIsPreviewPlaying(false);
+    } else {
+      alarmSoundService.setVolume(volume);
+      alarmSoundService.playSound(selectedSound);
+      setIsPreviewPlaying(true);
+      // Stop preview after 2 seconds
+      setTimeout(() => {
+        alarmSoundService.stopSound();
+        setIsPreviewPlaying(false);
+      }, 2000);
+    }
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVolume = parseFloat(e.target.value);
+    setVolume(newVolume);
+    alarmSoundService.setVolume(newVolume);
   };
 
   return (
@@ -255,11 +324,27 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
             <button
               type="button"
               onClick={previewSound}
-              className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              className={`px-3 py-2 text-sm font-medium text-white rounded-md transition-colors ${
+                isPreviewPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'
+              }`}
             >
-              Preview
+              {isPreviewPlaying ? 'Stop' : 'Preview'}
             </button>
           </div>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Volume
+          </label>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.1"
+            value={volume}
+            onChange={handleVolumeChange}
+            className="w-full"
+          />
         </div>
         <div className="flex justify-end space-x-3">
           <button

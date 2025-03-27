@@ -339,14 +339,19 @@ export function SolarClock() {
         </div>
         {hoverInfo.visible && (
           <div 
-            className="absolute bg-white/90 backdrop-blur-sm text-gray-600 text-sm rounded-lg p-3 pointer-events-none whitespace-pre-line shadow-lg border border-gray-200/50"
+            className="absolute bg-white/90 backdrop-blur-sm text-gray-600 text-sm rounded-lg p-4 pointer-events-none shadow-lg border border-gray-200/50 w-48"
             style={{ 
               left: `${hoverInfo.x + 10}px`, 
               top: `${hoverInfo.y + 10}px`,
               transform: 'translate(-50%, -100%)'
             }}
           >
-            {hoverInfo.content}
+            <div className="font-semibold mb-1">{hoverInfo.content.split('\n')[0]}</div>
+            <div className="space-y-1 text-gray-500">
+              {hoverInfo.content.split('\n').slice(1).map((line, index) => (
+                <div key={index}>{line}</div>
+              ))}
+            </div>
           </div>
         )}
       </motion.div>

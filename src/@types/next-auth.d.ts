@@ -15,6 +15,6 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT extends DefaultJWT {
-    // Add custom claims here if needed
+    id: string;
   }
 } 

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Switch } from '@/components/ui/switch';
 
 interface TimeSettings {
   format24Hour: boolean;
@@ -9,6 +10,11 @@ interface TimeSettings {
   showMilliseconds: boolean;
   timeZone: string;
   dateFormat: string;
+  defaultClockCount: number;
+  sortOrder: 'name' | 'timezone' | 'added';
+  theme: 'light' | 'dark' | 'system';
+  clockStyle: 'digital' | 'analog' | 'both';
+  colorScheme: 'blue' | 'purple' | 'green' | 'orange';
 }
 
 const DATE_FORMATS = [
@@ -18,133 +24,173 @@ const DATE_FORMATS = [
   { id: 'short', name: 'Short', example: '1/1/2024' },
 ];
 
-export const Settings = () => {
-  const [settings, setSettings] = useState<TimeSettings>({
-    format24Hour: false,
-    showSeconds: true,
-    showMilliseconds: false,
-    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    dateFormat: 'full',
-  });
+const SORT_OPTIONS = [
+  { id: 'name', name: 'City Name', description: 'Sort cities alphabetically' },
+  { id: 'timezone', name: 'Time Zone', description: 'Sort by GMT offset' },
+  { id: 'added', name: 'Recently Added', description: 'Sort by when added' },
+];
 
+const COLOR_SCHEMES = [
+  { id: 'blue', name: 'Ocean Blue', primary: 'bg-blue-500' },
+  { id: 'purple', name: 'Royal Purple', primary: 'bg-purple-500' },
+  { id: 'green', name: 'Forest Green', primary: 'bg-green-500' },
+  { id: 'orange', name: 'Sunset Orange', primary: 'bg-orange-500' },
+];
+
+const defaultSettings: TimeSettings = {
+  format24Hour: false,
+  showSeconds: true,
+  showMilliseconds: false,
+  timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  dateFormat: 'MM/DD/YYYY',
+  defaultClockCount: 3,
+  sortOrder: 'timezone',
+  theme: 'light',
+  clockStyle: 'digital',
+  colorScheme: 'blue',
+};
+
+export function Settings() {
+  const [settings, setSettings] = useState<TimeSettings>(defaultSettings);
+  const [mounted, setMounted] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
 
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('timeSettings');
+    if (savedSettings) {
+      try {
+        setSettings(JSON.parse(savedSettings));
+      } catch (e) {
+        console.error('Failed to parse saved settings:', e);
+      }
+    }
+    setMounted(true);
+  }, []);
+
   const handleSettingChange = (key: keyof TimeSettings, value: any) => {
-    setSettings({ ...settings, [key]: value });
+    const newSettings = { ...settings, [key]: value };
+    setSettings(newSettings);
+    localStorage.setItem('timeSettings', JSON.stringify(newSettings));
     
-    // Save to localStorage
-    localStorage.setItem('timeSettings', JSON.stringify({ ...settings, [key]: value }));
-    
+    // Dispatch event for other components
+    const event = new CustomEvent('timeSettingsChanged', { detail: newSettings });
+    window.dispatchEvent(event);
+
     // Show saved indicator
     setShowSaved(true);
     setTimeout(() => setShowSaved(false), 2000);
   };
 
+  if (!mounted) return null;
+
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
-      >
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-xl font-semibold mb-6">Time Display</h3>
-          
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="font-medium">24-Hour Format</label>
-                <p className="text-sm text-gray-500">Display time in 24-hour format</p>
-              </div>
-              <button
-                onClick={() => handleSettingChange('format24Hour', !settings.format24Hour)}
-                className={`w-12 h-6 rounded-full transition-colors ${
-                  settings.format24Hour ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-              >
-                <motion.div
-                  animate={{
-                    x: settings.format24Hour ? 24 : 0,
-                  }}
-                  className="w-6 h-6 bg-white rounded-full shadow-md"
-                />
-              </button>
-            </div>
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">Settings</h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300">
+          Customize your experience with personalized time formats, default locations,
+          and notification preferences.
+        </p>
+      </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="font-medium">Show Seconds</label>
-                <p className="text-sm text-gray-500">Display seconds in time</p>
-              </div>
-              <button
-                onClick={() => handleSettingChange('showSeconds', !settings.showSeconds)}
-                className={`w-12 h-6 rounded-full transition-colors ${
-                  settings.showSeconds ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-              >
-                <motion.div
-                  animate={{
-                    x: settings.showSeconds ? 24 : 0,
-                  }}
-                  className="w-6 h-6 bg-white rounded-full shadow-md"
-                />
-              </button>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6">
+        <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Display Settings</h2>
+        
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <label className="text-lg font-medium text-gray-900 dark:text-white">24-hour format</label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Display time in 24-hour format</p>
             </div>
+            <Switch
+              checked={settings.format24Hour}
+              onChange={(checked: boolean) => handleSettingChange('format24Hour', checked)}
+            />
+          </div>
 
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="font-medium">Show Milliseconds</label>
-                <p className="text-sm text-gray-500">Display milliseconds in time</p>
-              </div>
-              <button
-                onClick={() => handleSettingChange('showMilliseconds', !settings.showMilliseconds)}
-                className={`w-12 h-6 rounded-full transition-colors ${
-                  settings.showMilliseconds ? 'bg-blue-500' : 'bg-gray-300'
-                }`}
-              >
-                <motion.div
-                  animate={{
-                    x: settings.showMilliseconds ? 24 : 0,
-                  }}
-                  className="w-6 h-6 bg-white rounded-full shadow-md"
-                />
-              </button>
+          <div className="flex items-center justify-between">
+            <div>
+              <label className="text-lg font-medium text-gray-900 dark:text-white">Show seconds</label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Display seconds in time</p>
             </div>
+            <Switch
+              checked={settings.showSeconds}
+              onChange={(checked: boolean) => handleSettingChange('showSeconds', checked)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <label className="text-lg font-medium text-gray-900 dark:text-white">Show milliseconds</label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Display milliseconds in time</p>
+            </div>
+            <Switch
+              checked={settings.showMilliseconds}
+              onChange={(checked: boolean) => handleSettingChange('showMilliseconds', checked)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <label className="text-lg font-medium text-gray-900 dark:text-white">Theme</label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</p>
+            </div>
+            <select
+              value={settings.theme}
+              onChange={(e) => handleSettingChange('theme', e.target.value as TimeSettings['theme'])}
+              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="system">System</option>
+            </select>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <label className="text-lg font-medium text-gray-900 dark:text-white">Time Zone</label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Set your default time zone</p>
+            </div>
+            <select
+              value={settings.timeZone}
+              onChange={(e) => handleSettingChange('timeZone', e.target.value)}
+              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              {Intl.supportedValuesOf('timeZone').map((zone) => (
+                <option key={zone} value={zone}>
+                  {zone.replace(/_/g, ' ')}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <label className="text-lg font-medium text-gray-900 dark:text-white">Date Format</label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Choose how dates are displayed</p>
+            </div>
+            <select
+              value={settings.dateFormat}
+              onChange={(e) => handleSettingChange('dateFormat', e.target.value)}
+              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+              <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+              <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+            </select>
           </div>
         </div>
+      </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-xl font-semibold mb-6">Date Format</h3>
-          
-          <div className="space-y-4">
-            {DATE_FORMATS.map(format => (
-              <button
-                key={format.id}
-                onClick={() => handleSettingChange('dateFormat', format.id)}
-                className={`w-full text-left p-4 rounded-lg transition-colors ${
-                  settings.dateFormat === format.id
-                    ? 'bg-blue-50 border-2 border-blue-500'
-                    : 'border-2 border-transparent hover:bg-gray-50'
-                }`}
-              >
-                <div className="font-medium">{format.name}</div>
-                <div className="text-sm text-gray-500">{format.example}</div>
-              </button>
-            ))}
-          </div>
+      <p className="text-center mt-8 text-sm text-gray-500 dark:text-gray-400">
+        Your settings will sync across devices when you're signed in.
+      </p>
+
+      {showSaved && (
+        <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg">
+          Settings saved!
         </div>
-
-        {showSaved && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="fixed bottom-8 right-8 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg"
-          >
-            Settings saved!
-          </motion.div>
-        )}
-      </motion.div>
+      )}
     </div>
   );
-}; 
+} 

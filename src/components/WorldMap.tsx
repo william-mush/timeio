@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   ComposableMap,
@@ -31,6 +31,40 @@ export function WorldMap() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [position, setPosition] = useState<Position>({ coordinates: [0, 0], zoom: 1 });
+  const [timeSettings, setTimeSettings] = useState({
+    format24Hour: false,
+    showSeconds: true,
+    showMilliseconds: false
+  });
+
+  useEffect(() => {
+    const loadSettings = () => {
+      const savedSettings = localStorage.getItem('timeSettings');
+      if (savedSettings) {
+        try {
+          const parsed = JSON.parse(savedSettings);
+          setTimeSettings({
+            format24Hour: parsed.format24Hour,
+            showSeconds: parsed.showSeconds,
+            showMilliseconds: parsed.showMilliseconds
+          });
+        } catch (e) {
+          console.error('Failed to parse saved settings:', e);
+        }
+      }
+    };
+
+    const handleSettingsChange = (event: CustomEvent<any>) => {
+      const { format24Hour, showSeconds, showMilliseconds } = event.detail;
+      setTimeSettings({ format24Hour, showSeconds, showMilliseconds });
+    };
+
+    loadSettings();
+    window.addEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+    return () => {
+      window.removeEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+    };
+  }, []);
 
   const filteredMarkers = useMemo(() => {
     return CITY_MARKERS.filter(marker => {
@@ -53,18 +87,21 @@ export function WorldMap() {
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
     const cityTime = new Date(utc + (3600000 * offset));
     
-    return {
-      time12h: cityTime.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
-      }),
-      time24h: cityTime.toLocaleTimeString('en-US', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
-      })
+    const options: Intl.DateTimeFormatOptions = {
+      hour: timeSettings.format24Hour ? '2-digit' : 'numeric',
+      minute: '2-digit',
+      second: timeSettings.showSeconds ? '2-digit' : undefined,
+      hour12: !timeSettings.format24Hour
     };
+
+    let time = cityTime.toLocaleTimeString('en-US', options);
+    
+    if (timeSettings.showMilliseconds) {
+      const ms = cityTime.getMilliseconds().toString().padStart(3, '0');
+      time = time.replace(' ', ' : ' + ms + ' ');
+    }
+
+    return time;
   };
 
   return (
@@ -86,8 +123,8 @@ export function WorldMap() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-lg font-mono">{formatTime(selectedCity.offset).time24h}</p>
-                <p className="text-sm text-gray-500">{formatTime(selectedCity.offset).time12h}</p>
+                <p className="text-lg font-mono">{formatTime(selectedCity.offset)}</p>
+                <p className="text-sm text-gray-500">GMT {selectedCity.offset >= 0 ? '+' : ''}{selectedCity.offset}</p>
               </div>
             </div>
             {selectedCity.description && (

@@ -4,192 +4,322 @@ import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Stars, Html, Text } from '@react-three/drei';
 import * as THREE from 'three';
+import { TextureLoader } from 'three';
 
 interface CelestialObject {
   name: string;
+  type: "planet" | "asteroid" | "comet";
   orbitRadius: number;
-  rotationPeriod: number; // days
+  rotationPeriod: number;
   size: number;
   color: string;
-  orbitPeriod: number; // Earth years
-  tilt: number; // degrees
-  type: 'planet' | 'asteroid' | 'comet';
-  description?: string;
-  eccentricity: number; // orbital eccentricity
-  inclination: number; // orbital inclination in degrees
+  orbitPeriod: number;
+  tilt: number;
+  description: string;
+  eccentricity: number;
+  inclination: number;
+  periodDays: number;
+  textureUrl?: string;
+}
+
+interface Moon {
+  name: string;
+  orbitRadius: number;
+  rotationPeriod: number;
+  size: number;
+  color: string;
+  orbitPeriod: number;
+  tilt: number;
+  description: string;
+  eccentricity: number;
+  inclination: number;
+  periodDays: number;
 }
 
 const CELESTIAL_OBJECTS: CelestialObject[] = [
   {
-    name: 'Mercury',
-    orbitRadius: 10,
+    name: "Mercury",
+    type: "planet",
+    orbitRadius: 4,
     rotationPeriod: 58.6,
-    size: 1,
+    size: 0.4,
     color: '#A0522D',
-    orbitPeriod: 0.24,
+    orbitPeriod: 88,
     tilt: 0.034,
-    type: 'planet',
-    description: 'The smallest and innermost planet',
-    eccentricity: 0.206,
-    inclination: 7.0
+    description: "Smallest and innermost planet",
+    eccentricity: 0.205,
+    inclination: 7.0,
+    periodDays: 88,
+    textureUrl: "/textures/mercury.jpg"
   },
   {
-    name: 'Venus',
-    orbitRadius: 15,
-    rotationPeriod: -243,
-    size: 1.5,
+    name: "Venus",
+    type: "planet",
+    orbitRadius: 7,
+    rotationPeriod: 243,
+    size: 0.9,
     color: '#DEB887',
-    orbitPeriod: 0.62,
+    orbitPeriod: 225,
     tilt: 177.4,
-    type: 'planet',
-    description: 'The hottest planet with retrograde rotation',
+    description: "Second planet from the Sun",
     eccentricity: 0.007,
-    inclination: 3.4
+    inclination: 3.4,
+    periodDays: 225,
+    textureUrl: "/textures/venus.jpg"
   },
   {
-    name: 'Earth',
-    orbitRadius: 20,
-    rotationPeriod: 1,
-    size: 1.5,
+    name: "Earth",
+    type: "planet",
+    orbitRadius: 10,
+    rotationPeriod: 0.997,
+    size: 1,
     color: '#4169E1',
-    orbitPeriod: 1,
-    tilt: 23.44,
-    type: 'planet',
-    description: 'Our home planet',
+    orbitPeriod: 365,
+    tilt: 23.4,
+    description: "Our home planet",
     eccentricity: 0.017,
-    inclination: 0.0
+    inclination: 0.0,
+    periodDays: 365,
+    textureUrl: "/textures/earth.jpg"
   },
   {
-    name: 'Mars',
-    orbitRadius: 25,
+    name: "Mars",
+    type: "planet",
+    orbitRadius: 15,
     rotationPeriod: 1.03,
-    size: 1.2,
-    color: '#CD5C5C',
-    orbitPeriod: 1.88,
-    tilt: 25.19,
-    type: 'planet',
-    description: 'The red planet',
-    eccentricity: 0.093,
-    inclination: 1.85
-  },
-  {
-    name: 'Ceres',
-    orbitRadius: 30,
-    rotationPeriod: 0.378,
     size: 0.5,
-    color: '#8B8989',
-    orbitPeriod: 4.6,
+    color: '#CD5C5C',
+    orbitPeriod: 687,
+    tilt: 25.2,
+    description: "The Red Planet",
+    eccentricity: 0.093,
+    inclination: 1.9,
+    periodDays: 687,
+    textureUrl: "/textures/mars.jpg"
+  },
+  {
+    name: "Ceres",
+    type: "asteroid",
+    orbitRadius: 17,
+    rotationPeriod: 0.378,
+    size: 0.1,
+    color: '#8B4513',
+    orbitPeriod: 1680,
     tilt: 4,
-    type: 'asteroid',
-    description: 'The largest asteroid in the main belt',
-    eccentricity: 0.076,
-    inclination: 10.6
+    description: "Largest asteroid in the asteroid belt",
+    eccentricity: 0.079,
+    inclination: 10.6,
+    periodDays: 1680,
+    textureUrl: "/textures/ceres.jpg"
   },
   {
-    name: 'Jupiter',
-    orbitRadius: 35,
-    rotationPeriod: 0.41,
-    size: 4,
-    color: '#DEB887',
-    orbitPeriod: 11.86,
-    tilt: 3.13,
-    type: 'planet',
-    description: 'The largest planet',
-    eccentricity: 0.049,
-    inclination: 1.3
+    name: "Jupiter",
+    type: "planet",
+    orbitRadius: 52,
+    rotationPeriod: 0.414,
+    size: 11,
+    color: '#FF6B35',
+    orbitPeriod: 4333,
+    tilt: 3.1,
+    description: "Largest planet in our solar system",
+    eccentricity: 0.048,
+    inclination: 1.3,
+    periodDays: 4333,
+    textureUrl: "/textures/jupiter.jpg"
   },
   {
-    name: 'Saturn',
-    orbitRadius: 45,
-    rotationPeriod: 0.44,
-    size: 3.5,
-    color: '#F4A460',
-    orbitPeriod: 29.46,
-    tilt: 26.73,
-    type: 'planet',
-    description: 'The ringed planet',
+    name: "Saturn",
+    type: "planet",
+    orbitRadius: 95,
+    rotationPeriod: 0.444,
+    size: 9,
+    color: '#FFD93D',
+    orbitPeriod: 10759,
+    tilt: 26.7,
+    description: "Famous for its rings",
     eccentricity: 0.054,
-    inclination: 2.5
+    inclination: 2.5,
+    periodDays: 10759,
+    textureUrl: "/textures/saturn.jpg"
   },
   {
-    name: 'Uranus',
-    orbitRadius: 55,
-    rotationPeriod: -0.72,
-    size: 2.5,
+    name: "Uranus",
+    type: "planet",
+    orbitRadius: 192,
+    rotationPeriod: 0.718,
+    size: 4,
     color: '#87CEEB',
-    orbitPeriod: 84.01,
-    tilt: 97.77,
-    type: 'planet',
-    description: 'The tilted planet',
+    orbitPeriod: 30687,
+    tilt: 97.8,
+    description: "Ice giant planet",
     eccentricity: 0.047,
-    inclination: 0.8
+    inclination: 0.8,
+    periodDays: 30687,
+    textureUrl: "/textures/uranus.jpg"
   },
   {
-    name: 'Neptune',
-    orbitRadius: 65,
-    rotationPeriod: 0.67,
-    size: 2.5,
-    color: '#4169E1',
-    orbitPeriod: 164.79,
-    tilt: 28.32,
-    type: 'planet',
-    description: 'The windiest planet',
+    name: "Neptune",
+    type: "planet",
+    orbitRadius: 301,
+    rotationPeriod: 0.671,
+    size: 3.9,
+    color: '#1E90FF',
+    orbitPeriod: 60190,
+    tilt: 28.3,
+    description: "The windiest planet",
     eccentricity: 0.009,
-    inclination: 1.8
+    inclination: 1.8,
+    periodDays: 60190,
+    textureUrl: "/textures/neptune.jpg"
   },
   {
     name: "Halley's Comet",
-    orbitRadius: 75,
-    rotationPeriod: 2.2,
-    size: 0.7,
+    type: "comet",
+    orbitRadius: 100,
+    rotationPeriod: 2,
+    size: 0.15,
     color: '#FFFFFF',
-    orbitPeriod: 76,
-    tilt: 162.3,
-    type: 'comet',
-    description: 'Famous periodic comet visible every 76 years',
+    orbitPeriod: 27566,
+    tilt: 0,
+    description: "Famous periodic comet visible from Earth every 75-76 years. Last visible in 1986, next appearance in 2061.",
     eccentricity: 0.967,
-    inclination: 162.3
+    inclination: 162.3,
+    periodDays: 27566,
+    textureUrl: "/textures/halley.jpg"
   },
   {
     name: 'Pluto',
-    orbitRadius: 70,
+    type: 'planet',
+    orbitRadius: 395,
     rotationPeriod: -6.39,
     size: 1.2,
     color: '#D2B48C',
     orbitPeriod: 248.09,
     tilt: 122.53,
-    type: 'planet',
     description: 'The most famous dwarf planet',
     eccentricity: 0.248,
-    inclination: 17.2
+    inclination: 17.2,
+    periodDays: 248.09 * 365.25,
+    textureUrl: "/textures/pluto.jpg"
   },
   {
     name: 'Comet NEOWISE',
+    type: 'comet',
     orbitRadius: 85,
     rotationPeriod: 1.5,
     size: 0.6,
     color: '#FFFFFF',
     orbitPeriod: 6800,
     tilt: 128.9,
-    type: 'comet',
     description: 'A long-period comet discovered in 2020',
     eccentricity: 0.999,
-    inclination: 128.9
+    inclination: 128.9,
+    periodDays: 6800,
+    textureUrl: "/textures/neowise.jpg"
   },
   {
     name: 'Comet 67P',
+    type: 'comet',
     orbitRadius: 80,
     rotationPeriod: 12.4,
     size: 0.5,
     color: '#FFFFFF',
     orbitPeriod: 6.44,
     tilt: 7.04,
-    type: 'comet',
     description: 'The comet visited by Rosetta spacecraft',
     eccentricity: 0.641,
-    inclination: 7.04
+    inclination: 7.04,
+    periodDays: 6.44,
+    textureUrl: "/textures/67p.jpg"
   }
 ];
+
+const MOONS: Record<string, Moon[]> = {
+  "Earth": [
+    {
+      name: "Moon",
+      orbitRadius: 2,
+      rotationPeriod: 27.3,
+      size: 0.27,
+      color: '#C0C0C0',
+      orbitPeriod: 27.3,
+      tilt: 6.7,
+      description: "Earth's only natural satellite",
+      eccentricity: 0.0549,
+      inclination: 5.145,
+      periodDays: 27.3
+    }
+  ],
+  "Jupiter": [
+    {
+      name: "Io",
+      orbitRadius: 3,
+      rotationPeriod: 1.77,
+      size: 0.3,
+      color: '#FFD700',
+      orbitPeriod: 1.77,
+      tilt: 0.04,
+      description: "Most volcanically active body in the solar system",
+      eccentricity: 0.0041,
+      inclination: 0.036,
+      periodDays: 1.77
+    },
+    {
+      name: "Europa",
+      orbitRadius: 4,
+      rotationPeriod: 3.55,
+      size: 0.25,
+      color: '#FFFFFF',
+      orbitPeriod: 3.55,
+      tilt: 0.47,
+      description: "Possibly harbors a subsurface ocean",
+      eccentricity: 0.0094,
+      inclination: 0.466,
+      periodDays: 3.55
+    },
+    {
+      name: "Ganymede",
+      orbitRadius: 6,
+      rotationPeriod: 7.15,
+      size: 0.4,
+      color: '#A9A9A9',
+      orbitPeriod: 7.15,
+      tilt: 0.2,
+      description: "Largest moon in the solar system",
+      eccentricity: 0.0013,
+      inclination: 0.177,
+      periodDays: 7.15
+    },
+    {
+      name: "Callisto",
+      orbitRadius: 8,
+      rotationPeriod: 16.69,
+      size: 0.35,
+      color: '#808080',
+      orbitPeriod: 16.69,
+      tilt: 0.192,
+      description: "Most heavily cratered object in the solar system",
+      eccentricity: 0.0074,
+      inclination: 0.192,
+      periodDays: 16.69
+    }
+  ],
+  "Saturn": [
+    {
+      name: "Titan",
+      orbitRadius: 4,
+      rotationPeriod: 15.95,
+      size: 0.4,
+      color: '#FFA500',
+      orbitPeriod: 15.95,
+      tilt: 0.33,
+      description: "Only moon with a dense atmosphere",
+      eccentricity: 0.0288,
+      inclination: 0.33,
+      periodDays: 15.95
+    }
+  ]
+};
 
 function OrbitRing({ radius }: { radius: number }) {
   return (
@@ -226,56 +356,62 @@ function ClockHands({ radius }: { radius: number }) {
 
   return (
     <group>
-      {/* Hour hand */}
+      {/* Hour hand - Gold */}
       <group ref={handRefs.hour}>
-        <mesh position={[radius * 0.25, 0, 0]}>
-          <boxGeometry args={[radius * 0.5, 0.4, 0.1]} />
+        <mesh position={[radius * 0.3, 0, 0]}>
+          <boxGeometry args={[radius * 0.6, 0.8, 0.15]} />
           <meshStandardMaterial
             color="#FFD700"
             transparent
-            opacity={0.8}
+            opacity={0.95}
             emissive="#FFD700"
-            emissiveIntensity={0.3}
+            emissiveIntensity={0.5}
+            metalness={0.3}
+            roughness={0.2}
           />
         </mesh>
       </group>
       
-      {/* Minute hand */}
+      {/* Minute hand - Silver */}
       <group ref={handRefs.minute}>
-        <mesh position={[radius * 0.35, 0, 0]}>
-          <boxGeometry args={[radius * 0.7, 0.3, 0.08]} />
+        <mesh position={[radius * 0.4, 0, 0]}>
+          <boxGeometry args={[radius * 0.8, 0.5, 0.12]} />
           <meshStandardMaterial
             color="#C0C0C0"
             transparent
-            opacity={0.7}
+            opacity={0.9}
             emissive="#C0C0C0"
-            emissiveIntensity={0.2}
+            emissiveIntensity={0.4}
+            metalness={0.4}
+            roughness={0.3}
           />
         </mesh>
       </group>
 
-      {/* Second hand group */}
+      {/* Second hand - White */}
       <group ref={handRefs.second}>
         {/* Main second hand */}
-        <mesh position={[radius * 0.45, 0, 0]}>
-          <boxGeometry args={[radius * 0.9, 0.75, 0.05]} />
+        <mesh position={[radius * 0.5, 0, 0]}>
+          <boxGeometry args={[radius * 1, 0.4, 0.08]} />
           <meshStandardMaterial
             color="#FFFFFF"
             transparent
-            opacity={0.9}
+            opacity={0.95}
             emissive="#FFFFFF"
-            emissiveIntensity={0.8}
+            emissiveIntensity={0.9}
+            metalness={0.5}
+            roughness={0.2}
           />
         </mesh>
         {/* Sweep effect */}
-        <mesh position={[radius * 0.45, 0, 0]}>
-          <planeGeometry args={[radius * 0.9, 0.3]} />
+        <mesh position={[radius * 0.5, 0, 0]}>
+          <planeGeometry args={[radius * 1, 0.3]} />
           <meshStandardMaterial
             color="#FFFFFF"
             transparent
-            opacity={0.15}
+            opacity={0.2}
             emissive="#FFFFFF"
-            emissiveIntensity={0.8}
+            emissiveIntensity={0.9}
             side={THREE.DoubleSide}
           />
         </mesh>
@@ -299,8 +435,8 @@ function DigitalClock() {
 
   return (
     <Html position={[0, 40, 0]}>
-      <div className="px-8 py-4 bg-black/40 text-white rounded-xl backdrop-blur-md text-6xl font-sans tracking-tight font-light">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white via-gray-200 to-white">{time}</span>
+      <div className="px-12 py-6 text-8xl font-sans tracking-tight font-light">
+        <span className="text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">{time}</span>
       </div>
     </Html>
   );
@@ -309,6 +445,7 @@ function DigitalClock() {
 function Scene() {
   const [time, setTime] = useState(0);
   const [hoveredObject, setHoveredObject] = useState<CelestialObject | null>(null);
+  const [hoveredMoon, setHoveredMoon] = useState<Moon | null>(null);
   const initialAngles = useRef(
     CELESTIAL_OBJECTS.reduce((acc, obj) => {
       // Give each object a random initial position
@@ -341,22 +478,36 @@ function Scene() {
             time={time}
             initialAngle={initialAngles.current[object.name]}
             onHover={setHoveredObject}
+            onMoonHover={setHoveredMoon}
           />
         ))}
       </group>
       <Stars radius={200} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
       <DigitalClock />
       
-      {hoveredObject && (
+      {(hoveredObject || hoveredMoon) && (
         <Html position={[0, 20, 0]}>
           <div className="px-4 py-2 bg-black/80 text-white rounded-lg backdrop-blur-sm min-w-[200px]">
-            <h3 className="text-lg font-bold">{hoveredObject.name}</h3>
-            <p className="text-sm opacity-80">{hoveredObject.description}</p>
+            <h3 className="text-lg font-bold">{hoveredMoon ? hoveredMoon.name : hoveredObject?.name}</h3>
+            <p className="text-sm opacity-80">
+              {hoveredMoon ? hoveredMoon.description : hoveredObject?.description}
+            </p>
             <div className="text-xs mt-2 opacity-60">
-              <div>Type: {hoveredObject.type}</div>
-              <div>Rotation period: {Math.abs(hoveredObject.rotationPeriod)} days</div>
-              <div>Orbital period: {hoveredObject.orbitPeriod} years</div>
-              <div>Tilt: {hoveredObject.tilt}°</div>
+              {hoveredMoon ? (
+                <>
+                  <div>Type: Moon</div>
+                  <div>Rotation period: {Math.abs(hoveredMoon.rotationPeriod)} days</div>
+                  <div>Orbital period: {hoveredMoon.orbitPeriod} days</div>
+                  <div>Tilt: {hoveredMoon.tilt}°</div>
+                </>
+              ) : hoveredObject && (
+                <>
+                  <div>Type: {hoveredObject.type}</div>
+                  <div>Rotation period: {Math.abs(hoveredObject.rotationPeriod)} days</div>
+                  <div>Orbital period: {hoveredObject.orbitPeriod} years</div>
+                  <div>Tilt: {hoveredObject.tilt}°</div>
+                </>
+              )}
             </div>
           </div>
         </Html>
@@ -372,68 +523,145 @@ function getTexturePath(object: CelestialObject): string {
   return `/textures/${object.name.toLowerCase().replace(/['']/g, '')}.jpg`;
 }
 
+function Moon({ moon, parentPosition, time, initialAngle, onHover }: { 
+  moon: Moon; 
+  parentPosition: THREE.Vector3;
+  time: number;
+  initialAngle: number;
+  onHover: (object: Moon | null) => void;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const initialAngleRef = useRef(initialAngle);
+
+  useFrame(() => {
+    if (!meshRef.current) return;
+
+    // Calculate moon's orbital position
+    const orbitalPeriod = moon.periodDays * 24 * 60 * 60;
+    const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
+    const angle = initialAngleRef.current + time * orbitalSpeed;
+
+    const r = moon.orbitRadius * (1 - moon.eccentricity * moon.eccentricity) / 
+              (1 + moon.eccentricity * Math.cos(angle));
+    
+    const x = r * Math.cos(angle);
+    const y = r * Math.sin(angle) * Math.sin(moon.inclination * Math.PI / 180);
+    const z = r * Math.sin(angle) * Math.cos(moon.inclination * Math.PI / 180);
+
+    // Add parent planet's position
+    meshRef.current.position.set(
+      parentPosition.x + x,
+      parentPosition.y + y,
+      parentPosition.z + z
+    );
+
+    // Add rotation
+    meshRef.current.rotation.y += 0.01 / moon.rotationPeriod;
+  });
+
+  return (
+    <mesh 
+      ref={meshRef}
+      onPointerOver={() => onHover(moon)}
+      onPointerOut={() => onHover(null)}
+    >
+      <sphereGeometry args={[moon.size * 2, 32, 32]} />
+      <meshStandardMaterial
+        color={moon.color}
+        metalness={0.2}
+        roughness={0.8}
+        emissive={moon.color}
+        emissiveIntensity={0.3}
+      />
+    </mesh>
+  );
+}
+
+function SaturnRings({ size, position }: { size: number; position: THREE.Vector3 }) {
+  return (
+    <group position={position}>
+      {/* Main rings */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[size * 1.4, size * 0.2, 32, 64]} />
+        <meshStandardMaterial
+          color="#FFD93D"
+          transparent
+          opacity={0.8}
+          metalness={0.5}
+          roughness={0.2}
+          emissive="#FFD93D"
+          emissiveIntensity={0.2}
+        />
+      </mesh>
+      {/* Inner rings */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[size * 1.2, size * 0.1, 32, 64]} />
+        <meshStandardMaterial
+          color="#FFD93D"
+          transparent
+          opacity={0.6}
+          metalness={0.5}
+          roughness={0.2}
+          emissive="#FFD93D"
+          emissiveIntensity={0.2}
+        />
+      </mesh>
+      {/* Outer rings */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[size * 1.6, size * 0.15, 32, 64]} />
+        <meshStandardMaterial
+          color="#FFD93D"
+          transparent
+          opacity={0.4}
+          metalness={0.5}
+          roughness={0.2}
+          emissive="#FFD93D"
+          emissiveIntensity={0.2}
+        />
+      </mesh>
+    </group>
+  );
+}
+
 function CelestialObject({ 
   object, 
   time,
   initialAngle,
-  onHover 
+  onHover,
+  onMoonHover 
 }: { 
   object: CelestialObject; 
   time: number;
   initialAngle: number;
   onHover: (object: CelestialObject | null) => void;
+  onMoonHover: (moon: Moon | null) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const [textureError, setTextureError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [texture, setTexture] = useState<THREE.Texture | null>(null);
-  
-  useEffect(() => {
-    const texturePath = getTexturePath(object);
-    console.log(`Loading texture for ${object.name} from ${texturePath}`);
-    
-    const loader = new THREE.TextureLoader();
-    loader.load(
-      texturePath,
-      (loadedTexture) => {
-        loadedTexture.minFilter = THREE.LinearFilter;
-        loadedTexture.magFilter = THREE.LinearFilter;
-        loadedTexture.anisotropy = 16;
-        setTexture(loadedTexture);
-        setIsLoading(false);
-        console.log(`Texture loaded successfully for ${object.name}`);
-      },
-      undefined,
-      (error) => {
-        console.warn(`Texture for ${object.name} not loaded:`, error);
-        setTextureError(true);
-        setIsLoading(false);
-      }
-    );
-  }, [object]);
+  const [hovered, setHovered] = useState(false);
+  const initialAngleRef = useRef(initialAngle);
+  const [position, setPosition] = useState(new THREE.Vector3());
 
-  useFrame(() => {
+  useFrame((state) => {
     if (!meshRef.current) return;
+
+    // Calculate time-based position using Kepler's laws
+    const orbitalPeriod = object.periodDays * 24 * 60 * 60;
+    const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
+    const angle = initialAngleRef.current + time * orbitalSpeed;
+
+    const r = object.orbitRadius * (1 - object.eccentricity * object.eccentricity) / 
+              (1 + object.eccentricity * Math.cos(angle));
     
-    // Rotate around its axis with proper tilt
-    meshRef.current.rotation.x = (object.tilt * Math.PI) / 180;
-    const rotationSpeed = (2 * Math.PI) / (object.rotationPeriod * 24);
-    meshRef.current.rotation.y += rotationSpeed;
-    
-    // Calculate position using elliptical orbit
-    const orbitSpeed = (2 * Math.PI) / (object.orbitPeriod * 365 * 24);
-    const angle = initialAngle + time * orbitSpeed;
-    
-    // Apply Kepler's laws for elliptical orbit
-    const a = object.orbitRadius; // semi-major axis
-    const e = object.eccentricity;
-    const r = a * (1 - e * e) / (1 + e * Math.cos(angle));
-    
-    // Apply orbital inclination
-    const inclination = (object.inclination * Math.PI) / 180;
-    meshRef.current.position.x = r * Math.cos(angle);
-    meshRef.current.position.y = r * Math.sin(angle) * Math.sin(inclination);
-    meshRef.current.position.z = r * Math.sin(angle) * Math.cos(inclination);
+    const x = r * Math.cos(angle);
+    const y = r * Math.sin(angle) * Math.sin(object.inclination * Math.PI / 180);
+    const z = r * Math.sin(angle) * Math.cos(object.inclination * Math.PI / 180);
+
+    const newPosition = new THREE.Vector3(x, y, z);
+    meshRef.current.position.copy(newPosition);
+    setPosition(newPosition);
+
+    // Add rotation
+    meshRef.current.rotation.y += 0.01 / object.rotationPeriod;
   });
 
   // Add comet tail if it's a comet
@@ -460,16 +688,26 @@ function CelestialObject({
         >
           <sphereGeometry args={[object.size, 64, 64]} />
           <meshStandardMaterial
-            map={texture || null}
-            color={textureError || isLoading ? object.color : undefined}
+            color={object.color}
             metalness={0.2}
             roughness={0.8}
-            emissive={textureError || isLoading ? object.color : undefined}
+            emissive={object.color}
             emissiveIntensity={0.1}
             normalScale={[0.5, 0.5]}
           />
           {cometTail}
         </mesh>
+        {object.name === "Saturn" && <SaturnRings size={object.size} position={position} />}
+        {MOONS[object.name]?.map((moon, index) => (
+          <Moon
+            key={moon.name}
+            moon={moon}
+            parentPosition={position}
+            time={time}
+            initialAngle={initialAngle + (index * Math.PI / 2)}
+            onHover={onMoonHover}
+          />
+        ))}
         <OrbitRing radius={object.orbitRadius} />
       </group>
     </>
