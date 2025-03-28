@@ -693,7 +693,7 @@ function CelestialObject({
             roughness={0.8}
             emissive={object.color}
             emissiveIntensity={0.1}
-            normalScale={[0.5, 0.5]}
+            normalScale={new THREE.Vector2(0.5, 0.5)}
           />
           {cometTail}
         </mesh>
@@ -730,11 +730,36 @@ function Sun() {
 }
 
 export function SolarClock3D() {
+  const [hoveredObject, setHoveredObject] = useState<CelestialObject | null>(null);
+  const [hoveredMoon, setHoveredMoon] = useState<Moon | null>(null);
+
   return (
-    <div className="w-full h-screen bg-black">
-      <Canvas shadows>
+    <div className="w-full h-[800px] relative">
+      <Canvas
+        shadows
+        dpr={[1, 2]}
+        camera={{ position: [0, 50, 200], fov: 45 }}
+        style={{ background: 'black' }}
+      >
         <Scene />
+        <OrbitControls 
+          enablePan={true}
+          enableZoom={true}
+          enableRotate={true}
+          minDistance={10}
+          maxDistance={1000}
+        />
       </Canvas>
+      {(hoveredObject || hoveredMoon) && (
+        <div className="absolute bottom-4 left-4 bg-white/80 p-4 rounded-lg">
+          <h3 className="text-lg font-semibold">
+            {hoveredObject?.name || hoveredMoon?.name}
+          </h3>
+          <p className="text-sm text-gray-600">
+            {hoveredObject?.description || hoveredMoon?.description}
+          </p>
+        </div>
+      )}
     </div>
   );
 } 

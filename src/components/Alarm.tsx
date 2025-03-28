@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlarmSound, ALARM_SOUNDS, alarmSoundService } from '@/services/AlarmSound';
+import { useSession, signIn } from 'next-auth/react';
 
 interface AlarmTime {
   hours: number;
@@ -13,15 +14,26 @@ interface AlarmTime {
 }
 
 export const AlarmManager = () => {
+  const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
   const [alarms, setAlarms] = useState<AlarmTime[]>([]);
   const [showNewAlarm, setShowNewAlarm] = useState(false);
   const [activeAlarm, setActiveAlarm] = useState<AlarmTime | null>(null);
 
+  const handleGoogleAuth = () => {
+    signIn('google');
+  };
+
   // Load alarms from localStorage on mount
   useEffect(() => {
+    if (!session) {
+      setAlarms([]);
+      setMounted(true);
+      return;
+    }
+
     const loadAlarms = () => {
-      const savedAlarms = localStorage.getItem('alarms');
+      const savedAlarms = localStorage.getItem(`alarms_${session.user?.email}`);
       if (savedAlarms) {
         try {
           const parsed = JSON.parse(savedAlarms);
@@ -34,18 +46,18 @@ export const AlarmManager = () => {
 
     loadAlarms();
     setMounted(true);
-  }, []);
+  }, [session]);
 
   // Save alarms to localStorage whenever they change
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || !session) return;
 
     try {
-      localStorage.setItem('alarms', JSON.stringify(alarms));
+      localStorage.setItem(`alarms_${session.user?.email}`, JSON.stringify(alarms));
     } catch (e) {
       console.error('Failed to save alarms:', e);
     }
-  }, [alarms, mounted]);
+  }, [alarms, mounted, session]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -107,40 +119,50 @@ export const AlarmManager = () => {
   // Don't render anything on the server or before mounting
   if (!mounted) return null;
 
+  if (!session) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 mt-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Alarms</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Please sign in to set and manage your alarms.
+          </p>
+        </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            Sign in to create alarms and sync them across your devices.
+          </p>
+          <button
+            onClick={handleGoogleAuth}
+            className="button-primary flex items-center justify-center gap-2 mx-auto px-6 py-3 text-lg"
+          >
+            <img src="/google-icon.svg" alt="Google" className="w-6 h-6" />
+            Continue with Google
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto p-6">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold mb-4">My Alarms</h1>
+        <p className="text-lg text-gray-600 dark:text-gray-300">
+          Set and manage your alarms. Each alarm can be customized with different sounds and labels.
+        </p>
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-6"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6"
       >
-        {activeAlarm && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          >
-            <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full mx-4">
-              <h3 className="text-2xl font-bold mb-4">{activeAlarm.label}</h3>
-              <p className="text-4xl font-mono mb-6">
-                {activeAlarm.hours.toString().padStart(2, '0')}:
-                {activeAlarm.minutes.toString().padStart(2, '0')}
-              </p>
-              <button
-                onClick={stopAlarm}
-                className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
-              >
-                Stop Alarm
-              </button>
-            </div>
-          </motion.div>
-        )}
-
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">My Alarms</h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Active Alarms</h2>
           <button
             onClick={() => setShowNewAlarm(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            className="button-primary px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
           >
             + New Alarm
           </button>
@@ -153,23 +175,23 @@ export const AlarmManager = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="flex items-center justify-between p-4 bg-white rounded-lg shadow-sm"
+              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
             >
               <div className="flex items-center space-x-4">
-                <div className="text-2xl font-mono">
+                <div className="text-2xl font-mono text-gray-900 dark:text-white">
                   {alarm.hours.toString().padStart(2, '0')}:
                   {alarm.minutes.toString().padStart(2, '0')}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-gray-500">{alarm.label}</span>
-                  <span className="text-gray-400 text-sm">{alarm.sound.name}</span>
+                  <span className="text-gray-700 dark:text-gray-300">{alarm.label}</span>
+                  <span className="text-gray-500 dark:text-gray-400 text-sm">{alarm.sound.name}</span>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
                 <button
                   onClick={() => toggleAlarm(index)}
                   className={`w-12 h-6 rounded-full transition-colors ${
-                    alarm.enabled ? 'bg-green-500' : 'bg-gray-300'
+                    alarm.enabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <motion.div
@@ -181,13 +203,19 @@ export const AlarmManager = () => {
                 </button>
                 <button
                   onClick={() => deleteAlarm(index)}
-                  className="text-red-500 hover:text-red-600"
+                  className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
                 >
                   Delete
                 </button>
               </div>
             </motion.div>
           ))}
+
+          {alarms.length === 0 && (
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              No alarms set. Click "New Alarm" to create one.
+            </div>
+          )}
         </div>
 
         {showNewAlarm && (
@@ -195,6 +223,30 @@ export const AlarmManager = () => {
             onSubmit={addAlarm}
             onCancel={() => setShowNewAlarm(false)}
           />
+        )}
+
+        {activeAlarm && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          >
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl max-w-md w-full mx-4">
+              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+                {activeAlarm.label}
+              </h3>
+              <p className="text-4xl font-mono mb-6 text-gray-900 dark:text-white">
+                {activeAlarm.hours.toString().padStart(2, '0')}:
+                {activeAlarm.minutes.toString().padStart(2, '0')}
+              </p>
+              <button
+                onClick={stopAlarm}
+                className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
+              >
+                Stop Alarm
+              </button>
+            </div>
+          </motion.div>
         )}
       </motion.div>
     </div>

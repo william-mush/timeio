@@ -11,11 +11,8 @@ interface AuthModalProps {
 }
 
 const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
-  const [loading, setLoading] = useState(false);
-
   const handleGoogleAuth = () => {
-    setLoading(true);
-    signIn('google', { callbackUrl: '/' });
+    signIn('google');
   };
 
   if (!isOpen) return null;
@@ -25,26 +22,25 @@ const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="bg-white/80 backdrop-blur-2xl rounded-xl p-6 max-w-md w-full mx-4 shadow-xl"
+        className="bg-white/80 backdrop-blur-2xl rounded-xl p-8 max-w-md w-full mx-4 shadow-xl relative top-1/4"
       >
-        <h3 className="text-xl font-semibold mb-4 text-gray-500/90">
+        <h3 className="text-2xl font-semibold mb-6 text-gray-500/90">
           Sign in to time.IO
         </h3>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           <button
             onClick={handleGoogleAuth}
-            disabled={loading}
-            className="w-full px-4 py-2.5 bg-white/60 hover:bg-white/80 rounded-lg text-gray-700 transition-colors flex items-center justify-center gap-2 border border-gray-200/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full px-6 py-3 bg-white/60 hover:bg-white/80 rounded-lg text-gray-700 transition-colors flex items-center justify-center gap-3 border border-gray-200/50 text-lg"
           >
-            <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
-            {loading ? 'Signing in...' : 'Continue with Google'}
+            <img src="/google-icon.svg" alt="Google" className="w-6 h-6" />
+            Continue with Google
           </button>
         </div>
 
         <button
           onClick={onClose}
-          className="mt-4 w-full px-4 py-2 bg-white/40 hover:bg-white/60 rounded-lg text-gray-500/90 transition-colors"
+          className="mt-6 w-full px-6 py-3 bg-white/40 hover:bg-white/60 rounded-lg text-gray-500/90 transition-colors text-lg"
         >
           Close
         </button>

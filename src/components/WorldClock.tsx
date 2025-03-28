@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CITIES } from '@/data/cities';
+import { useSession, signIn } from 'next-auth/react';
 
 interface TimeZone {
   id: string;
@@ -40,6 +41,8 @@ function getRegion(latitude: number): string {
 }
 
 export const WorldClock = () => {
+  const { data: session } = useSession();
+  const [mounted, setMounted] = useState(false);
   const [selectedZones, setSelectedZones] = useState<TimeZone[]>(WORLD_TIMEZONES.slice(0, 3));
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showAddZone, setShowAddZone] = useState(false);
@@ -48,46 +51,49 @@ export const WorldClock = () => {
   const [format24Hour, setFormat24Hour] = useState(false);
   const [showSeconds, setShowSeconds] = useState(true);
   const [showMilliseconds, setShowMilliseconds] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  // Load settings and listen for changes
+  const handleGoogleAuth = () => {
+    signIn('google');
+  };
+
+  // Load selected zones from localStorage on mount
   useEffect(() => {
-    const loadSettings = () => {
-      const savedSettings = localStorage.getItem('timeSettings');
-      if (savedSettings) {
-        try {
-          const settings = JSON.parse(savedSettings);
-          if (settings.format24Hour !== undefined) setFormat24Hour(settings.format24Hour);
-          if (settings.showSeconds !== undefined) setShowSeconds(settings.showSeconds);
-          if (settings.showMilliseconds !== undefined) setShowMilliseconds(settings.showMilliseconds);
-        } catch (e) {
-          console.error('Failed to parse saved settings:', e);
-        }
+    if (!session) {
+      setSelectedZones(WORLD_TIMEZONES.slice(0, 3)); // Default zones for non-authenticated users
+      setMounted(true);
+      return;
+    }
+
+    const savedZones = localStorage.getItem(`worldClock_zones_${session.user?.email}`);
+    if (savedZones) {
+      try {
+        const parsed = JSON.parse(savedZones);
+        setSelectedZones(parsed);
+      } catch (e) {
+        console.error('Failed to load saved zones:', e);
       }
-    };
-
-    const handleSettingsChange = (event: CustomEvent<TimeSettings>) => {
-      const { format24Hour, showSeconds, showMilliseconds } = event.detail;
-      if (format24Hour !== undefined) setFormat24Hour(format24Hour);
-      if (showSeconds !== undefined) setShowSeconds(showSeconds);
-      if (showMilliseconds !== undefined) setShowMilliseconds(showMilliseconds);
-    };
-
-    loadSettings();
-    window.addEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+    }
     setMounted(true);
-    return () => {
-      window.removeEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
-    };
-  }, []);
+  }, [session]);
+
+  // Save selected zones whenever they change
+  useEffect(() => {
+    if (!mounted || !session) return;
+
+    try {
+      localStorage.setItem(`worldClock_zones_${session.user?.email}`, JSON.stringify(selectedZones));
+    } catch (e) {
+      console.error('Failed to save zones:', e);
+    }
+  }, [selectedZones, mounted, session]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, showMilliseconds ? 16 : 1000);
+    }, 1000);
 
     return () => clearInterval(interval);
-  }, [showMilliseconds]);
+  }, []);
 
   const getTimeInZone = (offset: number) => {
     const localTime = currentTime.getTime();
@@ -100,13 +106,16 @@ export const WorldClock = () => {
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const seconds = date.getSeconds().toString().padStart(2, '0');
-    const ms = date.getMilliseconds().toString().padStart(3, '0');
     
     let period = '';
-    if (!format24Hour) {
-      period = hours >= 12 ? ' PM' : ' AM';
+    if (hours > 12) {
+      period = ' PM';
       hours = hours % 12;
       hours = hours ? hours : 12; // Convert 0 to 12
+    } else if (hours === 0) {
+      hours = 12; // Convert 0 to 12
+    } else if (hours === 12) {
+      period = ' PM';
     }
     
     const timeStr = [
@@ -114,18 +123,19 @@ export const WorldClock = () => {
       minutes
     ];
 
-    if (showSeconds) {
+    if (seconds) {
       timeStr.push(seconds);
     }
 
-    if (showMilliseconds) {
-      timeStr.push(ms);
-    }
-
-    return timeStr.join(':') + (!format24Hour ? period : '');
+    return timeStr.join(':') + period;
   };
 
   const addTimeZone = (zone: TimeZone) => {
+    if (!session) {
+      signIn('google');
+      return;
+    }
+    
     if (!selectedZones.find(z => z.id === zone.id)) {
       setSelectedZones([...selectedZones, zone]);
     }
@@ -133,17 +143,18 @@ export const WorldClock = () => {
   };
 
   const removeTimeZone = (zoneId: string) => {
+    if (!session) {
+      signIn('google');
+      return;
+    }
+    
     setSelectedZones(selectedZones.filter(z => z.id !== zoneId));
   };
 
   const filteredZones = WORLD_TIMEZONES
     .filter(zone => !selectedZones.find(z => z.id === zone.id))
     .filter(zone => 
-      selectedRegion === 'all' || zone.region === selectedRegion)
-    .filter(zone =>
-      searchQuery === '' ||
-      zone.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      zone.country.toLowerCase().includes(searchQuery.toLowerCase()));
+      selectedRegion === 'all' || zone.region === selectedRegion);
 
   const uniqueRegions = Array.from(new Set(WORLD_TIMEZONES.map(zone => zone.region)));
 
@@ -157,13 +168,23 @@ export const WorldClock = () => {
         className="space-y-8"
       >
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">World Clock</h2>
-          <button
-            onClick={() => setShowAddZone(true)}
-            className="bg-primary-600 dark:bg-primary-400 text-white px-4 py-2 rounded-lg hover:bg-primary-700 dark:hover:bg-primary-500 transition-colors"
-          >
-            + Add City
-          </button>
+          <h2 className="heading-2">World Clock</h2>
+          {session ? (
+            <button
+              onClick={() => setShowAddZone(true)}
+              className="button-primary"
+            >
+              + Add City
+            </button>
+          ) : (
+            <button
+              onClick={handleGoogleAuth}
+              className="button-primary flex items-center justify-center gap-2"
+            >
+              <img src="/google-icon.svg" alt="Google" className="w-6 h-6" />
+              Sign in to Add Cities
+            </button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -172,43 +193,45 @@ export const WorldClock = () => {
               key={zone.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6"
+              className="card"
             >
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{zone.city}</h3>
-                  <p className="text-gray-500 dark:text-gray-400">{zone.country}</p>
-                  <p className="text-gray-400 dark:text-gray-500 text-sm">{zone.region}</p>
+                  <h3 className="text-xl font-semibold text-gray-900">{zone.city}</h3>
+                  <p className="text-muted">{zone.country}</p>
+                  <p className="text-sm text-muted">{zone.region}</p>
                 </div>
-                <button
-                  onClick={() => removeTimeZone(zone.id)}
-                  className="text-gray-400 hover:text-red-500 dark:text-gray-500 dark:hover:text-red-400"
-                >
-                  Remove
-                </button>
+                {session && (
+                  <button
+                    onClick={() => removeTimeZone(zone.id)}
+                    className="text-gray-400 hover:text-red-500"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
-              <div className="text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
+              <div className="text-3xl font-mono whitespace-nowrap text-gray-900">
                 {formatTime(getTimeInZone(zone.offset))}
               </div>
-              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              <div className="text-sm text-muted mt-1">
                 GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
               </div>
             </motion.div>
           ))}
         </div>
 
-        {showAddZone && (
+        {showAddZone && session && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            className="fixed inset-0 flex items-center justify-center z-50"
           >
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
+            <div className="card max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto bg-white shadow-lg">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">Add City</h3>
+                <h3 className="heading-3">Add City</h3>
                 <button
                   onClick={() => setShowAddZone(false)}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  className="text-gray-500 hover:text-gray-700"
                 >
                   ✕
                 </button>
@@ -216,17 +239,10 @@ export const WorldClock = () => {
 
               <div className="space-y-4 mb-6">
                 <div className="flex space-x-4">
-                  <input
-                    type="text"
-                    placeholder="Search cities..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
                   <select
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
-                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="select-field"
                   >
                     <option value="all">All Regions</option>
                     {uniqueRegions.map(region => (
@@ -237,21 +253,22 @@ export const WorldClock = () => {
               </div>
 
               <div className="grid gap-4 max-h-[50vh] overflow-y-auto">
-                {filteredZones.map(zone => (
-                  <button
+                {filteredZones.map((zone) => (
+                  <motion.div
                     key={zone.id}
+                    className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
                     onClick={() => addTimeZone(zone)}
-                    className="flex justify-between items-center p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border border-gray-200 dark:border-gray-600 text-left"
                   >
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
-                      <div className="text-xs text-gray-400 dark:text-gray-500">{zone.region}</div>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h4 className="font-medium">{zone.city}</h4>
+                        <p className="text-sm text-gray-500">{zone.country}</p>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                      </div>
                     </div>
-                    <div className="text-gray-500 dark:text-gray-400">
-                      GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
-                    </div>
-                  </button>
+                  </motion.div>
                 ))}
               </div>
             </div>

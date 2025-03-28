@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Switch } from '@/components/ui/switch';
+import { useSession, signIn } from 'next-auth/react';
 
 interface TimeSettings {
   format24Hour: boolean;
@@ -51,12 +52,22 @@ const defaultSettings: TimeSettings = {
 };
 
 export function Settings() {
+  const { data: session } = useSession();
   const [settings, setSettings] = useState<TimeSettings>(defaultSettings);
   const [mounted, setMounted] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
 
+  const handleGoogleAuth = () => {
+    signIn('google');
+  };
+
   useEffect(() => {
-    const savedSettings = localStorage.getItem('timeSettings');
+    if (!session) {
+      setMounted(true);
+      return;
+    }
+
+    const savedSettings = localStorage.getItem(`timeSettings_${session.user?.email}`);
     if (savedSettings) {
       try {
         setSettings(JSON.parse(savedSettings));
@@ -65,12 +76,14 @@ export function Settings() {
       }
     }
     setMounted(true);
-  }, []);
+  }, [session]);
 
   const handleSettingChange = (key: keyof TimeSettings, value: any) => {
+    if (!session) return;
+    
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
-    localStorage.setItem('timeSettings', JSON.stringify(newSettings));
+    localStorage.setItem(`timeSettings_${session.user?.email}`, JSON.stringify(newSettings));
     
     // Dispatch event for other components
     const event = new CustomEvent('timeSettingsChanged', { detail: newSettings });
@@ -82,6 +95,31 @@ export function Settings() {
   };
 
   if (!mounted) return null;
+
+  if (!session) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 mt-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4">Settings</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300">
+            Please sign in to access and customize your settings.
+          </p>
+        </div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 text-center">
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            Sign in to save your preferences and sync them across devices.
+          </p>
+          <button
+            onClick={handleGoogleAuth}
+            className="button-primary flex items-center justify-center gap-2 mx-auto px-6 py-3 text-lg"
+          >
+            <img src="/google-icon.svg" alt="Google" className="w-6 h-6" />
+            Continue with Google
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto p-6">
