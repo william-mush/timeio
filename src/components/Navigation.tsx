@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings, Sun, Home } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, Sun, Home, Menu, X } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -93,12 +93,32 @@ const navItems = [
 export function Navigation() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   return (
     <nav className="fixed left-0 top-16 w-full bg-white/60 backdrop-blur-xl border-b border-gray-200/50 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14">
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-12 sm:h-14">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="lg:hidden p-1.5 sm:p-2 rounded-lg hover:bg-gray-100/50"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {isMobileMenuOpen ? (
+              <X className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+            ) : (
+              <Menu className="w-5 h-5 sm:w-6 sm:h-6 text-gray-600" />
+            )}
+          </button>
+
+          {/* Desktop navigation */}
+          <div className="hidden lg:flex items-center gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -115,11 +135,11 @@ export function Navigation() {
             ))}
           </div>
           
-          <div className="flex items-center gap-4 pl-4 border-l border-gray-200/50">
+          <div className="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 border-l border-gray-200/50">
             <TimeDisplay />
 
             {status === 'authenticated' && session?.user?.image && (
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-gray-100">
                 <Image
                   src={session.user.image}
                   alt={session.user.name || 'User profile'}
@@ -132,6 +152,28 @@ export function Navigation() {
             )}
           </div>
         </div>
+
+        {/* Mobile menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden py-2">
+            <div className="flex flex-col space-y-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm transition-colors flex items-center gap-2 px-3 py-2.5 rounded-lg ${
+                    pathname === item.href
+                      ? 'text-blue-500 font-medium bg-blue-50/50'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
+                  }`}
+                >
+                  <item.icon className="w-4 h-4" />
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   );
