@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Stars, Html, Text } from '@react-three/drei';
+import { OrbitControls, PerspectiveCamera, Stars, Html, Text, useTexture } from '@react-three/drei';
 import * as THREE from 'three';
 import { TextureLoader } from 'three';
 
@@ -442,13 +442,39 @@ function DigitalClock() {
   );
 }
 
+// Add type for textures
+type TextureMap = {
+  [key: string]: THREE.Texture | undefined;
+};
+
+// Add texture preloading with error handling
+function usePreloadedTextures(): TextureMap {
+  try {
+    return useTexture({
+      mercury: '/textures/mercury.jpg',
+      venus: '/textures/venus.jpg',
+      earth: '/textures/earth.jpg',
+      mars: '/textures/mars.jpg',
+      jupiter: '/textures/jupiter.jpg',
+      saturn: '/textures/saturn.jpg',
+      uranus: '/textures/uranus.jpg',
+      neptune: '/textures/neptune.jpg',
+      pluto: '/textures/pluto.jpg',
+      comet: '/textures/comet.jpg',
+    });
+  } catch (error) {
+    console.warn('Some textures failed to load:', error);
+    return {};
+  }
+}
+
 function Scene() {
   const [time, setTime] = useState(0);
   const [hoveredObject, setHoveredObject] = useState<CelestialObject | null>(null);
   const [hoveredMoon, setHoveredMoon] = useState<Moon | null>(null);
+  const textureMap = usePreloadedTextures();
   const initialAngles = useRef(
     CELESTIAL_OBJECTS.reduce((acc, obj) => {
-      // Give each object a random initial position
       acc[obj.name] = Math.random() * Math.PI * 2;
       return acc;
     }, {} as Record<string, number>)
@@ -465,24 +491,30 @@ function Scene() {
         enablePan={false}
         minDistance={30}
         maxDistance={300}
+        maxPolarAngle={Math.PI / 1.5}
+        minPolarAngle={Math.PI / 6}
       />
-      <ambientLight intensity={0.5} />
-      <hemisphereLight intensity={0.5} groundColor="#000000" />
+      <ambientLight intensity={0.3} />
+      <hemisphereLight intensity={0.3} groundColor="#000000" />
       <Sun />
       <group rotation={[0, 0, 0]}>
         <ClockHands radius={80} />
-        {CELESTIAL_OBJECTS.map(object => (
-          <CelestialObject
-            key={object.name}
-            object={object}
-            time={time}
-            initialAngle={initialAngles.current[object.name]}
-            onHover={setHoveredObject}
-            onMoonHover={setHoveredMoon}
-          />
-        ))}
+        {CELESTIAL_OBJECTS.map(object => {
+          const textureName = object.type === 'comet' ? 'comet' : object.name.toLowerCase();
+          return (
+            <CelestialObject
+              key={object.name}
+              object={object}
+              time={time}
+              initialAngle={initialAngles.current[object.name]}
+              onHover={setHoveredObject}
+              onMoonHover={setHoveredMoon}
+              texture={textureMap[textureName]}
+            />
+          );
+        })}
       </group>
-      <Stars radius={200} depth={50} count={5000} factor={4} saturation={0} fade speed={1} />
+      <Stars radius={200} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
       <DigitalClock />
       
       {(hoveredObject || hoveredMoon) && (
@@ -628,18 +660,25 @@ function CelestialObject({
   time,
   initialAngle,
   onHover,
-  onMoonHover 
+  onMoonHover,
+  texture
 }: { 
-  object: CelestialObject; 
+  object: CelestialObject;
   time: number;
   initialAngle: number;
   onHover: (object: CelestialObject | null) => void;
   onMoonHover: (moon: Moon | null) => void;
+  texture?: THREE.Texture;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
-  const [hovered, setHovered] = useState(false);
-  const initialAngleRef = useRef(initialAngle);
   const [position, setPosition] = useState(new THREE.Vector3());
+  const initialAngleRef = useRef(initialAngle);
+
+  // Optimize geometry segments based on size
+  const segments = object.size > 5 ? 32 : 16;
+
+  // Use comet texture for all comets
+  const finalTexture = object.type === 'comet' ? texture : texture;
 
   useFrame((state) => {
     if (!meshRef.current) return;
@@ -660,23 +699,9 @@ function CelestialObject({
     meshRef.current.position.copy(newPosition);
     setPosition(newPosition);
 
-    // Add rotation
-    meshRef.current.rotation.y += 0.01 / object.rotationPeriod;
+    // Add rotation with optimized frequency
+    meshRef.current.rotation.y += (0.01 / object.rotationPeriod) * state.clock.elapsedTime;
   });
-
-  // Add comet tail if it's a comet
-  const cometTail = object.type === 'comet' && (
-    <mesh position={[object.size * 2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
-      <coneGeometry args={[0.5, 4, 32]} />
-      <meshStandardMaterial
-        color="white"
-        transparent
-        opacity={0.3}
-        emissive="white"
-        emissiveIntensity={0.5}
-      />
-    </mesh>
-  );
 
   return (
     <>
@@ -686,16 +711,27 @@ function CelestialObject({
           onPointerOver={() => onHover(object)}
           onPointerOut={() => onHover(null)}
         >
-          <sphereGeometry args={[object.size, 64, 64]} />
+          <sphereGeometry args={[object.size, segments, segments]} />
           <meshStandardMaterial
+            map={finalTexture}
             color={object.color}
             metalness={0.2}
             roughness={0.8}
             emissive={object.color}
             emissiveIntensity={0.1}
-            normalScale={new THREE.Vector2(0.5, 0.5)}
           />
-          {cometTail}
+          {object.type === 'comet' && (
+            <mesh position={[object.size * 2, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
+              <coneGeometry args={[0.5, 4, 16]} />
+              <meshStandardMaterial
+                color="white"
+                transparent
+                opacity={0.3}
+                emissive="white"
+                emissiveIntensity={0.5}
+              />
+            </mesh>
+          )}
         </mesh>
         {object.name === "Saturn" && <SaturnRings size={object.size} position={position} />}
         {MOONS[object.name]?.map((moon, index) => (
@@ -737,9 +773,10 @@ export function SolarClock3D() {
     <div className="w-full h-[800px] relative">
       <Canvas
         shadows
-        dpr={[1, 2]}
+        dpr={[1, 1.5]} // Reduce DPR for better performance
         camera={{ position: [0, 50, 200], fov: 45 }}
         style={{ background: 'black' }}
+        performance={{ min: 0.5 }} // Allow frame rate to drop for better performance
       >
         <Scene />
         <OrbitControls 
@@ -748,6 +785,10 @@ export function SolarClock3D() {
           enableRotate={true}
           minDistance={10}
           maxDistance={1000}
+          maxPolarAngle={Math.PI / 1.5}
+          minPolarAngle={Math.PI / 6}
+          rotateSpeed={0.5}
+          zoomSpeed={0.8}
         />
       </Canvas>
       {(hoveredObject || hoveredMoon) && (
