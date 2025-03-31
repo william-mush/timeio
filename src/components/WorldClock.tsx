@@ -222,65 +222,77 @@ export const WorldClock = () => {
 
         {showAddZone && session && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 flex items-center justify-center z-50 p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-start md:items-center justify-center z-50 p-4 overflow-y-auto"
           >
-            <div className="card max-w-2xl w-full mx-auto max-h-[80vh] overflow-y-auto bg-white dark:bg-gray-800 shadow-lg p-4 md:p-6">
-              <div className="flex justify-between items-center mb-4 md:mb-6">
-                <h3 className="heading-3 text-xl md:text-2xl">Add City</h3>
-                <button
-                  onClick={() => setShowAddZone(false)}
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <select
-                    value={selectedRegion}
-                    onChange={(e) => setSelectedRegion(e.target.value)}
-                    className="select-field flex-1"
-                  >
-                    <option value="all">All Regions</option>
-                    {uniqueRegions.map(region => (
-                      <option key={region} value={region}>{region}</option>
-                    ))}
-                  </select>
-
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search cities..."
-                    className="input-field flex-1"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto p-1">
-                  {filteredZones
-                    .filter(zone =>
-                      zone.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      zone.country.toLowerCase().includes(searchQuery.toLowerCase())
-                    )
-                    .map(zone => (
-                      <button
-                        key={zone.id}
-                        onClick={() => addTimeZone(zone)}
-                        className="text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              className="relative w-full max-w-2xl mx-auto my-8 md:my-0"
+            >
+              <div className="card bg-white dark:bg-gray-800 shadow-xl overflow-hidden">
+                <div className="sticky top-0 bg-white dark:bg-gray-800 z-10 px-4 py-3 md:p-6 border-b dark:border-gray-700">
+                  <div className="flex justify-between items-center">
+                    <h3 className="heading-3 text-xl md:text-2xl">Add City</h3>
+                    <button
+                      onClick={() => setShowAddZone(false)}
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full"
+                      aria-label="Close"
+                    >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="mt-4 space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <select
+                        value={selectedRegion}
+                        onChange={(e) => setSelectedRegion(e.target.value)}
+                        className="select-field flex-1"
                       >
-                        <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
-                        <div className="text-xs text-gray-400 dark:text-gray-500">
-                          GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
-                        </div>
-                      </button>
-                    ))}
+                        <option value="all">All Regions</option>
+                        {uniqueRegions.map(region => (
+                          <option key={region} value={region}>{region}</option>
+                        ))}
+                      </select>
+
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search cities..."
+                        className="input-field flex-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="px-4 py-3 md:p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto p-1">
+                    {filteredZones
+                      .filter(zone =>
+                        zone.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        zone.country.toLowerCase().includes(searchQuery.toLowerCase())
+                      )
+                      .map(zone => (
+                        <button
+                          key={zone.id}
+                          onClick={() => addTimeZone(zone)}
+                          className="text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        >
+                          <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
+                          <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
+                          <div className="text-xs text-gray-400 dark:text-gray-500">
+                            GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                          </div>
+                        </button>
+                      ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </motion.div>
