@@ -161,59 +161,59 @@ export const WorldClock = () => {
   if (!mounted) return null;
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6">
+    <div className="w-full max-w-4xl mx-auto p-4 md:p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-8"
+        className="space-y-6 md:space-y-8"
       >
-        <div className="flex justify-between items-center">
-          <h2 className="heading-2">World Clock</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h2 className="heading-2 text-2xl md:text-3xl">World Clock</h2>
           {session ? (
             <button
               onClick={() => setShowAddZone(true)}
-              className="button-primary"
+              className="w-full sm:w-auto button-primary px-4 py-2"
             >
               + Add City
             </button>
           ) : (
             <button
               onClick={handleGoogleAuth}
-              className="button-primary flex items-center justify-center gap-2"
+              className="w-full sm:w-auto button-primary flex items-center justify-center gap-2 px-4 py-2"
             >
-              <img src="/google-icon.svg" alt="Google" className="w-6 h-6" />
+              <img src="/google-icon.svg" alt="Google" className="w-5 h-5 md:w-6 md:h-6" />
               Sign in to Add Cities
             </button>
           )}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {selectedZones.map((zone) => (
             <motion.div
               key={zone.id}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="card"
+              className="card p-4 md:p-6"
             >
-              <div className="flex justify-between items-start mb-4">
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3 md:mb-4">
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900">{zone.city}</h3>
-                  <p className="text-muted">{zone.country}</p>
-                  <p className="text-sm text-muted">{zone.region}</p>
+                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">{zone.city}</h3>
+                  <p className="text-sm md:text-base text-muted">{zone.country}</p>
+                  <p className="text-xs md:text-sm text-muted">{zone.region}</p>
                 </div>
                 {session && (
                   <button
                     onClick={() => removeTimeZone(zone.id)}
-                    className="text-gray-400 hover:text-red-500"
+                    className="text-gray-400 hover:text-red-500 text-sm md:text-base"
                   >
                     Remove
                   </button>
                 )}
               </div>
-              <div className="text-3xl font-mono whitespace-nowrap text-gray-900">
+              <div className="text-2xl md:text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
                 {formatTime(getTimeInZone(zone.offset))}
               </div>
-              <div className="text-sm text-muted mt-1">
+              <div className="text-xs md:text-sm text-muted mt-1">
                 GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
               </div>
             </motion.div>
@@ -224,52 +224,61 @@ export const WorldClock = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 flex items-center justify-center z-50"
+            className="fixed inset-0 flex items-center justify-center z-50 p-4"
           >
-            <div className="card max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto bg-white shadow-lg">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="heading-3">Add City</h3>
+            <div className="card max-w-2xl w-full mx-auto max-h-[80vh] overflow-y-auto bg-white dark:bg-gray-800 shadow-lg p-4 md:p-6">
+              <div className="flex justify-between items-center mb-4 md:mb-6">
+                <h3 className="heading-3 text-xl md:text-2xl">Add City</h3>
                 <button
                   onClick={() => setShowAddZone(false)}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 >
                   ✕
                 </button>
               </div>
 
-              <div className="space-y-4 mb-6">
-                <div className="flex space-x-4">
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <select
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.target.value)}
-                    className="select-field"
+                    className="select-field flex-1"
                   >
                     <option value="all">All Regions</option>
                     {uniqueRegions.map(region => (
                       <option key={region} value={region}>{region}</option>
                     ))}
                   </select>
-                </div>
-              </div>
 
-              <div className="grid gap-4 max-h-[50vh] overflow-y-auto">
-                {filteredZones.map((zone) => (
-                  <motion.div
-                    key={zone.id}
-                    className="p-4 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer"
-                    onClick={() => addTimeZone(zone)}
-                  >
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <h4 className="font-medium">{zone.city}</h4>
-                        <p className="text-sm text-gray-500">{zone.country}</p>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search cities..."
+                    className="input-field flex-1"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[50vh] overflow-y-auto p-1">
+                  {filteredZones
+                    .filter(zone =>
+                      zone.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      zone.country.toLowerCase().includes(searchQuery.toLowerCase())
+                    )
+                    .map(zone => (
+                      <button
+                        key={zone.id}
+                        onClick={() => addTimeZone(zone)}
+                        className="text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      >
+                        <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
+                        <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500">
+                          GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                        </div>
+                      </button>
+                    ))}
+                </div>
               </div>
             </div>
           </motion.div>

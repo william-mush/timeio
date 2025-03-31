@@ -145,10 +145,10 @@ export const AlarmManager = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">My Alarms</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-300">
+    <div className="max-w-2xl mx-auto p-4 md:p-6">
+      <div className="text-center mb-8 md:mb-12">
+        <h1 className="text-3xl md:text-4xl font-bold mb-3 md:mb-4">My Alarms</h1>
+        <p className="text-base md:text-lg text-gray-600 dark:text-gray-300">
           Set and manage your alarms. Each alarm can be customized with different sounds and labels.
         </p>
       </div>
@@ -156,38 +156,38 @@ export const AlarmManager = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6"
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 md:p-8 space-y-4 md:space-y-6"
       >
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Active Alarms</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-6">
+          <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">Active Alarms</h2>
           <button
             onClick={() => setShowNewAlarm(true)}
-            className="button-primary px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+            className="w-full sm:w-auto button-primary px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
           >
             + New Alarm
           </button>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {alarms.map((alarm, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 bg-gray-50 dark:bg-gray-700 rounded-lg gap-3"
             >
-              <div className="flex items-center space-x-4">
-                <div className="text-2xl font-mono text-gray-900 dark:text-white">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+                <div className="text-xl md:text-2xl font-mono text-gray-900 dark:text-white">
                   {alarm.hours.toString().padStart(2, '0')}:
                   {alarm.minutes.toString().padStart(2, '0')}
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-gray-700 dark:text-gray-300">{alarm.label}</span>
-                  <span className="text-gray-500 dark:text-gray-400 text-sm">{alarm.sound.name}</span>
+                  <span className="text-sm md:text-base text-gray-700 dark:text-gray-300">{alarm.label}</span>
+                  <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{alarm.sound.name}</span>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                 <button
                   onClick={() => toggleAlarm(index)}
                   className={`w-12 h-6 rounded-full transition-colors ${
@@ -212,7 +212,7 @@ export const AlarmManager = () => {
           ))}
 
           {alarms.length === 0 && (
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            <div className="text-center py-6 md:py-8 text-gray-500 dark:text-gray-400">
               No alarms set. Click "New Alarm" to create one.
             </div>
           )}
@@ -229,19 +229,19 @@ export const AlarmManager = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
           >
-            <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl max-w-md w-full mx-4">
-              <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+            <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-xl max-w-md w-full">
+              <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
                 {activeAlarm.label}
               </h3>
-              <p className="text-4xl font-mono mb-6 text-gray-900 dark:text-white">
+              <p className="text-3xl md:text-4xl font-mono mb-4 md:mb-6 text-gray-900 dark:text-white">
                 {activeAlarm.hours.toString().padStart(2, '0')}:
                 {activeAlarm.minutes.toString().padStart(2, '0')}
               </p>
               <button
                 onClick={stopAlarm}
-                className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors text-lg"
               >
                 Stop Alarm
               </button>
