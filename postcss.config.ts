@@ -1,12 +1,10 @@
 import type { Config } from 'postcss-load-config'
 
-const config: Config = {
-  plugins: {
-    'postcss-import': {},
-    'tailwindcss/nesting': 'postcss-nesting',
-    tailwindcss: {},
-    autoprefixer: {},
-  },
-}
-
-export default config 
+module.exports = {
+  plugins: [
+    require('postcss-import'),
+    require('tailwindcss/nesting'),
+    require('tailwindcss'),
+    require('autoprefixer'),
+  ],
+} 
