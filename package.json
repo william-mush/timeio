@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:clean": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -12,9 +13,12 @@
   },
   "dependencies": {
     "@auth/core": "^0.34.2",
+    "@auth/prisma-adapter": "^2.8.0",
+    "@prisma/client": "^6.5.0",
     "@react-three/drei": "9.88.17",
     "@react-three/fiber": "8.15.11",
     "@tailwindcss/forms": "^0.5.7",
+    "clsx": "^2.1.1",
     "d3-geo": "^3.1.1",
     "framer-motion": "^12.5.0",
     "libphonenumber-js": "^1.12.6",
@@ -22,9 +26,11 @@
     "lucide-react": "^0.483.0",
     "next": "^14.1.0",
     "next-auth": "^4.24.11",
+    "prisma": "^6.5.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-simple-maps": "^3.0.0",
+    "tailwind-merge": "^3.1.0",
     "three": "0.158.0",
     "twilio": "^5.5.1"
   },
