@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 // GET /api/time-zones - Get all time zones for the current user
 export async function GET() {
@@ -31,9 +33,9 @@ export async function POST(request: Request) {
 
   try {
     const data = await request.json();
-    const { cityId, cityName, country, offset, region, order } = data;
+    const { cityId, city, country, offset, region, order } = data;
 
-    if (!cityId || !cityName || !country || offset === undefined || !region) {
+    if (!cityId || !city || !country || offset === undefined || !region) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
@@ -53,7 +55,7 @@ export async function POST(request: Request) {
       data: {
         userId: session.user.id,
         cityId,
-        cityName,
+        cityName: city,
         country,
         offset,
         region,
