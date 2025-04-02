@@ -1,24 +1,34 @@
 'use client';
 
-import { SessionProvider } from "@/components/SessionProvider";
 import { AuthHeader } from '@/components/AuthHeader';
 import { Navigation } from "@/components/Navigation";
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
+  const { data: session } = useSession();
   const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('light');
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Load theme from settings
-    const savedSettings = localStorage.getItem('timeSettings');
-    if (savedSettings) {
+    setMounted(true);
+    
+    // Load theme from database settings
+    const loadSettings = async () => {
+      if (!session?.user?.id) return;
+      
       try {
-        const settings = JSON.parse(savedSettings);
-        setTheme(settings.theme || 'light');
+        const response = await fetch('/api/settings');
+        if (response.ok) {
+          const settings = await response.json();
+          setTheme(settings.theme || 'light');
+        }
       } catch (e) {
-        console.error('Failed to parse saved settings:', e);
+        console.error('Failed to load settings:', e);
       }
-    }
+    };
+
+    loadSettings();
 
     // Listen for theme changes
     const handleSettingsChange = (event: CustomEvent<any>) => {
@@ -27,11 +37,22 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
       }
     };
 
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleSystemThemeChange = () => {
+      if (theme === 'system') {
+        updateThemeClass();
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleSystemThemeChange);
     window.addEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+
     return () => {
+      mediaQuery.removeEventListener('change', handleSystemThemeChange);
       window.removeEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
     };
-  }, []);
+  }, [session]);
 
   // Determine actual theme based on system preference and settings
   const getActualTheme = () => {
@@ -41,20 +62,33 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
     return theme;
   };
 
-  // Update data-theme attribute when theme changes
+  // Update theme classes
+  const updateThemeClass = () => {
+    const actualTheme = getActualTheme();
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(actualTheme);
+  };
+
+  // Update theme classes when theme changes
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', getActualTheme());
-  }, [theme]);
+    if (mounted) {
+      updateThemeClass();
+    }
+  }, [theme, mounted]);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
-    <SessionProvider>
-      <div className="min-h-screen bg-gradient-to-br from-primary-100/30 via-secondary-100/30 to-accent-100/30">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      <div className="bg-gradient-to-br from-primary-100/30 via-secondary-100/30 to-accent-100/30 dark:from-gray-800/50 dark:via-gray-800/30 dark:to-gray-900/50">
         <AuthHeader />
         <Navigation />
         <main className="pt-32">
           {children}
         </main>
       </div>
-    </SessionProvider>
+    </div>
   );
 } 

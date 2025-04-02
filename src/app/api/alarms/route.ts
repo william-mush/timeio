@@ -73,7 +73,7 @@ export async function PATCH(req: Request) {
   return NextResponse.json(alarm);
 }
 
-// DELETE /api/alarms/:id - Delete an alarm
+// DELETE /api/alarms/:id - Archive an alarm instead of deleting it
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);
   
@@ -97,7 +97,28 @@ export async function DELETE(req: Request) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
-  await prisma.alarm.delete({ where: { id } });
+  // Start a transaction to archive and delete the alarm
+  await prisma.$transaction(async (tx) => {
+    // Create an archived version
+    await tx.archivedAlarm.create({
+      data: {
+        userId: existingAlarm.userId,
+        hours: existingAlarm.hours,
+        minutes: existingAlarm.minutes,
+        label: existingAlarm.label,
+        sound: existingAlarm.sound,
+        repeatDays: existingAlarm.repeatDays,
+        createdAt: existingAlarm.createdAt,
+        lastTriggered: existingAlarm.lastTriggered,
+        reason: 'deleted',
+      },
+    });
+
+    // Delete the original alarm
+    await tx.alarm.delete({
+      where: { id },
+    });
+  });
 
   return NextResponse.json({ success: true });
 } 

@@ -49,7 +49,10 @@ model User {
   accounts      Account[]
   sessions      Session[]
   alarms        Alarm[]
+  archivedAlarms ArchivedAlarm[]
   timezone      String    @default("UTC")
+  timeZones     UserTimeZone[]
+  settings      UserSettings?
 }
 
 model VerificationToken {
@@ -73,4 +76,54 @@ model Alarm {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   lastTriggered DateTime?
+}
+
+model ArchivedAlarm {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  hours         Int
+  minutes       Int
+  label         String?
+  sound         String
+  repeatDays    Int[]     // 0-6 for Sunday-Saturday
+  createdAt     DateTime  // When the original alarm was created
+  archivedAt    DateTime  @default(now())
+  lastTriggered DateTime?
+  reason        String    // Why the alarm was archived (e.g., "deleted", "replaced")
+}
+
+model UserTimeZone {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  cityId    String   // References the city ID from the CITIES data
+  cityName  String   // Store the city name for quick access
+  country   String   // Store the country for quick access
+  offset    Float    // Store the UTC offset
+  region    String   // Store the geographical region
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  order     Int      @default(0)  // For custom ordering
+
+  @@unique([userId, cityId])
+  @@index([userId, order])
+}
+
+model UserSettings {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  format24Hour  Boolean  @default(false)
+  showSeconds   Boolean  @default(true)
+  showMilliseconds Boolean @default(false)
+  timeZone      String   @default("UTC")
+  dateFormat    String   @default("MM/dd/yyyy")
+  defaultClockCount Int  @default(3)
+  sortOrder     String   @default("timezone") // 'name' | 'timezone' | 'added'
+  theme         String   @default("light")    // 'light' | 'dark' | 'system'
+  clockStyle    String   @default("digital")  // 'digital' | 'analog' | 'both'
+  colorScheme   String   @default("blue")     // 'blue' | 'purple' | 'green' | 'orange'
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

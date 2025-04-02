@@ -5,6 +5,7 @@ module.exports = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  darkMode: 'class',
   safelist: [
     'bg-white',
     'text-black',
@@ -13,6 +14,13 @@ module.exports = {
     'text-gray-700',
     'text-gray-800',
     'text-gray-900',
+    'dark:bg-gray-800',
+    'dark:bg-gray-900',
+    'dark:text-white',
+    'dark:text-gray-100',
+    'dark:text-gray-200',
+    'dark:text-gray-300',
+    'dark:text-gray-400',
   ],
   theme: {
     extend: {
