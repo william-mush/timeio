@@ -1,4 +1,4 @@
-# time.IO - World Time Management App
+# time.IO - World Universe Time Management App
 
 A modern web application for managing time across different time zones, featuring an interactive world map, alarms, and time zone conversion.
 
