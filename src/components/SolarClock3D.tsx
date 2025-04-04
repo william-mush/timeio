@@ -470,7 +470,7 @@ function usePreloadedTextures(): TextureMap {
 
 function Scene({ timeScale }: { timeScale: number }) {
   const [time, setTime] = useState(0);
-  const [simulationStartTime] = useState(() => new Date());
+  const [simulationStartTime, setSimulationStartTime] = useState(() => new Date());
   const [currentSimulatedDate, setCurrentSimulatedDate] = useState(() => new Date());
   const [hoveredObject, setHoveredObject] = useState<CelestialObject | null>(null);
   const [hoveredMoon, setHoveredMoon] = useState<Moon | null>(null);
@@ -483,13 +483,31 @@ function Scene({ timeScale }: { timeScale: number }) {
     }, {} as Record<string, number>)
   );
 
-  useFrame((_, delta) => {
-    const effectiveDelta = delta * timeScale;
-    const newTime = time + effectiveDelta;
-    setTime(newTime);
+  useEffect(() => {
+    if (timeScale === 1) {
+      const now = new Date();
+      setSimulationStartTime(now);
+      setTime(0);
+      setCurrentSimulatedDate(now);
+      console.log("Simulation time reset to real time.");
+    }
+  }, [timeScale]);
 
-    const elapsedSimulationMillis = newTime * 1000;
-    setCurrentSimulatedDate(new Date(simulationStartTime.getTime() + elapsedSimulationMillis));
+  useFrame((_, delta) => {
+    if (timeScale !== 0) {
+      const effectiveDelta = delta * timeScale;
+      const newTime = time + effectiveDelta;
+      setTime(newTime);
+
+      const elapsedSimulationMillis = newTime * 1000;
+      setCurrentSimulatedDate(new Date(simulationStartTime.getTime() + elapsedSimulationMillis));
+    } else {
+      const elapsedSimulationMillis = time * 1000;
+      const pausedDate = new Date(simulationStartTime.getTime() + elapsedSimulationMillis);
+      if (currentSimulatedDate.getTime() !== pausedDate.getTime()) {
+        setCurrentSimulatedDate(pausedDate);
+      }
+    }
   });
 
   const handleFocus = (name: string, targetPosition: THREE.Vector3) => {
