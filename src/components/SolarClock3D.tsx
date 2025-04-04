@@ -221,7 +221,7 @@ const CELESTIAL_OBJECTS: CelestialObject[] = [
     name: 'Comet 67P',
     type: 'comet',
     orbitRadius: 80,
-    rotationPeriod: 12.4,
+    rotationPeriod: 12.4 / 24,
     size: 0.5,
     color: '#FFFFFF',
     orbitPeriod: 6.44,
@@ -229,7 +229,7 @@ const CELESTIAL_OBJECTS: CelestialObject[] = [
     description: 'The comet visited by Rosetta spacecraft',
     eccentricity: 0.641,
     inclination: 7.04,
-    periodDays: 6.44,
+    periodDays: 6.44 * 365.25,
     textureUrl: "/textures/67p.jpg"
   }
 ];
@@ -330,7 +330,7 @@ function OrbitRing({ radius }: { radius: number }) {
   );
 }
 
-function ClockHands({ radius }: { radius: number }) {
+function ClockHands({ radius, simulatedDate }: { radius: number, simulatedDate: Date }) {
   const handRefs = {
     second: useRef<THREE.Group>(null),
     minute: useRef<THREE.Group>(null),
@@ -338,7 +338,7 @@ function ClockHands({ radius }: { radius: number }) {
   };
   
   useFrame(() => {
-    const date = new Date();
+    const date = simulatedDate;
     const seconds = date.getSeconds() + date.getMilliseconds() / 1000;
     const minutes = date.getMinutes() + seconds / 60;
     const hours = date.getHours() % 12 + minutes / 60;
@@ -420,12 +420,12 @@ function ClockHands({ radius }: { radius: number }) {
   );
 }
 
-function DigitalClock() {
-  const [time, setTime] = useState('');
+function DigitalClock({ simulatedDate }: { simulatedDate: Date }) {
+  const [timeStr, setTimeStr] = useState('');
   
   useFrame(() => {
-    const date = new Date();
-    setTime(date.toLocaleTimeString('en-US', { 
+    const date = simulatedDate;
+    setTimeStr(date.toLocaleTimeString('en-US', { 
       hour12: false,
       hour: '2-digit',
       minute: '2-digit',
@@ -436,7 +436,7 @@ function DigitalClock() {
   return (
     <Html position={[0, 40, 0]}>
       <div className="px-12 py-6 text-8xl font-sans tracking-tight font-light">
-        <span className="text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">{time}</span>
+        <span className="text-white drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]">{timeStr}</span>
       </div>
     </Html>
   );
@@ -470,6 +470,8 @@ function usePreloadedTextures(): TextureMap {
 
 function Scene({ timeScale }: { timeScale: number }) {
   const [time, setTime] = useState(0);
+  const [simulationStartTime] = useState(() => new Date());
+  const [currentSimulatedDate, setCurrentSimulatedDate] = useState(() => new Date());
   const [hoveredObject, setHoveredObject] = useState<CelestialObject | null>(null);
   const [hoveredMoon, setHoveredMoon] = useState<Moon | null>(null);
   const textureMap = usePreloadedTextures();
@@ -483,7 +485,11 @@ function Scene({ timeScale }: { timeScale: number }) {
 
   useFrame((_, delta) => {
     const effectiveDelta = delta * timeScale;
-    setTime(prev => prev + effectiveDelta);
+    const newTime = time + effectiveDelta;
+    setTime(newTime);
+
+    const elapsedSimulationMillis = newTime * 1000;
+    setCurrentSimulatedDate(new Date(simulationStartTime.getTime() + elapsedSimulationMillis));
   });
 
   const handleFocus = (name: string, targetPosition: THREE.Vector3) => {
@@ -509,7 +515,7 @@ function Scene({ timeScale }: { timeScale: number }) {
       <hemisphereLight intensity={0.3} groundColor="#000000" />
       <Sun />
       <group rotation={[0, 0, 0]}>
-        <ClockHands radius={80} />
+        <ClockHands radius={80} simulatedDate={currentSimulatedDate} />
         {CELESTIAL_OBJECTS.map(object => {
           const textureName = object.type === 'comet' ? 'comet' : object.name.toLowerCase();
           return (
@@ -528,7 +534,7 @@ function Scene({ timeScale }: { timeScale: number }) {
         })}
       </group>
       <Stars radius={200} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
-      <DigitalClock />
+      <DigitalClock simulatedDate={currentSimulatedDate} />
       
       {(hoveredObject || hoveredMoon) && (
         <Html position={[0, 20, 0]}>
