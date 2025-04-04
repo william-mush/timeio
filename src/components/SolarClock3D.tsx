@@ -482,7 +482,7 @@ function Scene({ timeScale }: { timeScale: number }) {
   );
 
   useFrame((_, delta) => {
-    const effectiveDelta = delta * timeScale * 50;
+    const effectiveDelta = delta * timeScale;
     setTime(prev => prev + effectiveDelta);
   });
 
@@ -583,9 +583,10 @@ function Moon({ moon, parentPosition, time, timeScale, initialAngle, onHover, on
   useFrame((_, delta) => {
     if (!meshRef.current) return;
 
+    const ORBITAL_VISUAL_BOOST = 5000;
     const orbitalPeriod = moon.periodDays * 24 * 60 * 60;
     const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
-    const angle = initialAngleRef.current + time * orbitalSpeed;
+    const angle = initialAngleRef.current + time * orbitalSpeed * ORBITAL_VISUAL_BOOST;
 
     const r = moon.orbitRadius * (1 - moon.eccentricity * moon.eccentricity) / 
               (1 + moon.eccentricity * Math.cos(angle));
@@ -702,9 +703,10 @@ function CelestialObject({
   useFrame((_, delta) => {
     if (!meshRef.current) return;
 
+    const ORBITAL_VISUAL_BOOST = 5000;
     const orbitalPeriod = object.periodDays * 24 * 60 * 60;
     const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
-    const angle = initialAngleRef.current + time * orbitalSpeed;
+    const angle = initialAngleRef.current + time * orbitalSpeed * ORBITAL_VISUAL_BOOST;
 
     const r = object.orbitRadius * (1 - object.eccentricity * object.eccentricity) / 
               (1 + object.eccentricity * Math.cos(angle));
