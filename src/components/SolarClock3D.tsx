@@ -482,7 +482,8 @@ function Scene({ timeScale }: { timeScale: number }) {
   );
 
   useFrame((_, delta) => {
-    setTime(prev => prev + delta * timeScale);
+    const effectiveDelta = delta * timeScale * 50;
+    setTime(prev => prev + effectiveDelta);
   });
 
   const handleFocus = (name: string, targetPosition: THREE.Vector3) => {
@@ -516,6 +517,7 @@ function Scene({ timeScale }: { timeScale: number }) {
               key={object.name}
               object={object}
               time={time}
+              timeScale={timeScale}
               initialAngle={initialAngles.current[object.name]}
               onHover={setHoveredObject}
               onMoonHover={setHoveredMoon}
@@ -566,10 +568,11 @@ function getTexturePath(object: CelestialObject): string {
   return `/textures/${object.name.toLowerCase().replace(/['']/g, '')}.jpg`;
 }
 
-function Moon({ moon, parentPosition, time, initialAngle, onHover, onClick }: { 
+function Moon({ moon, parentPosition, time, timeScale, initialAngle, onHover, onClick }: { 
   moon: Moon; 
   parentPosition: THREE.Vector3;
   time: number;
+  timeScale: number;
   initialAngle: number;
   onHover: (object: Moon | null) => void;
   onClick: (position: THREE.Vector3) => void;
@@ -577,7 +580,7 @@ function Moon({ moon, parentPosition, time, initialAngle, onHover, onClick }: {
   const meshRef = useRef<THREE.Mesh>(null);
   const initialAngleRef = useRef(initialAngle);
 
-  useFrame(() => {
+  useFrame((_, delta) => {
     if (!meshRef.current) return;
 
     const orbitalPeriod = moon.periodDays * 24 * 60 * 60;
@@ -597,7 +600,8 @@ function Moon({ moon, parentPosition, time, initialAngle, onHover, onClick }: {
       parentPosition.z + z
     );
 
-    meshRef.current.rotation.y += 0.01 / moon.rotationPeriod;
+    const rotationSpeedFactor = 5;
+    meshRef.current.rotation.y += (rotationSpeedFactor / moon.rotationPeriod) * delta * timeScale;
   });
 
   return (
@@ -673,6 +677,7 @@ function SaturnRings({ size, position }: { size: number; position: THREE.Vector3
 function CelestialObject({ 
   object, 
   time,
+  timeScale,
   initialAngle,
   onHover,
   onMoonHover,
@@ -681,6 +686,7 @@ function CelestialObject({
 }: { 
   object: CelestialObject;
   time: number;
+  timeScale: number;
   initialAngle: number;
   onHover: (object: CelestialObject | null) => void;
   onMoonHover: (moon: Moon | null) => void;
@@ -690,12 +696,10 @@ function CelestialObject({
   const meshRef = useRef<THREE.Mesh>(null);
   const [position, setPosition] = useState(new THREE.Vector3());
   const initialAngleRef = useRef(initialAngle);
-
   const segments = object.size > 5 ? 32 : 16;
-
   const finalTexture = object.type === 'comet' ? texture : texture;
 
-  useFrame((state) => {
+  useFrame((_, delta) => {
     if (!meshRef.current) return;
 
     const orbitalPeriod = object.periodDays * 24 * 60 * 60;
@@ -713,7 +717,8 @@ function CelestialObject({
     meshRef.current.position.copy(newPosition);
     setPosition(newPosition);
 
-    meshRef.current.rotation.y += (0.01 / object.rotationPeriod) * state.clock.elapsedTime;
+    const rotationSpeedFactor = 20;
+    meshRef.current.rotation.y += (rotationSpeedFactor / object.rotationPeriod) * delta * timeScale;
   });
 
   return (
@@ -759,6 +764,7 @@ function CelestialObject({
             moon={moon}
             parentPosition={position}
             time={time}
+            timeScale={timeScale}
             initialAngle={initialAngle + (index * Math.PI / 2)}
             onHover={onMoonHover}
             onClick={onClick}
