@@ -468,11 +468,12 @@ function usePreloadedTextures(): TextureMap {
   }
 }
 
-function Scene() {
+function Scene({ timeScale }: { timeScale: number }) {
   const [time, setTime] = useState(0);
   const [hoveredObject, setHoveredObject] = useState<CelestialObject | null>(null);
   const [hoveredMoon, setHoveredMoon] = useState<Moon | null>(null);
   const textureMap = usePreloadedTextures();
+  const controlsRef = useRef<any>(null!);
   const initialAngles = useRef(
     CELESTIAL_OBJECTS.reduce((acc, obj) => {
       acc[obj.name] = Math.random() * Math.PI * 2;
@@ -481,13 +482,22 @@ function Scene() {
   );
 
   useFrame((_, delta) => {
-    setTime(prev => prev + delta);
+    setTime(prev => prev + delta * timeScale);
   });
+
+  const handleFocus = (name: string, targetPosition: THREE.Vector3) => {
+    console.log(`Focus requested on ${name}`);
+  };
+  
+  const goToPreset = (presetName: string) => {
+    console.log(`Preset requested: ${presetName}`);
+  };
 
   return (
     <>
       <PerspectiveCamera makeDefault position={[0, 50, 100]} />
       <OrbitControls
+        ref={controlsRef}
         enablePan={false}
         minDistance={30}
         maxDistance={300}
@@ -510,6 +520,7 @@ function Scene() {
               onHover={setHoveredObject}
               onMoonHover={setHoveredMoon}
               texture={textureMap[textureName]}
+              onClick={(pos) => handleFocus(object.name, pos)}
             />
           );
         })}
@@ -555,12 +566,13 @@ function getTexturePath(object: CelestialObject): string {
   return `/textures/${object.name.toLowerCase().replace(/['']/g, '')}.jpg`;
 }
 
-function Moon({ moon, parentPosition, time, initialAngle, onHover }: { 
+function Moon({ moon, parentPosition, time, initialAngle, onHover, onClick }: { 
   moon: Moon; 
   parentPosition: THREE.Vector3;
   time: number;
   initialAngle: number;
   onHover: (object: Moon | null) => void;
+  onClick: (position: THREE.Vector3) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const initialAngleRef = useRef(initialAngle);
@@ -568,7 +580,6 @@ function Moon({ moon, parentPosition, time, initialAngle, onHover }: {
   useFrame(() => {
     if (!meshRef.current) return;
 
-    // Calculate moon's orbital position
     const orbitalPeriod = moon.periodDays * 24 * 60 * 60;
     const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
     const angle = initialAngleRef.current + time * orbitalSpeed;
@@ -580,22 +591,26 @@ function Moon({ moon, parentPosition, time, initialAngle, onHover }: {
     const y = r * Math.sin(angle) * Math.sin(moon.inclination * Math.PI / 180);
     const z = r * Math.sin(angle) * Math.cos(moon.inclination * Math.PI / 180);
 
-    // Add parent planet's position
     meshRef.current.position.set(
       parentPosition.x + x,
       parentPosition.y + y,
       parentPosition.z + z
     );
 
-    // Add rotation
     meshRef.current.rotation.y += 0.01 / moon.rotationPeriod;
   });
 
   return (
     <mesh 
       ref={meshRef}
-      onPointerOver={() => onHover(moon)}
-      onPointerOut={() => onHover(null)}
+      onPointerOver={(e) => { e.stopPropagation(); onHover(moon); }}
+      onPointerOut={(e) => { e.stopPropagation(); onHover(null); }}
+      onClick={(e) => {
+         e.stopPropagation();
+         if (meshRef.current) {
+           onClick(meshRef.current.position); 
+         }
+      }}
     >
       <sphereGeometry args={[moon.size * 2, 32, 32]} />
       <meshStandardMaterial
@@ -661,7 +676,8 @@ function CelestialObject({
   initialAngle,
   onHover,
   onMoonHover,
-  texture
+  texture,
+  onClick
 }: { 
   object: CelestialObject;
   time: number;
@@ -669,21 +685,19 @@ function CelestialObject({
   onHover: (object: CelestialObject | null) => void;
   onMoonHover: (moon: Moon | null) => void;
   texture?: THREE.Texture;
+  onClick: (position: THREE.Vector3) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [position, setPosition] = useState(new THREE.Vector3());
   const initialAngleRef = useRef(initialAngle);
 
-  // Optimize geometry segments based on size
   const segments = object.size > 5 ? 32 : 16;
 
-  // Use comet texture for all comets
   const finalTexture = object.type === 'comet' ? texture : texture;
 
   useFrame((state) => {
     if (!meshRef.current) return;
 
-    // Calculate time-based position using Kepler's laws
     const orbitalPeriod = object.periodDays * 24 * 60 * 60;
     const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
     const angle = initialAngleRef.current + time * orbitalSpeed;
@@ -699,7 +713,6 @@ function CelestialObject({
     meshRef.current.position.copy(newPosition);
     setPosition(newPosition);
 
-    // Add rotation with optimized frequency
     meshRef.current.rotation.y += (0.01 / object.rotationPeriod) * state.clock.elapsedTime;
   });
 
@@ -708,8 +721,14 @@ function CelestialObject({
       <group>
         <mesh 
           ref={meshRef}
-          onPointerOver={() => onHover(object)}
-          onPointerOut={() => onHover(null)}
+          onPointerOver={(e) => { e.stopPropagation(); onHover(object); }}
+          onPointerOut={(e) => { e.stopPropagation(); onHover(null); }}
+          onClick={(e) => {
+             e.stopPropagation();
+             if (meshRef.current) {
+               onClick(meshRef.current.position);
+             }
+          }}
         >
           <sphereGeometry args={[object.size, segments, segments]} />
           <meshStandardMaterial
@@ -742,6 +761,7 @@ function CelestialObject({
             time={time}
             initialAngle={initialAngle + (index * Math.PI / 2)}
             onHover={onMoonHover}
+            onClick={onClick}
           />
         ))}
         <OrbitRing radius={object.orbitRadius} />
@@ -766,41 +786,44 @@ function Sun() {
 }
 
 export function SolarClock3D() {
-  const [hoveredObject, setHoveredObject] = useState<CelestialObject | null>(null);
-  const [hoveredMoon, setHoveredMoon] = useState<Moon | null>(null);
+  const [timeScale, setTimeScale] = useState(1);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  const timeScales = {
+    ReverseFast: -100,
+    Reverse: -10,
+    Pause: 0,
+    RealTime: 1,
+    Fast: 10,
+    VeryFast: 100,
+    Ludicrous: 1000,
+  };
+
+  if (!isClient) {
+    return null;
+  }
 
   return (
-    <div className="w-full h-[800px] relative">
-      <Canvas
-        shadows
-        dpr={[1, 1.5]} // Reduce DPR for better performance
-        camera={{ position: [0, 50, 200], fov: 45 }}
-        style={{ background: 'black' }}
-        performance={{ min: 0.5 }} // Allow frame rate to drop for better performance
-      >
-        <Scene />
-        <OrbitControls 
-          enablePan={true}
-          enableZoom={true}
-          enableRotate={true}
-          minDistance={10}
-          maxDistance={1000}
-          maxPolarAngle={Math.PI / 1.5}
-          minPolarAngle={Math.PI / 6}
-          rotateSpeed={0.5}
-          zoomSpeed={0.8}
-        />
+    <div className="relative w-full h-[600px] md:h-[800px] bg-black">
+      <Canvas shadows camera={{ position: [0, 50, 150], fov: 50 }}>
+        <Scene timeScale={timeScale} />
       </Canvas>
-      {(hoveredObject || hoveredMoon) && (
-        <div className="absolute bottom-4 left-4 bg-white/80 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold">
-            {hoveredObject?.name || hoveredMoon?.name}
-          </h3>
-          <p className="text-sm text-gray-600">
-            {hoveredObject?.description || hoveredMoon?.description}
-          </p>
-        </div>
-      )}
+      <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-2 p-2 bg-gray-800/70 rounded-lg backdrop-blur-sm">
+        {Object.entries(timeScales).map(([name, scale]) => (
+          <button
+            key={name}
+            onClick={() => setTimeScale(scale)}
+            className={`px-3 py-1 text-xs rounded ${timeScale === scale ? 'bg-blue-600 text-white' : 'bg-gray-600 text-gray-200 hover:bg-gray-500'}`}
+            title={`${name} (${scale}x)`}
+          >
+            {name.replace(/([A-Z])/g, ' $1').trim()} {scale !== 1 && scale !== 0 ? `(${scale}x)` : ''}
+          </button>
+        ))}
+      </div>
     </div>
   );
 } 
