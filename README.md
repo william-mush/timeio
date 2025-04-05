@@ -47,6 +47,10 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+# Trigger Vercel Deploy (Feature Branch - Retry 4 - DB URL Check)
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
 ## Project Structure
 
 - `/src/app/*`
