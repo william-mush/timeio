@@ -71,30 +71,6 @@ export async function POST(request: Request) {
 }
 
 // DELETE /api/time-zones/[id] - Delete a time zone
-export async function DELETE(request: Request) {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.email) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  try {
-    const url = new URL(request.url);
-    const cityId = url.pathname.split('/').pop();
-
-    if (!cityId) {
-      return NextResponse.json({ error: 'Missing cityId' }, { status: 400 });
-    }
-
-    await prisma.userTimeZone.deleteMany({
-      where: {
-        userId: session.user.id,
-        cityId: cityId
-      }
-    });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Failed to delete time zone:', error);
-    return NextResponse.json({ error: 'Failed to delete time zone' }, { status: 500 });
-  }
-} 
+// export async function DELETE(request: Request) { <-- Remove this whole function
+// ... function content ...
+// } 

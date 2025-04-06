@@ -15,10 +15,11 @@ declare global {
 export function Analytics() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const GA_MEASUREMENT_ID = 'G-Z50WKQ64VD'; // Ensure this is your correct ID
+  // Use environment variable
+  const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_ID;
 
   useEffect(() => {
-    if (!pathname) return; // Ensure pathname is available
+    if (!pathname || !GA_MEASUREMENT_ID) return; // Ensure pathname and ID are available
 
     const url = pathname + (searchParams ? searchParams.toString() : '');
     
@@ -37,6 +38,12 @@ export function Analytics() {
       console.warn('gtag not defined, Analytics script might not be loaded yet or blocked.');
     }
   }, [pathname, searchParams]); // Rerun effect when path or search params change
+
+  // Don't render script if ID is missing
+  if (!GA_MEASUREMENT_ID) {
+    console.warn("Google Analytics MEASUREMENT ID is missing.");
+    return null;
+  }
 
   return (
     <>

@@ -211,7 +211,7 @@ export const WorldClock = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           cityId: zone.id,
-          cityName: zone.city,
+          city: zone.city,
           country: zone.country,
           offset: zone.offset,
           region: zone.region,
