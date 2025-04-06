@@ -32,7 +32,7 @@ class AlarmSoundService {
   private audioContext: AudioContext | null = null;
   private oscillator: OscillatorNode | null = null;
   private gainNode: GainNode | null = null;
-  private currentSound: AlarmSound | null = null;
+  private currentSound: string | null = null;
 
   private initializeAudioContext() {
     if (typeof window === 'undefined') return;
@@ -49,12 +49,12 @@ class AlarmSoundService {
     }
   }
 
-  async playSound(sound: AlarmSound) {
+  async playSound(soundId: string) {
     this.initializeAudioContext();
     if (!this.audioContext || !this.gainNode) return;
     
     try {
-      this.currentSound = sound;
+      this.currentSound = soundId;
       
       // Stop any existing sound
       if (this.oscillator) {
@@ -69,12 +69,12 @@ class AlarmSoundService {
 
       // Create and configure oscillator
       this.oscillator = this.audioContext.createOscillator();
-      this.oscillator.type = sound.id === 'gentle' ? 'sine' :
-                            sound.id === 'classic' ? 'square' : 'sawtooth';
+      this.oscillator.type = soundId === 'gentle' ? 'sine' :
+                            soundId === 'classic' ? 'square' : 'sawtooth';
       this.oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime); // A4 note
       
       // Add some variation for more interesting sound
-      if (sound.id === 'digital') {
+      if (soundId === 'digital') {
         this.oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime + 0.2);
         this.oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime + 0.4);
       }

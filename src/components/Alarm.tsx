@@ -6,11 +6,14 @@ import { AlarmSound, ALARM_SOUNDS, alarmSoundService } from '@/services/AlarmSou
 import { useSession, signIn } from 'next-auth/react';
 
 interface AlarmTime {
+  id?: string;
   hours: number;
   minutes: number;
-  enabled: boolean;
+  isEnabled: boolean;
   label: string;
-  sound: AlarmSound;
+  sound: string;
+  repeatDays: number[];
+  lastTriggered?: Date | null;
 }
 
 export const AlarmManager = () => {
@@ -19,6 +22,7 @@ export const AlarmManager = () => {
   const [alarms, setAlarms] = useState<AlarmTime[]>([]);
   const [showNewAlarm, setShowNewAlarm] = useState(false);
   const [activeAlarm, setActiveAlarm] = useState<AlarmTime | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const handleGoogleAuth = () => {
     signIn('google');
@@ -29,35 +33,26 @@ export const AlarmManager = () => {
     setMounted(true);
   }, []);
 
-  // Load alarms from localStorage when session changes
+  // Load alarms from API when session changes
   useEffect(() => {
-    if (!mounted || !session?.user?.email) return;
+    if (!mounted || !session?.user?.id) return;
 
-    const loadAlarms = () => {
-      const savedAlarms = localStorage.getItem(`alarms_${session.user.email}`);
-      if (savedAlarms) {
-        try {
-          const parsed = JSON.parse(savedAlarms);
-          setAlarms(parsed);
-        } catch (e) {
-          console.error('Failed to load alarms:', e);
-        }
+    const loadAlarms = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('/api/alarms');
+        if (!response.ok) throw new Error('Failed to load alarms');
+        const data = await response.json();
+        setAlarms(data);
+      } catch (e) {
+        console.error('Failed to load alarms:', e);
+      } finally {
+        setLoading(false);
       }
     };
 
     loadAlarms();
-  }, [session?.user?.email, mounted]);
-
-  // Save alarms to localStorage whenever they change
-  useEffect(() => {
-    if (!mounted || !session?.user?.email) return;
-
-    try {
-      localStorage.setItem(`alarms_${session.user.email}`, JSON.stringify(alarms));
-    } catch (e) {
-      console.error('Failed to save alarms:', e);
-    }
-  }, [alarms, mounted, session?.user?.email]);
+  }, [session?.user?.id, mounted]);
 
   useEffect(() => {
     if (!mounted) return;
@@ -68,7 +63,7 @@ export const AlarmManager = () => {
       const currentMinutes = now.getMinutes();
 
       alarms.forEach(alarm => {
-        if (alarm.enabled && 
+        if (alarm.isEnabled && 
             alarm.hours === currentHours && 
             alarm.minutes === currentMinutes && 
             now.getSeconds() === 0) {
@@ -85,6 +80,18 @@ export const AlarmManager = () => {
     try {
       setActiveAlarm(alarm);
       await alarmSoundService?.playSound(alarm.sound);
+      
+      // Update lastTriggered in database
+      if (alarm.id) {
+        await fetch(`/api/alarms`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: alarm.id,
+            lastTriggered: new Date(),
+          }),
+        });
+      }
     } catch (e) {
       console.error('Failed to trigger alarm:', e);
     }
@@ -99,21 +106,60 @@ export const AlarmManager = () => {
     }
   };
 
-  const addAlarm = (alarm: AlarmTime) => {
-    setAlarms(prev => [...prev, alarm]);
-    setShowNewAlarm(false);
+  const addAlarm = async (alarm: AlarmTime) => {
+    try {
+      const response = await fetch('/api/alarms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(alarm),
+      });
+      
+      if (!response.ok) throw new Error('Failed to create alarm');
+      
+      const newAlarm = await response.json();
+      setAlarms(prev => [...prev, newAlarm]);
+      setShowNewAlarm(false);
+    } catch (e) {
+      console.error('Failed to add alarm:', e);
+    }
   };
 
-  const toggleAlarm = (index: number) => {
-    setAlarms(prev => {
-      const newAlarms = [...prev];
-      newAlarms[index] = { ...newAlarms[index], enabled: !newAlarms[index].enabled };
-      return newAlarms;
-    });
+  const toggleAlarm = async (alarm: AlarmTime) => {
+    if (!alarm.id) return;
+    
+    try {
+      const response = await fetch(`/api/alarms`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: alarm.id,
+          isEnabled: !alarm.isEnabled,
+        }),
+      });
+      
+      if (!response.ok) throw new Error('Failed to update alarm');
+      
+      const updatedAlarm = await response.json();
+      setAlarms(prev => prev.map(a => a.id === alarm.id ? updatedAlarm : a));
+    } catch (e) {
+      console.error('Failed to toggle alarm:', e);
+    }
   };
 
-  const deleteAlarm = (index: number) => {
-    setAlarms(prev => prev.filter((_, i) => i !== index));
+  const deleteAlarm = async (alarm: AlarmTime) => {
+    if (!alarm.id) return;
+    
+    try {
+      const response = await fetch(`/api/alarms?id=${alarm.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (!response.ok) throw new Error('Failed to delete alarm');
+      
+      setAlarms(prev => prev.filter(a => a.id !== alarm.id));
+    } catch (e) {
+      console.error('Failed to delete alarm:', e);
+    }
   };
 
   // Don't render anything on the server or before mounting
@@ -144,6 +190,14 @@ export const AlarmManager = () => {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[200px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6">
       <div className="text-center mb-8 md:mb-12">
@@ -169,9 +223,9 @@ export const AlarmManager = () => {
         </div>
 
         <div className="space-y-3 md:space-y-4">
-          {alarms.map((alarm, index) => (
+          {alarms.map((alarm) => (
             <motion.div
-              key={index}
+              key={alarm.id}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
@@ -184,75 +238,62 @@ export const AlarmManager = () => {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm md:text-base text-gray-700 dark:text-gray-300">{alarm.label}</span>
-                  <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{alarm.sound.name}</span>
+                  <span className="text-xs md:text-sm text-gray-500 dark:text-gray-400">{alarm.sound}</span>
                 </div>
               </div>
               <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                 <button
-                  onClick={() => toggleAlarm(index)}
+                  onClick={() => toggleAlarm(alarm)}
                   className={`w-12 h-6 rounded-full transition-colors ${
-                    alarm.enabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                    alarm.isEnabled ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
                   }`}
-                  aria-label={`Toggle alarm ${alarm.label} ${alarm.enabled ? 'off' : 'on'}`}
+                  aria-label={`Toggle alarm ${alarm.label} ${alarm.isEnabled ? 'off' : 'on'}`}
                   role="switch"
-                  aria-checked={alarm.enabled}
+                  aria-checked={alarm.isEnabled}
                 >
                   <motion.div
-                    animate={{
-                      x: alarm.enabled ? 24 : 0,
-                    }}
-                    className="w-6 h-6 bg-white rounded-full shadow-md"
+                    className="w-4 h-4 bg-white rounded-full shadow-sm mx-1"
+                    animate={{ x: alarm.isEnabled ? '24px' : '0' }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                   />
                 </button>
                 <button
-                  onClick={() => deleteAlarm(index)}
-                  className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300"
+                  onClick={() => deleteAlarm(alarm)}
+                  className="text-red-500 hover:text-red-600 transition-colors"
                   aria-label={`Delete alarm ${alarm.label}`}
                 >
-                  Delete
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
                 </button>
               </div>
             </motion.div>
           ))}
-
-          {alarms.length === 0 && (
-            <div className="text-center py-6 md:py-8 text-gray-500 dark:text-gray-400">
-              No alarms set. Click "New Alarm" to create one.
-            </div>
-          )}
         </div>
-
-        {showNewAlarm && (
-          <NewAlarmForm
-            onSubmit={addAlarm}
-            onCancel={() => setShowNewAlarm(false)}
-          />
-        )}
-
-        {activeAlarm && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-          >
-            <div className="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-xl max-w-md w-full">
-              <h3 className="text-xl md:text-2xl font-bold mb-3 md:mb-4 text-gray-900 dark:text-white">
-                {activeAlarm.label}
-              </h3>
-              <p className="text-3xl md:text-4xl font-mono mb-4 md:mb-6 text-gray-900 dark:text-white">
-                {activeAlarm.hours.toString().padStart(2, '0')}:
-                {activeAlarm.minutes.toString().padStart(2, '0')}
-              </p>
-              <button
-                onClick={stopAlarm}
-                className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition-colors text-lg"
-              >
-                Stop Alarm
-              </button>
-            </div>
-          </motion.div>
-        )}
       </motion.div>
+
+      {showNewAlarm && (
+        <NewAlarmForm onSubmit={addAlarm} onCancel={() => setShowNewAlarm(false)} />
+      )}
+
+      {activeAlarm && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-md w-full"
+          >
+            <h2 className="text-2xl font-bold mb-4">Alarm!</h2>
+            <p className="text-lg mb-6">{activeAlarm.label}</p>
+            <button
+              onClick={stopAlarm}
+              className="w-full button-primary py-3"
+            >
+              Stop Alarm
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };
@@ -263,37 +304,37 @@ interface NewAlarmFormProps {
 }
 
 const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
-  const [hours, setHours] = useState(7);
-  const [minutes, setMinutes] = useState(15);
+  const [hours, setHours] = useState('');
+  const [minutes, setMinutes] = useState('');
   const [label, setLabel] = useState('');
-  const [selectedSound, setSelectedSound] = useState<AlarmSound>(ALARM_SOUNDS[0]);
-  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+  const [selectedSound, setSelectedSound] = useState(ALARM_SOUNDS[0].id);
   const [volume, setVolume] = useState(0.5);
-  const [error, setError] = useState('');
-
-  useEffect(() => {
-    return () => {
-      alarmSoundService.stopSound();
-    };
-  }, []);
+  const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+  const [errors, setErrors] = useState<{
+    hours?: string;
+    minutes?: string;
+    label?: string;
+  }>({});
 
   const validateInputs = (): boolean => {
-    if (hours < 0 || hours > 23) {
-      setError('Hours must be between 0 and 23');
-      return false;
-    }
+    const newErrors: typeof errors = {};
     
-    if (minutes < 0 || minutes > 59) {
-      setError('Minutes must be between 0 and 59');
-      return false;
-    }
-    
-    if (label.trim().length > 50) {
-      setError('Label must be less than 50 characters');
-      return false;
+    const hoursNum = parseInt(hours);
+    if (isNaN(hoursNum) || hoursNum < 0 || hoursNum > 23) {
+      newErrors.hours = 'Please enter a valid hour (0-23)';
     }
 
-    return true;
+    const minutesNum = parseInt(minutes);
+    if (isNaN(minutesNum) || minutesNum < 0 || minutesNum > 59) {
+      newErrors.minutes = 'Please enter a valid minute (0-59)';
+    }
+
+    if (label && label.length > 50) {
+      newErrors.label = 'Label must be less than 50 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -305,11 +346,12 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
 
     try {
       onSubmit({
-        hours,
-        minutes,
-        enabled: true,
+        hours: parseInt(hours),
+        minutes: parseInt(minutes),
+        isEnabled: true,
         label: label.trim() || 'Alarm',
         sound: selectedSound,
+        repeatDays: [],
       });
     } catch (error) {
       console.error('Failed to create alarm:', error);
@@ -317,41 +359,41 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
   };
 
   const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value)) {
+    const value = e.target.value;
+    if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 23)) {
       setHours(value);
-      setError('');
+      setErrors(prev => ({ ...prev, hours: undefined }));
     }
   };
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
-    if (!isNaN(value)) {
+    const value = e.target.value;
+    if (value === '' || (parseInt(value) >= 0 && parseInt(value) <= 59)) {
       setMinutes(value);
-      setError('');
+      setErrors(prev => ({ ...prev, minutes: undefined }));
     }
   };
 
   const handleLabelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLabel(e.target.value);
-    if (error) {
-      setError('');
+    const value = e.target.value;
+    setLabel(value);
+    if (value.length <= 50) {
+      setErrors(prev => ({ ...prev, label: undefined }));
     }
   };
 
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newVolume = parseFloat(e.target.value);
-    if (!isNaN(newVolume) && newVolume >= 0 && newVolume <= 1) {
-      setVolume(newVolume);
-      alarmSoundService.setVolume(newVolume);
+    const value = parseFloat(e.target.value);
+    setVolume(value);
+    if (alarmSoundService) {
+      alarmSoundService.setVolume(value);
     }
   };
 
   const previewSound = () => {
-    if (isPreviewPlaying) {
-      alarmSoundService.stopSound();
-      setIsPreviewPlaying(false);
-    } else {
+    if (!alarmSoundService) return;
+
+    if (!isPreviewPlaying) {
       alarmSoundService.setVolume(volume);
       alarmSoundService.playSound(selectedSound);
       setIsPreviewPlaying(true);
@@ -359,161 +401,151 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
         alarmSoundService.stopSound();
         setIsPreviewPlaying(false);
       }, 2000);
+    } else {
+      alarmSoundService.stopSound();
+      setIsPreviewPlaying(false);
     }
   };
 
   return (
-    <motion.form
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white p-6 rounded-lg shadow-lg"
-      onSubmit={handleSubmit}
-      data-testid="new-alarm-form"
-    >
-      <div className="space-y-4">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Set Alarm Time</h3>
-          <p className="text-sm text-gray-600">Choose when you want the alarm to go off</p>
-        </div>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <label htmlFor="hours" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Set Alarm Time
-            </label>
-            <div className="flex gap-2">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-md w-full"
+      >
+        <h2 className="text-2xl font-bold mb-6">New Alarm</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-2" htmlFor="hours">
+                Hour
+              </label>
               <input
                 type="number"
                 id="hours"
                 value={hours}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (value >= 0 && value <= 23) {
-                    setHours(value);
-                    setError('');
-                  } else {
-                    setError('Hours must be between 0 and 23');
-                  }
-                }}
+                onChange={handleHoursChange}
+                className="input-field w-full"
+                placeholder="0-23"
                 min="0"
                 max="23"
-                className="input-field w-20"
-                placeholder="7"
-                aria-invalid={!!error}
-                aria-describedby={error ? "hours-error" : undefined}
+                required
+                aria-invalid={errors.hours ? 'true' : undefined}
               />
-              <span className="text-2xl font-bold text-gray-700 dark:text-gray-300">:</span>
+              {errors.hours && (
+                <div className="text-red-500 text-sm mt-1" role="alert">
+                  {errors.hours}
+                </div>
+              )}
+            </div>
+            
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-2" htmlFor="minutes">
+                Minute
+              </label>
               <input
                 type="number"
                 id="minutes"
                 value={minutes}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (value >= 0 && value <= 59) {
-                    setMinutes(value);
-                    setError('');
-                  } else {
-                    setError('Minutes must be between 0 and 59');
-                  }
-                }}
+                onChange={handleMinutesChange}
+                className="input-field w-full"
+                placeholder="0-59"
                 min="0"
                 max="59"
-                className="input-field w-20"
-                placeholder="15"
-                aria-invalid={!!error}
-                aria-describedby={error ? "minutes-error" : undefined}
+                required
+                aria-invalid={errors.minutes ? 'true' : undefined}
               />
+              {errors.minutes && (
+                <div className="text-red-500 text-sm mt-1" role="alert">
+                  {errors.minutes}
+                </div>
+              )}
             </div>
-            {error && (
-              <p id="hours-error" className="mt-1 text-sm text-red-600 dark:text-red-400" role="alert">
-                {error}
-              </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="label">
+              Label
+            </label>
+            <input
+              type="text"
+              id="label"
+              value={label}
+              onChange={handleLabelChange}
+              className="input-field w-full"
+              placeholder="Alarm label"
+              maxLength={50}
+              aria-invalid={errors.label ? 'true' : undefined}
+            />
+            {errors.label && (
+              <div className="text-red-500 text-sm mt-1" role="alert">
+                {errors.label}
+              </div>
             )}
           </div>
-          <div className="flex items-end">
-            <button
-              type="submit"
-              className="button-primary w-full sm:w-auto px-6 py-2"
-              disabled={!!error}
-            >
-              Add Alarm
-            </button>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="sound">
+              Sound
+            </label>
+            <div className="flex gap-4">
+              <select
+                id="sound"
+                value={selectedSound}
+                onChange={(e) => setSelectedSound(e.target.value)}
+                className="input-field flex-1"
+              >
+                {ALARM_SOUNDS.map((sound) => (
+                  <option key={sound.id} value={sound.id}>
+                    {sound.name}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={previewSound}
+                className="button-secondary px-4"
+              >
+                {isPreviewPlaying ? 'Stop' : 'Preview'}
+              </button>
+            </div>
           </div>
-        </div>
-        <div>
-          <label htmlFor="label" className="block text-sm font-medium text-gray-700">
-            Alarm Label
-          </label>
-          <input
-            id="label"
-            type="text"
-            value={label}
-            onChange={handleLabelChange}
-            placeholder="e.g., Wake up for work"
-            className={`mt-1 block w-full rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 ${
-              error ? 'border-red-300' : 'border-gray-300'
-            }`}
-          />
-          {error && (
-            <p className="mt-1 text-xs text-red-600">{error}</p>
-          )}
-          <p className="mt-1 text-xs text-gray-500">Give your alarm a descriptive name</p>
-        </div>
-        <div>
-          <label htmlFor="sound" className="block text-sm font-medium text-gray-700 mb-1">
-            Sound
-          </label>
-          <div className="flex space-x-2">
-            <select
-              id="sound"
-              value={selectedSound.id}
-              onChange={(e) => {
-                const sound = ALARM_SOUNDS.find(s => s.id === e.target.value);
-                if (sound) setSelectedSound(sound);
-              }}
-              className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-            >
-              {ALARM_SOUNDS.map(sound => (
-                <option key={sound.id} value={sound.id}>
-                  {sound.name}
-                </option>
-              ))}
-            </select>
+
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="volume">
+              Volume
+            </label>
+            <input
+              type="range"
+              id="volume"
+              min="0"
+              max="1"
+              step="0.1"
+              value={volume}
+              onChange={handleVolumeChange}
+              className="w-full"
+            />
+          </div>
+
+          <div className="flex justify-end gap-4 mt-8">
             <button
               type="button"
-              onClick={previewSound}
-              className={`px-3 py-2 text-sm font-medium text-white rounded-md transition-colors ${
-                isPreviewPlaying ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'
-              }`}
+              onClick={onCancel}
+              className="button-secondary px-6 py-2"
             >
-              {isPreviewPlaying ? 'Stop' : 'Preview'}
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="button-primary px-6 py-2"
+            >
+              Create Alarm
             </button>
           </div>
-        </div>
-        <div>
-          <label htmlFor="volume" className="block text-sm font-medium text-gray-700 mb-1">
-            Volume
-          </label>
-          <input
-            id="volume"
-            type="range"
-            min="0"
-            max="1"
-            step="0.1"
-            value={volume}
-            onChange={handleVolumeChange}
-            className="w-full"
-          />
-        </div>
-        <div className="flex justify-end space-x-3">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          >
-            Cancel
-          </button>
-        </div>
-      </div>
-    </motion.form>
+        </form>
+      </motion.div>
+    </div>
   );
 }; 

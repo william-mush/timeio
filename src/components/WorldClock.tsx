@@ -43,7 +43,7 @@ function getRegion(latitude: number): string {
 export const WorldClock = () => {
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
-  const [selectedZones, setSelectedZones] = useState<TimeZone[]>(WORLD_TIMEZONES.slice(0, 3));
+  const [selectedZones, setSelectedZones] = useState<TimeZone[]>([]);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [showAddZone, setShowAddZone] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
@@ -51,42 +51,107 @@ export const WorldClock = () => {
   const [format24Hour, setFormat24Hour] = useState(false);
   const [showSeconds, setShowSeconds] = useState(true);
   const [showMilliseconds, setShowMilliseconds] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleGoogleAuth = () => {
     signIn('google');
   };
 
-  // Load selected zones from localStorage on mount
+  // Load settings and time zones from database
   useEffect(() => {
-    if (!session) {
-      setSelectedZones(WORLD_TIMEZONES.slice(0, 3)); // Default zones for non-authenticated users
-      setMounted(true);
-      return;
-    }
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
 
-    const savedZones = localStorage.getItem(`worldClock_zones_${session.user?.email}`);
-    if (savedZones) {
-      try {
-        const parsed = JSON.parse(savedZones);
-        setSelectedZones(parsed);
-      } catch (e) {
-        console.error('Failed to load saved zones:', e);
+      if (!session) {
+        const defaultZones = WORLD_TIMEZONES.filter(zone => 
+          ['new_york', 'los_angeles', 'chicago'].includes(zone.id)
+        );
+        setSelectedZones(defaultZones);
+        setIsLoading(false);
+        setMounted(true);
+        return;
       }
-    }
-    setMounted(true);
+
+      try {
+        // Load settings
+        const settingsResponse = await fetch('/api/settings');
+        if (settingsResponse.ok) {
+          const settings = await settingsResponse.json();
+          setFormat24Hour(settings.format24Hour ?? false);
+          setShowSeconds(settings.showSeconds ?? true);
+          setShowMilliseconds(settings.showMilliseconds ?? false);
+        }
+
+        // Load time zones
+        const timeZonesResponse = await fetch('/api/time-zones');
+        if (timeZonesResponse.ok) {
+          const timeZones = await timeZonesResponse.json();
+          if (Array.isArray(timeZones) && timeZones.length > 0) {
+            const zones = timeZones.map((tz: any) => ({
+              id: tz.cityId,
+              name: tz.cityName,
+              city: tz.cityName,
+              country: tz.country,
+              offset: tz.offset,
+              region: tz.region
+            }));
+            setSelectedZones(zones);
+          } else {
+            // If no time zones found, set default ones
+            const defaultZones = WORLD_TIMEZONES.filter(zone => 
+              ['new_york', 'los_angeles', 'chicago'].includes(zone.id)
+            );
+            setSelectedZones(defaultZones);
+            
+            // Save default zones to database
+            await Promise.all(defaultZones.map((zone, index) => 
+              fetch('/api/time-zones', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  cityId: zone.id,
+                  cityName: zone.city,
+                  country: zone.country,
+                  offset: zone.offset,
+                  region: zone.region,
+                  order: index
+                })
+              })
+            ));
+          }
+        }
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        setError('Failed to load world clock data. Please try again.');
+        const defaultZones = WORLD_TIMEZONES.filter(zone => 
+          ['new_york', 'los_angeles', 'chicago'].includes(zone.id)
+        );
+        setSelectedZones(defaultZones);
+      } finally {
+        setIsLoading(false);
+        setMounted(true);
+      }
+    };
+
+    loadData();
   }, [session]);
 
-  // Save selected zones whenever they change
+  // Listen for settings changes
   useEffect(() => {
-    if (!mounted || !session) return;
+    const handleSettingsChange = (event: CustomEvent<TimeSettings>) => {
+      const { format24Hour, showSeconds, showMilliseconds } = event.detail;
+      setFormat24Hour(format24Hour);
+      setShowSeconds(showSeconds);
+      setShowMilliseconds(showMilliseconds);
+    };
 
-    try {
-      localStorage.setItem(`worldClock_zones_${session.user?.email}`, JSON.stringify(selectedZones));
-    } catch (e) {
-      console.error('Failed to save zones:', e);
-    }
-  }, [selectedZones, mounted, session]);
+    window.addEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+    return () => window.removeEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
+  }, []);
 
+  // Update time every second
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
@@ -105,17 +170,14 @@ export const WorldClock = () => {
   const formatTime = (date: Date) => {
     let hours = date.getHours();
     const minutes = date.getMinutes().toString().padStart(2, '0');
-    const seconds = date.getSeconds().toString().padStart(2, '0');
+    const seconds = showSeconds ? date.getSeconds().toString().padStart(2, '0') : '';
+    const milliseconds = showMilliseconds ? (date.getMilliseconds() / 1000).toFixed(3).slice(2) : '';
     
     let period = '';
-    if (hours > 12) {
-      period = ' PM';
+    if (!format24Hour) {
+      period = hours >= 12 ? ' PM' : ' AM';
       hours = hours % 12;
       hours = hours ? hours : 12; // Convert 0 to 12
-    } else if (hours === 0) {
-      hours = 12; // Convert 0 to 12
-    } else if (hours === 12) {
-      period = ' PM';
     }
     
     const timeStr = [
@@ -123,32 +185,93 @@ export const WorldClock = () => {
       minutes
     ];
 
-    if (seconds) {
+    if (showSeconds) {
       timeStr.push(seconds);
+    }
+
+    if (showMilliseconds && showSeconds) {
+      timeStr.push(milliseconds);
     }
 
     return timeStr.join(':') + period;
   };
 
-  const addTimeZone = (zone: TimeZone) => {
+  const addTimeZone = async (zone: TimeZone) => {
     if (!session) {
       signIn('google');
       return;
     }
     
-    if (!selectedZones.find(z => z.id === zone.id)) {
-      setSelectedZones([...selectedZones, zone]);
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch('/api/time-zones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          cityId: zone.id,
+          city: zone.city,
+          country: zone.country,
+          offset: zone.offset,
+          region: zone.region,
+          order: selectedZones.length
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Failed to add time zone:', errorData);
+        setError(`Failed to add ${zone.city}: ${errorData.error || response.statusText}`);
+        return;
+      }
+      
+      const newTimeZone = await response.json();
+      console.log('Successfully added time zone:', newTimeZone);
+      
+      const newZone = {
+        id: newTimeZone.cityId,
+        name: newTimeZone.cityName,
+        city: newTimeZone.cityName,
+        country: newTimeZone.country,
+        offset: newTimeZone.offset,
+        region: newTimeZone.region
+      };
+      
+      setSelectedZones(prev => [...prev, newZone]);
+      setShowAddZone(false);
+    } catch (error) {
+      console.error('Error adding time zone:', error);
+      setError(`Failed to add ${zone.city}. Please try again.`);
+    } finally {
+      setIsLoading(false);
     }
-    setShowAddZone(false);
   };
 
-  const removeTimeZone = (zoneId: string) => {
-    if (!session) {
-      signIn('google');
-      return;
-    }
+  const removeTimeZone = async (zoneId: string) => {
+    if (!session) return;
     
-    setSelectedZones(selectedZones.filter(z => z.id !== zoneId));
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/time-zones/${zoneId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(`Failed to remove city: ${errorData.error || response.statusText}`);
+        return;
+      }
+
+      setSelectedZones(prev => prev.filter(zone => zone.id !== zoneId));
+    } catch (error) {
+      console.error('Failed to remove time zone:', error);
+      setError('Failed to remove city. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const filteredZones = WORLD_TIMEZONES
@@ -173,6 +296,7 @@ export const WorldClock = () => {
             <button
               onClick={() => setShowAddZone(true)}
               className="w-full sm:w-auto button-primary px-4 py-2"
+              disabled={isLoading}
             >
               + Add City
             </button>
@@ -187,38 +311,56 @@ export const WorldClock = () => {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {selectedZones.map((zone) => (
-            <motion.div
-              key={zone.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="card p-4 md:p-6"
-            >
-              <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3 md:mb-4">
-                <div>
-                  <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">{zone.city}</h3>
-                  <p className="text-sm md:text-base text-muted">{zone.country}</p>
-                  <p className="text-xs md:text-sm text-muted">{zone.region}</p>
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
+            {error}
+          </div>
+        )}
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="card p-4 md:p-6 animate-pulse">
+                <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-4"></div>
+                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-full"></div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {selectedZones.map((zone) => (
+              <motion.div
+                key={zone.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="card p-4 md:p-6"
+              >
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3 md:mb-4">
+                  <div>
+                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">{zone.city}</h3>
+                    <p className="text-sm md:text-base text-muted">{zone.country}</p>
+                    <p className="text-xs md:text-sm text-muted">{zone.region}</p>
+                  </div>
+                  {session && (
+                    <button
+                      onClick={() => removeTimeZone(zone.id)}
+                      className="text-gray-400 hover:text-red-500 text-sm md:text-base"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
-                {session && (
-                  <button
-                    onClick={() => removeTimeZone(zone.id)}
-                    className="text-gray-400 hover:text-red-500 text-sm md:text-base"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-              <div className="text-2xl md:text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
-                {formatTime(getTimeInZone(zone.offset))}
-              </div>
-              <div className="text-xs md:text-sm text-muted mt-1">
-                GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
-              </div>
-            </motion.div>
-          ))}
-        </div>
+                <div className="text-2xl md:text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
+                  {formatTime(getTimeInZone(zone.offset))}
+                </div>
+                <div className="text-xs md:text-sm text-muted mt-1">
+                  GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         {showAddZone && session && (
           <motion.div

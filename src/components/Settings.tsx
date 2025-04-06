@@ -56,6 +56,7 @@ export function Settings() {
   const [settings, setSettings] = useState<TimeSettings>(defaultSettings);
   const [mounted, setMounted] = useState(false);
   const [showSaved, setShowSaved] = useState(false);
+  const [isMigrating, setIsMigrating] = useState(false);
 
   const handleGoogleAuth = () => {
     signIn('google');
@@ -67,31 +68,70 @@ export function Settings() {
       return;
     }
 
-    const savedSettings = localStorage.getItem(`timeSettings_${session.user?.email}`);
-    if (savedSettings) {
+    const loadSettings = async () => {
       try {
-        setSettings(JSON.parse(savedSettings));
+        // First try to load from database
+        const response = await fetch('/api/settings');
+        if (response.ok) {
+          const dbSettings = await response.json();
+          setSettings(dbSettings);
+          setMounted(true);
+          return;
+        }
+
+        // If no database settings, try localStorage and migrate
+        const savedSettings = localStorage.getItem(`timeSettings_${session.user?.email}`);
+        if (savedSettings) {
+          const localSettings = JSON.parse(savedSettings);
+          setSettings(localSettings);
+          
+          // Migrate to database
+          setIsMigrating(true);
+          await fetch('/api/migrate-settings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              settings: localSettings,
+              defaultCities: ['new_york', 'los_angeles', 'chicago'] 
+            })
+          });
+          setIsMigrating(false);
+        }
       } catch (e) {
-        console.error('Failed to parse saved settings:', e);
+        console.error('Failed to load settings:', e);
       }
-    }
-    setMounted(true);
+      setMounted(true);
+    };
+
+    loadSettings();
   }, [session]);
 
-  const handleSettingChange = (key: keyof TimeSettings, value: any) => {
+  const handleSettingChange = async (key: keyof TimeSettings, value: any) => {
     if (!session) return;
     
     const newSettings = { ...settings, [key]: value };
     setSettings(newSettings);
-    localStorage.setItem(`timeSettings_${session.user?.email}`, JSON.stringify(newSettings));
-    
-    // Dispatch event for other components
-    const event = new CustomEvent('timeSettingsChanged', { detail: newSettings });
-    window.dispatchEvent(event);
 
-    // Show saved indicator
-    setShowSaved(true);
-    setTimeout(() => setShowSaved(false), 2000);
+    try {
+      // Update database
+      const response = await fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newSettings)
+      });
+
+      if (!response.ok) throw new Error('Failed to update settings');
+      
+      // Dispatch event for other components
+      const event = new CustomEvent('timeSettingsChanged', { detail: newSettings });
+      window.dispatchEvent(event);
+
+      // Show saved indicator
+      setShowSaved(true);
+      setTimeout(() => setShowSaved(false), 2000);
+    } catch (error) {
+      console.error('Failed to save settings:', error);
+    }
   };
 
   if (!mounted) return null;
@@ -135,37 +175,39 @@ export function Settings() {
         <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-white">Display Settings</h2>
         
         <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-lg font-medium text-gray-900 dark:text-white">24-hour format</label>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Display time in 24-hour format</p>
-            </div>
-            <Switch
-              checked={settings.format24Hour}
-              onChange={(checked: boolean) => handleSettingChange('format24Hour', checked)}
-            />
-          </div>
+          <div>
+            <h3 className="heading-3 mb-4">Time Format</h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">
+                  24-hour format
+                </label>
+                <Switch
+                  checked={settings.format24Hour}
+                  onChange={(checked: boolean) => handleSettingChange('format24Hour', checked)}
+                />
+              </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-lg font-medium text-gray-900 dark:text-white">Show seconds</label>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Display seconds in time</p>
-            </div>
-            <Switch
-              checked={settings.showSeconds}
-              onChange={(checked: boolean) => handleSettingChange('showSeconds', checked)}
-            />
-          </div>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">
+                  Show seconds
+                </label>
+                <Switch
+                  checked={settings.showSeconds}
+                  onChange={(checked: boolean) => handleSettingChange('showSeconds', checked)}
+                />
+              </div>
 
-          <div className="flex items-center justify-between">
-            <div>
-              <label className="text-lg font-medium text-gray-900 dark:text-white">Show milliseconds</label>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Display milliseconds in time</p>
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">
+                  Show milliseconds
+                </label>
+                <Switch
+                  checked={settings.showMilliseconds}
+                  onChange={(checked: boolean) => handleSettingChange('showMilliseconds', checked)}
+                />
+              </div>
             </div>
-            <Switch
-              checked={settings.showMilliseconds}
-              onChange={(checked: boolean) => handleSettingChange('showMilliseconds', checked)}
-            />
           </div>
 
           <div className="flex items-center justify-between">
@@ -173,15 +215,38 @@ export function Settings() {
               <label className="text-lg font-medium text-gray-900 dark:text-white">Theme</label>
               <p className="text-sm text-gray-500 dark:text-gray-400">Choose your preferred theme</p>
             </div>
-            <select
-              value={settings.theme}
-              onChange={(e) => handleSettingChange('theme', e.target.value as TimeSettings['theme'])}
-              className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="system">System</option>
-            </select>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleSettingChange('theme', 'light')}
+                className={`px-4 py-2 rounded-lg ${
+                  settings.theme === 'light'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              >
+                Light
+              </button>
+              <button
+                onClick={() => handleSettingChange('theme', 'dark')}
+                className={`px-4 py-2 rounded-lg ${
+                  settings.theme === 'dark'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              >
+                Dark
+              </button>
+              <button
+                onClick={() => handleSettingChange('theme', 'system')}
+                className={`px-4 py-2 rounded-lg ${
+                  settings.theme === 'system'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              >
+                System
+              </button>
+            </div>
           </div>
 
           <div className="flex items-center justify-between">

@@ -6,11 +6,15 @@ jest.mock('next-auth/react', () => ({
   useSession: () => ({
     data: {
       user: {
+        id: 'test-user-id',
         email: 'test@example.com',
       },
+      expires: new Date(Date.now() + 2 * 86400 * 1000).toISOString(),
     },
+    status: 'authenticated',
   }),
   signIn: jest.fn(),
+  signOut: jest.fn(),
 }))
 
 // Mock localStorage
