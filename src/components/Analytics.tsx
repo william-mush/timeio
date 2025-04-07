@@ -37,8 +37,6 @@ export function Analytics() {
       
       // Log for debugging (optional)
       console.log(`GA Pageview: ${url}`);
-    } else {
-      console.warn('gtag not defined, Analytics script might not be loaded yet or blocked.');
     }
   }, [pathname, searchParams]); // Rerun effect when path or search params change
 
