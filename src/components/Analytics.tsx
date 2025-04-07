@@ -23,6 +23,9 @@ export function Analytics() {
 
     const url = pathname + (searchParams ? searchParams.toString() : '');
     
+    // Log the type of gtag when the effect runs
+    console.log(`Analytics useEffect: typeof window.gtag is ${typeof window.gtag}`);
+
     // Check if gtag is defined (script loaded)
     if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       // Send page view event
@@ -61,6 +64,8 @@ export function Analytics() {
             // Send initial page view on load
             page_path: window.location.pathname + window.location.search,
           });
+          // Log confirmation that onLoad completed
+          console.log('Analytics Script onLoad completed and gtag configured.');
         }}
       />
     </>
