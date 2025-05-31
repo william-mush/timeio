@@ -279,71 +279,173 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
   {
     id: 'a-lange-sohne',
     name: 'A. Lange & Söhne',
-    description: 'Founded in 1845, A. Lange & Söhne is Germany\'s premier watch manufacturer, known for their exceptional finishing.',
-    history: 'Based in Glashütte, Germany, the brand was revived in 1990 after the fall of the Berlin Wall.',
+    description: 'Founded in 1845 by Ferdinand Adolph Lange, A. Lange & Söhne represents the pinnacle of German watchmaking, known for their exceptional finishing, innovative complications, and distinctive design language.',
+    history: 'Based in Glashütte, Germany, the brand was nationalized during the Cold War and revived in 1990 by Walter Lange, the great-grandson of the founder. The brand\'s renaissance marked the rebirth of German watchmaking, with the first four watches (Lange 1, Saxonia, Arkade, and Tourbillon "Pour le Mérite") setting new standards in watchmaking. A. Lange & Söhne is known for their distinctive German design elements, including the three-quarter plate, hand-engraved balance cocks, and gold chatons. The brand produces only about 5,000 watches annually, each subject to rigorous quality control.',
     notableModels: [
       {
         name: 'Lange 1',
         newPrice: '$40,000 - $50,000',
         usedPrice: '$35,000 - $45,000',
-        description: 'Iconic asymmetric dial design.',
+        description: 'The brand\'s iconic watch featuring an asymmetric dial layout and outsize date. The movement is known for its three-quarter plate and hand-engraved balance cock. The latest generation includes the improved L121.1 movement with 72-hour power reserve.',
         imageUrl: '/images/luxury/models/a-lange-sohne-lange-1.jpg',
       },
       {
         name: 'Datograph',
         newPrice: '$80,000 - $100,000',
         usedPrice: '$70,000 - $90,000',
-        description: 'Highly regarded chronograph movement.',
+        description: 'Considered by many collectors to be the finest chronograph ever made. Features a flyback function, jumping minute counter, and exceptional finishing. The latest generation (Datograph Up/Down) includes a power reserve indicator.',
         imageUrl: '/images/luxury/models/a-lange-sohne-datograph.jpg',
+      },
+      {
+        name: 'Zeitwerk',
+        newPrice: '$90,000 - $110,000',
+        usedPrice: '$80,000 - $100,000',
+        description: 'A revolutionary digital-mechanical watch with jumping hours and minutes. Features a constant-force escapement and remontoir mechanism for precise time display. The latest generation includes a date display and power reserve indicator.',
+        imageUrl: '/images/luxury/models/a-lange-sohne-zeitwerk.jpg',
       }
     ],
-    imageUrl: '/images/luxury/a-lange-sohne.jpg'
+    imageUrl: '/images/luxury/a-lange-sohne.jpg',
+    standout: [
+      'Distinctive German watchmaking tradition',
+      'Exceptional movement finishing and decoration',
+      'Innovative complications and designs',
+      'Limited production of only about 5,000 watches annually',
+      'Strong focus on technical innovation',
+      'Complete in-house manufacturing',
+      'Rich heritage in Glashütte'
+    ],
+    love: [
+      'Exceptional finishing and attention to detail',
+      'Distinctive German design language',
+      'Strong investment value',
+      'Innovative complications',
+      'Excellent customer service',
+      'Commitment to preserving watchmaking skills',
+      'Strong secondary market performance'
+    ],
+    hate: [
+      'Very high price point',
+      'Limited availability at retail',
+      'Some models can be difficult to service',
+      'Complex pieces require regular maintenance',
+      'Limited sports watch options',
+      'Some see the designs as too traditional',
+      'Richemont ownership may limit independence'
+    ]
   },
   {
     id: 'breguet',
     name: 'Breguet',
-    description: 'Founded in 1775, Breguet is one of the oldest and most prestigious watch manufacturers.',
-    history: 'Founded by Abraham-Louis Breguet in Paris, the brand is known for numerous horological innovations.',
+    description: 'Founded in 1775 by Abraham-Louis Breguet, Breguet is one of the most influential watch manufacturers in history, known for numerous horological innovations and elegant designs that have shaped watchmaking for over two centuries.',
+    history: 'Based in Paris, France, Breguet revolutionized watchmaking with inventions including the tourbillon (1801), the pare-chute shock protection system (1790), and the self-winding mechanism (1780). The brand\'s watches were favored by royalty, including Marie-Antoinette and Napoleon Bonaparte. Today, Breguet continues to produce watches that combine traditional craftsmanship with modern technology, maintaining the distinctive design elements created by its founder, such as the Breguet hands, guilloché dials, and coin-edge cases. The brand is owned by the Swatch Group but maintains its independence in terms of design and production.',
     notableModels: [
       {
         name: 'Classique',
         newPrice: '$20,000 - $30,000',
         usedPrice: '$15,000 - $25,000',
-        description: 'Traditional dress watch with guilloché dial.',
+        description: 'The brand\'s signature collection featuring traditional Breguet design elements. Includes models with complications like tourbillons, perpetual calendars, and minute repeaters. The latest generation features improved movements and enhanced finishing.',
         imageUrl: '/images/luxury/models/breguet-classique.jpg',
       },
       {
         name: 'Marine',
         newPrice: '$25,000 - $35,000',
         usedPrice: '$20,000 - $30,000',
-        description: 'Sporty yet elegant timepiece.',
+        description: 'A modern sports watch collection inspired by Breguet\'s role as the official chronometer-maker to the French Royal Navy. Features water resistance to 100 meters, a distinctive wave-pattern dial, and robust construction.',
         imageUrl: '/images/luxury/models/breguet-marine.jpg',
+      },
+      {
+        name: 'Type XX',
+        newPrice: '$15,000 - $25,000',
+        usedPrice: '$12,000 - $20,000',
+        description: 'A modern interpretation of the military chronographs supplied to the French Air Force in the 1950s. Features a flyback chronograph function, rotating bezel, and robust construction suitable for aviation use.',
+        imageUrl: '/images/luxury/models/breguet-type-xx.jpg',
       }
     ],
-    imageUrl: '/images/luxury/breguet.jpg'
+    imageUrl: '/images/luxury/breguet.jpg',
+    standout: [
+      'Inventor of the tourbillon and numerous other innovations',
+      'Rich heritage dating back to 1775',
+      'Distinctive design elements created by A.L. Breguet',
+      'Strong focus on traditional craftsmanship',
+      'Complete in-house manufacturing',
+      'Extensive archive of historical documents',
+      'Limited production numbers'
+    ],
+    love: [
+      'Rich historical significance',
+      'Elegant, timeless designs',
+      'Exceptional finishing and craftsmanship',
+      'Strong investment value for rare pieces',
+      'Excellent customer service',
+      'Commitment to preserving traditional techniques',
+      'Distinctive Breguet design elements'
+    ],
+    hate: [
+      'Some models can be difficult to obtain',
+      'High price point for basic models',
+      'Limited availability of sports watches',
+      'Some collectors find the designs too traditional',
+      'Complex pieces require regular maintenance',
+      'Limited brand recognition compared to competitors',
+      'Swatch Group ownership may limit independence'
+    ]
   },
   {
     id: 'blancpain',
     name: 'Blancpain',
-    description: 'Founded in 1735, Blancpain is the oldest watch brand in the world.',
-    history: 'Known for their commitment to traditional watchmaking and the famous "Never an quartz" motto.',
+    description: 'Founded in 1735 by Jehan-Jacques Blancpain, Blancpain is the oldest watch brand in the world, known for their commitment to traditional watchmaking and the famous "Never an quartz" motto.',
+    history: 'Based in Le Brassus, Switzerland, Blancpain has maintained its commitment to mechanical watchmaking throughout its history. The brand was revived in 1983 by Jean-Claude Biver and Jacques Piguet, who famously declared "Since 1735, there has never been a quartz Blancpain watch. And there never will be." Blancpain is credited with saving the mechanical watch industry during the quartz crisis. The brand is known for its Fifty Fathoms diving watch, which was the first modern diving watch (1953), and its commitment to traditional watchmaking techniques. Today, Blancpain produces about 30,000 watches annually, each subject to rigorous quality control.',
     notableModels: [
       {
         name: 'Fifty Fathoms',
         newPrice: '$15,000 - $20,000',
         usedPrice: '$12,000 - $18,000',
-        description: 'Iconic diving watch.',
+        description: 'The world\'s first modern diving watch, introduced in 1953. Features a unidirectional rotating bezel, luminescent markers, and water resistance to 300 meters. The latest generation includes the improved 1315 movement with 120-hour power reserve.',
         imageUrl: '/images/luxury/models/blancpain-fifty-fathoms.jpg',
       },
       {
         name: 'Villeret',
         newPrice: '$10,000 - $15,000',
         usedPrice: '$8,000 - $12,000',
-        description: 'Classic dress watch collection.',
+        description: 'The brand\'s classic dress watch collection, named after Blancpain\'s original home. Features traditional watchmaking techniques, including hand-guilloché dials and hand-engraved movements. The latest generation includes models with complications like perpetual calendars and tourbillons.',
         imageUrl: '/images/luxury/models/blancpain-villeret.jpg',
+      },
+      {
+        name: 'L-evolution',
+        newPrice: '$20,000 - $30,000',
+        usedPrice: '$15,000 - $25,000',
+        description: 'A modern collection featuring innovative materials and complications. Includes models with tourbillons, chronographs, and annual calendars. The latest generation features improved movements and enhanced finishing.',
+        imageUrl: '/images/luxury/models/blancpain-l-evolution.jpg',
       }
     ],
-    imageUrl: '/images/luxury/blancpain.jpg'
+    imageUrl: '/images/luxury/blancpain.jpg',
+    standout: [
+      'World\'s oldest watch brand',
+      'Creator of the first modern diving watch',
+      'Commitment to mechanical watchmaking',
+      'Strong focus on traditional techniques',
+      'Complete in-house manufacturing',
+      'Rich heritage and tradition',
+      'Limited production numbers'
+    ],
+    love: [
+      'Rich historical significance',
+      'Commitment to mechanical watchmaking',
+      'Exceptional finishing and craftsmanship',
+      'Strong investment value for rare pieces',
+      'Excellent customer service',
+      'Distinctive design language',
+      'Strong secondary market performance'
+    ],
+    hate: [
+      'Some models can be difficult to obtain',
+      'High price point for basic models',
+      'Limited availability of sports watches',
+      'Some collectors find the designs too traditional',
+      'Complex pieces require regular maintenance',
+      'Limited brand recognition compared to competitors',
+      'Swatch Group ownership may limit independence'
+    ]
   },
   {
     id: 'piaget',
