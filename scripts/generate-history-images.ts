@@ -18,44 +18,84 @@ const replicate = new Replicate({
 // Enhanced prompts with more specific details and artistic direction
 const prompts = {
   sundial: {
-    prompt: "A detailed, photorealistic ancient Egyptian sundial, made of polished limestone, with precise hour markings and a bronze gnomon casting a sharp shadow. The sundial is placed in a desert landscape with the Great Pyramids in the background. The scene is captured during golden hour, with dramatic shadows and warm lighting. Professional photography, 8k resolution, shot on Hasselblad.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details"
+    prompt: "A dramatic, cinematic scene of an ancient Egyptian sundial at sunrise, casting a long shadow across golden desert sands. The sundial is ornately carved, with hieroglyphics and a gleaming bronze gnomon. The Great Pyramids and palm trees are silhouetted in the background, with vibrant colors and atmospheric lighting. 8k, shot on Hasselblad, epic composition.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
+  },
+  sundial_2: {
+    prompt: "A close-up, moody shot of a sundial in an ancient Egyptian temple courtyard, with priests in white linen robes performing a ritual. Sunbeams filter through columns, dust motes in the air, and the sundial's shadow falls on intricate hour lines. Warm, mystical lighting, 8k, shot on Hasselblad.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
   },
   waterClock: {
-    prompt: "A sophisticated ancient Greek water clock (clepsydra), crafted from bronze with intricate mythological engravings. Water flows gracefully through the mechanism, creating a mesmerizing effect. The clock is displayed in a classical Greek temple setting with marble columns and natural light streaming through. Professional photography, 8k resolution, museum quality lighting, shot on Phase One.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details"
+    prompt: "A visually stunning ancient Greek water clock (clepsydra) in action during a lively Athenian assembly. Water sparkles as it flows through the bronze vessel, surrounded by animated philosophers and orators in colorful togas. The Parthenon and marble columns rise in the background, with dramatic sunlight and dynamic composition. 8k, shot on Phase One, vibrant and energetic.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
+  },
+  waterClock_2: {
+    prompt: "A night scene in ancient Athens: a clepsydra water clock illuminated by oil lamps, casting flickering shadows on marble walls. A judge times a passionate speech, while the city glows in the distance. Rich colors, cinematic lighting, 8k, shot on Phase One, atmospheric and immersive.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
   },
   candleClock: {
-    prompt: "A medieval European candle clock with precisely marked intervals and ornate metal balls. The candle is partially burned, showing the passage of time through its elegant drips. Set in a medieval castle chamber with stone walls, torch lighting, and rich tapestries. Professional photography, 8k resolution, atmospheric lighting, shot on Leica.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details"
+    prompt: "A medieval candle clock burning in a stone-walled monastery at midnight. Monks in hooded robes chant by candlelight, with the candle's wax dripping onto a metal plate. Stained glass windows cast colorful patterns, and the scene is filled with mystery and reverence. 8k, shot on Leica, moody and evocative.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
+  },
+  candleClock_2: {
+    prompt: "A close-up of a candle clock in a medieval scriptorium, surrounded by illuminated manuscripts, quills, and ink pots. The candle's flame flickers, casting dramatic shadows on ancient parchment. Warm, intimate lighting, 8k, shot on Leica.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
   },
   incenseClock: {
-    prompt: "An ornate Chinese incense clock from the Song Dynasty, featuring delicately carved wooden frame and marked incense sticks. The incense burns with a subtle smoke effect, creating an ethereal atmosphere. Set in a traditional Chinese temple with red lacquered pillars and hanging lanterns. Professional photography, 8k resolution, ethereal lighting, shot on Fujifilm GFX.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details"
+    prompt: "A Song Dynasty incense clock burning in a lavish Chinese palace. Courtiers in silk robes admire the intricate wooden frame as fragrant smoke curls upward, illuminated by lanterns and moonlight. The scene is rich with color, texture, and cultural detail. 8k, shot on Fujifilm GFX, lush and atmospheric.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
+  },
+  incenseClock_2: {
+    prompt: "A poetic scene of a scholar's study: an incense clock burns beside calligraphy scrolls, jade figurines, and a window overlooking a moonlit garden. Soft, ethereal lighting, 8k, shot on Fujifilm GFX, tranquil and inspiring.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
   },
   mechanicalClock: {
-    prompt: "A large, intricate 13th-century European mechanical clock tower with visible brass gears and weights. The clock face shows Roman numerals and has astronomical indicators with celestial bodies. Set in a medieval cathedral with stained glass windows casting colorful light. Professional photography, 8k resolution, dramatic lighting, shot on Canon EOS R5.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details"
+    prompt: "A grand 13th-century European clock tower at dawn, gears and weights visible through open panels. Townsfolk gather in the square as the clock chimes, with mist swirling around gothic arches and stained glass. Epic, cinematic lighting, 8k, shot on Canon EOS R5, full of life and movement.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
+  },
+  mechanicalClock_2: {
+    prompt: "Inside a medieval clockmaker's workshop: a craftsman assembles a complex clock mechanism, surrounded by tools, blueprints, and candlelight. Brass gears gleam, and the atmosphere is one of invention and discovery. 8k, shot on Canon EOS R5, warm and detailed.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
   },
   pendulumClock: {
-    prompt: "A beautiful 17th-century pendulum clock by Christiaan Huygens, crafted from polished brass and rich mahogany. The pendulum swings with perfect precision, and the clock shows intricate craftsmanship with visible escapement mechanism. Set in a Dutch study with period furniture and natural light. Professional photography, 8k resolution, natural lighting, shot on Nikon Z9.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details"
+    prompt: "A stately 17th-century Dutch home with a grand pendulum clock as the centerpiece. Sunlight streams through leaded windows, illuminating the polished wood and brass. Family members gather, reflecting on the passage of time. 8k, shot on Nikon Z9, elegant and nostalgic.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
+  },
+  pendulumClock_2: {
+    prompt: "A scientific demonstration of a pendulum clock in an 18th-century observatory, with astronomers recording data and celestial charts on the walls. The pendulum swings in perfect rhythm, bathed in cool, focused light. 8k, shot on Nikon Z9, intellectual and inspiring.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
   },
   pocketWatch: {
-    prompt: "An elegant 19th-century pocket watch with gold casing and intricate engravings depicting maritime scenes. The watch is open, revealing the mechanical movement with visible balance wheel and jewels. Set on a velvet cushion in a Victorian study with leather-bound books. Professional photography, 8k resolution, studio lighting, shot on Sony A1.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details"
+    prompt: "A Victorian-era train station bustling with travelers, a gentleman checks his ornate gold pocket watch as steam billows from a locomotive. The watch glints in the sunlight, and the scene is filled with energy and anticipation. 8k, shot on Sony A1, vibrant and cinematic.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
+  },
+  pocketWatch_2: {
+    prompt: "A close-up of a pocket watch resting on a velvet cushion, gears exposed and ticking, surrounded by handwritten letters and a quill. Soft, nostalgic lighting, 8k, shot on Sony A1, intimate and detailed.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details, boring, static"
   },
   atomicClock: {
-    prompt: "A modern atomic clock laboratory setup with the NIST-F1 cesium atomic clock. The room is immaculately clean and high-tech, with monitoring equipment displaying precise measurements. Blue LED indicators and holographic displays create a futuristic atmosphere. Professional photography, 8k resolution, clinical lighting, shot on Hasselblad X2D.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, outdated technology, messy environment"
+    prompt: "A futuristic atomic clock laboratory with glowing blue LED panels, scientists in lab coats, and holographic displays showing nanosecond precision. The room is sleek, high-tech, and filled with a sense of discovery. 8k, shot on Hasselblad X2D, sci-fi and awe-inspiring.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, outdated technology, messy environment, boring, static"
+  },
+  atomicClock_2: {
+    prompt: "A dramatic close-up of an atomic clock's core, with cesium atoms suspended in a glowing magnetic field. Digital readouts and laser beams create a sense of cutting-edge science. 8k, shot on Hasselblad X2D, visually striking and modern.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, outdated technology, messy environment, boring, static"
   },
   timeZones: {
-    prompt: "A modern world map showing time zones, with a clean, minimalist design. The map is displayed on a high-tech screen in a control room with multiple monitors showing real-time data. Blue LED lighting creates an immersive atmosphere. Professional photography, 8k resolution, ambient lighting, shot on Canon EOS R3.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, outdated design, cluttered interface"
+    prompt: "A vibrant, interactive world map in a global control center, with time zones highlighted in neon colors. Operators monitor real-time data on massive digital screens, and the room buzzes with international activity. 8k, shot on Canon EOS R3, energetic and futuristic.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, outdated design, cluttered interface, boring, static"
+  },
+  timeZones_2: {
+    prompt: "A creative visualization of time zones: clocks from around the world float above a spinning globe, each showing a different time. The background is deep blue with stars, and the scene is imaginative and playful. 8k, shot on Canon EOS R3, whimsical and colorful.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, outdated design, cluttered interface, boring, static"
   },
   digitalClock: {
-    prompt: "A sleek, modern digital clock with LED display, showing the time in a minimalist design. The clock is placed in a contemporary home setting with clean lines and modern furniture. Ambient lighting creates a warm, inviting atmosphere. Professional photography, 8k resolution, natural lighting, shot on Leica Q3.",
-    negative_prompt: "blurry, low quality, distorted, unrealistic, cartoon, illustration, painting, drawing, sketch, outdated design, cluttered environment"
+    prompt: "A modern cityscape at night, skyscrapers illuminated by digital clocks and neon signs. The scene is lively, with people checking the time on smartwatches and phones. Reflections shimmer on wet pavement, and the atmosphere is urban and dynamic. 8k, shot on Leica Q3, vibrant and contemporary.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, outdated design, cluttered environment, boring, static"
+  },
+  digitalClock_2: {
+    prompt: "A close-up of a digital alarm clock on a minimalist bedside table, glowing softly in the early morning. A hand reaches to turn off the alarm, and sunlight streams through sheer curtains. 8k, shot on Leica Q3, peaceful and relatable.",
+    negative_prompt: "blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, outdated design, cluttered environment, boring, static"
   }
 };
 

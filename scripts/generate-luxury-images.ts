@@ -1,11 +1,7 @@
+import 'dotenv/config';
 import Replicate from 'replicate';
-import fs from 'fs/promises';
 import path from 'path';
-import dotenv from 'dotenv';
-import sharp from 'sharp';
-
-// Load environment variables from the root .env file
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+import fs from 'fs/promises';
 
 if (!process.env.REPLICATE_API_TOKEN) {
   console.error('Error: REPLICATE_API_TOKEN is not set in .env file');
@@ -80,104 +76,55 @@ async function loadCache() {
   }
 }
 
-async function saveCache(cache: any) {
+async function saveCache(cache: Record<string, boolean>) {
   await fs.writeFile(CACHE_FILE, JSON.stringify(cache, null, 2));
 }
 
-const MAX_RETRIES = 3;
-const RETRY_DELAY = 5000; // 5 seconds
-
-async function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-async function generateImage(key: string, prompt: any, outputPath: string, retryCount = 0) {
-  try {
-    console.log(`Generating image for: ${key}${retryCount > 0 ? ` (Attempt ${retryCount + 1}/${MAX_RETRIES})` : ''}`);
-    
-    const output = await replicate.run(
-      "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
-      {
-        input: {
-          prompt: prompt.prompt,
-          negative_prompt: prompt.negative_prompt,
-          width: 1024,
-          height: 768,
-          num_outputs: 1,
-          scheduler: "K_EULER",
-          num_inference_steps: 50,
-          guidance_scale: 7.5,
-          refine: "expert_ensemble_refiner",
-          high_noise_frac: 0.8,
-        }
+async function generateImage(key: string, prompt: string, negative_prompt: string) {
+  console.log(`Generating image for ${key}...`);
+  
+  const output = await replicate.run(
+    "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
+    {
+      input: {
+        prompt,
+        negative_prompt,
+        width: 1024,
+        height: 1024,
+        num_outputs: 1,
+        scheduler: "K_EULER",
+        num_inference_steps: 50,
+        guidance_scale: 7.5,
+        refine: "expert_ensemble_refiner",
+        high_noise_frac: 0.8,
       }
-    );
+    }
+  );
 
-    if (Array.isArray(output) && output[0]) {
-      const imageUrl = output[0];
-      const response = await fetch(imageUrl);
-      const buffer = await response.arrayBuffer();
-      
-      // Optimize the image using Sharp
-      await sharp(Buffer.from(buffer))
-        .resize(1024, 768, {
-          fit: 'contain',
-          background: { r: 0, g: 0, b: 0, alpha: 0 }
-        })
-        .webp({
-          quality: 80,
-          effort: 6
-        })
-        .toFile(outputPath);
-        
-      console.log(`Successfully saved and optimized image to: ${outputPath}`);
-      return true;
-    }
-    return false;
-  } catch (error) {
-    console.error(`Error generating image for ${key}:`, error);
-    
-    if (retryCount < MAX_RETRIES - 1) {
-      console.log(`Retrying in ${RETRY_DELAY/1000} seconds...`);
-      await sleep(RETRY_DELAY);
-      return generateImage(key, prompt, outputPath, retryCount + 1);
-    }
-    
-    return false;
+  if (Array.isArray(output) && output[0]) {
+    const imageUrl = output[0];
+    const response = await fetch(imageUrl);
+    const buffer = await response.arrayBuffer();
+    await fs.writeFile(
+      path.join(process.cwd(), 'public', 'images', 'luxury', 'ai', `${key}.jpg`),
+      Buffer.from(buffer)
+    );
+    return true;
   }
+  return false;
 }
 
 async function main() {
   const cache = await loadCache();
-  const outputDir = path.join(process.cwd(), 'public', 'images', 'luxury', 'optimized');
   
-  // Ensure output directory exists
-  await fs.mkdir(outputDir, { recursive: true });
-
-  const failedImages: string[] = [];
-
   for (const [key, prompt] of Object.entries(prompts)) {
-    const outputPath = path.join(outputDir, `${key}.webp`);
-    
-    // Skip if image already exists and is in cache
-    if (cache[key] && await fs.access(outputPath).then(() => true).catch(() => false)) {
-      console.log(`Skipping ${key} - already exists`);
-      continue;
+    if (!cache[key]) {
+      const success = await generateImage(key, prompt.prompt, prompt.negative_prompt);
+      if (success) {
+        cache[key] = true;
+        await saveCache(cache);
+      }
     }
-
-    const success = await generateImage(key, prompt, outputPath);
-    if (success) {
-      cache[key] = true;
-      await saveCache(cache);
-    } else {
-      failedImages.push(key);
-    }
-  }
-
-  if (failedImages.length > 0) {
-    console.error('\nFailed to generate the following images:');
-    failedImages.forEach(key => console.error(`- ${key}`));
-    process.exit(1);
   }
 }
 
