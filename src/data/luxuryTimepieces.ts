@@ -11,16 +11,37 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Nautilus 5711',
         newPrice: '$35,000 - $45,000',
         usedPrice: '$80,000 - $120,000',
-        description: 'The iconic sports watch with a distinctive porthole design.'
+        description: 'The iconic sports watch with a distinctive porthole design.',
+        imageUrl: '/images/luxury/models/patek-philippe-nautilus-5711.jpg',
       },
       {
         name: 'Calatrava 5196',
         newPrice: '$22,000 - $28,000',
         usedPrice: '$18,000 - $25,000',
-        description: 'Classic dress watch known for its elegant simplicity.'
+        description: 'Classic dress watch known for its elegant simplicity.',
+        imageUrl: '/images/luxury/models/patek-philippe-calatrava-5196.jpg',
       }
     ],
-    imageUrl: '/images/luxury/patek-philippe.jpg'
+    imageUrl: '/images/luxury/patek-philippe.jpg',
+    standout: [
+      'Unparalleled craftsmanship and finishing',
+      'Family-owned independence',
+      'Extremely limited production',
+      'Most complicated mechanical watches ever made',
+      'Highest auction prices in the world',
+    ],
+    love: [
+      'Ultimate status symbol among collectors',
+      'Incredible attention to detail',
+      'Strong investment value',
+      'Rich heritage and tradition',
+    ],
+    hate: [
+      'Extremely difficult to purchase at retail',
+      'Long waiting lists',
+      'High entry price',
+      'Some see the hype as excessive',
+    ],
   },
   {
     id: 'audemars-piguet',
@@ -32,16 +53,34 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Royal Oak 15500',
         newPrice: '$22,000 - $28,000',
         usedPrice: '$35,000 - $45,000',
-        description: 'The iconic octagonal sports watch with integrated bracelet.'
+        description: 'The iconic octagonal sports watch with integrated bracelet.',
+        imageUrl: '/images/luxury/models/audemars-piguet-royal-oak-15500.jpg',
       },
       {
         name: 'Royal Oak Offshore',
         newPrice: '$30,000 - $45,000',
         usedPrice: '$25,000 - $40,000',
-        description: 'Larger, more sporty version of the Royal Oak.'
+        description: 'Larger, more sporty version of the Royal Oak.',
+        imageUrl: '/images/luxury/models/audemars-piguet-royal-oak-offshore.jpg',
       }
     ],
-    imageUrl: '/images/luxury/audemars-piguet.jpg'
+    imageUrl: '/images/luxury/audemars-piguet.jpg',
+    standout: [
+      'Inventor of the luxury sports watch (Royal Oak)',
+      'Bold, instantly recognizable design',
+      'Independent, family-owned',
+      'Innovative use of materials',
+    ],
+    love: [
+      'Royal Oak is a design icon',
+      'Strong brand identity',
+      'Excellent finishing and movement work',
+    ],
+    hate: [
+      'Royal Oak hype overshadows other models',
+      'Very high prices for steel watches',
+      'Some dislike the angular design',
+    ],
   },
   {
     id: 'vacheron-constantin',
@@ -53,13 +92,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Overseas',
         newPrice: '$22,000 - $35,000',
         usedPrice: '$18,000 - $30,000',
-        description: 'Luxury sports watch with interchangeable straps.'
+        description: 'Luxury sports watch with interchangeable straps.',
+        imageUrl: '/images/luxury/models/vacheron-constantin-overseas.jpg',
       },
       {
         name: 'Patrimony',
         newPrice: '$18,000 - $25,000',
         usedPrice: '$15,000 - $22,000',
-        description: 'Classic dress watch with minimalist design.'
+        description: 'Classic dress watch with minimalist design.',
+        imageUrl: '/images/luxury/models/vacheron-constantin-patrimony.jpg',
       }
     ],
     imageUrl: '/images/luxury/vacheron-constantin.jpg'
@@ -74,13 +115,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Submariner',
         newPrice: '$9,100 - $10,100',
         usedPrice: '$12,000 - $20,000',
-        description: 'Iconic diving watch with rotating bezel.'
+        description: 'Iconic diving watch with rotating bezel.',
+        imageUrl: '/images/luxury/models/rolex-submariner.jpg',
       },
       {
         name: 'Daytona',
         newPrice: '$13,150 - $14,150',
         usedPrice: '$25,000 - $40,000',
-        description: 'Legendary chronograph watch.'
+        description: 'Legendary chronograph watch.',
+        imageUrl: '/images/luxury/models/rolex-daytona.jpg',
       }
     ],
     imageUrl: '/images/luxury/rolex.jpg'
@@ -95,13 +138,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'RM 011',
         newPrice: '$150,000 - $200,000',
         usedPrice: '$120,000 - $180,000',
-        description: 'Flying tourbillon chronograph with annual calendar.'
+        description: 'Flying tourbillon chronograph with annual calendar.',
+        imageUrl: '/images/luxury/models/richard-mille-rm-011.jpg',
       },
       {
         name: 'RM 035',
         newPrice: '$80,000 - $100,000',
         usedPrice: '$70,000 - $90,000',
-        description: 'Ultra-light automatic movement.'
+        description: 'Ultra-light automatic movement.',
+        imageUrl: '/images/luxury/models/richard-mille-rm-035.jpg',
       }
     ],
     imageUrl: '/images/luxury/richard-mille.jpg'
@@ -116,13 +161,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Reverso',
         newPrice: '$7,000 - $15,000',
         usedPrice: '$5,000 - $12,000',
-        description: 'Art Deco-inspired reversible watch.'
+        description: 'Art Deco-inspired reversible watch.',
+        imageUrl: '/images/luxury/models/jaeger-lecoultre-reverso.jpg',
       },
       {
         name: 'Master Ultra Thin',
         newPrice: '$8,000 - $12,000',
         usedPrice: '$6,000 - $10,000',
-        description: 'Elegant dress watch with ultra-thin movement.'
+        description: 'Elegant dress watch with ultra-thin movement.',
+        imageUrl: '/images/luxury/models/jaeger-lecoultre-master-ultra-thin.jpg',
       }
     ],
     imageUrl: '/images/luxury/jaeger-lecoultre.jpg'
@@ -137,13 +184,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Lange 1',
         newPrice: '$40,000 - $50,000',
         usedPrice: '$35,000 - $45,000',
-        description: 'Iconic asymmetric dial design.'
+        description: 'Iconic asymmetric dial design.',
+        imageUrl: '/images/luxury/models/a-lange-sohne-lange-1.jpg',
       },
       {
         name: 'Datograph',
         newPrice: '$80,000 - $100,000',
         usedPrice: '$70,000 - $90,000',
-        description: 'Highly regarded chronograph movement.'
+        description: 'Highly regarded chronograph movement.',
+        imageUrl: '/images/luxury/models/a-lange-sohne-datograph.jpg',
       }
     ],
     imageUrl: '/images/luxury/a-lange-sohne.jpg'
@@ -158,13 +207,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Classique',
         newPrice: '$20,000 - $30,000',
         usedPrice: '$15,000 - $25,000',
-        description: 'Traditional dress watch with guilloché dial.'
+        description: 'Traditional dress watch with guilloché dial.',
+        imageUrl: '/images/luxury/models/breguet-classique.jpg',
       },
       {
         name: 'Marine',
         newPrice: '$25,000 - $35,000',
         usedPrice: '$20,000 - $30,000',
-        description: 'Sporty yet elegant timepiece.'
+        description: 'Sporty yet elegant timepiece.',
+        imageUrl: '/images/luxury/models/breguet-marine.jpg',
       }
     ],
     imageUrl: '/images/luxury/breguet.jpg'
@@ -179,13 +230,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Fifty Fathoms',
         newPrice: '$15,000 - $20,000',
         usedPrice: '$12,000 - $18,000',
-        description: 'Iconic diving watch.'
+        description: 'Iconic diving watch.',
+        imageUrl: '/images/luxury/models/blancpain-fifty-fathoms.jpg',
       },
       {
         name: 'Villeret',
         newPrice: '$10,000 - $15,000',
         usedPrice: '$8,000 - $12,000',
-        description: 'Classic dress watch collection.'
+        description: 'Classic dress watch collection.',
+        imageUrl: '/images/luxury/models/blancpain-villeret.jpg',
       }
     ],
     imageUrl: '/images/luxury/blancpain.jpg'
@@ -200,13 +253,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Altiplano',
         newPrice: '$20,000 - $30,000',
         usedPrice: '$15,000 - $25,000',
-        description: 'Ultra-thin dress watch.'
+        description: 'Ultra-thin dress watch.',
+        imageUrl: '/images/luxury/models/piaget-altiplano.jpg',
       },
       {
         name: 'Polo',
         newPrice: '$25,000 - $35,000',
         usedPrice: '$20,000 - $30,000',
-        description: 'Sporty luxury watch with distinctive design.'
+        description: 'Sporty luxury watch with distinctive design.',
+        imageUrl: '/images/luxury/models/piaget-polo.jpg',
       }
     ],
     imageUrl: '/images/luxury/piaget.jpg'
@@ -221,13 +276,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Laureato',
         newPrice: '$12,000 - $20,000',
         usedPrice: '$10,000 - $18,000',
-        description: 'Sporty luxury watch with integrated bracelet.'
+        description: 'Sporty luxury watch with integrated bracelet.',
+        imageUrl: '/images/luxury/models/girard-perregaux-laureato.jpg',
       },
       {
         name: '1966',
         newPrice: '$15,000 - $25,000',
         usedPrice: '$12,000 - $20,000',
-        description: 'Classic dress watch collection.'
+        description: 'Classic dress watch collection.',
+        imageUrl: '/images/luxury/models/girard-perregaux-1966.jpg',
       }
     ],
     imageUrl: '/images/luxury/girard-perregaux.jpg'
@@ -242,13 +299,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Tank',
         newPrice: '$3,000 - $8,000',
         usedPrice: '$2,500 - $7,000',
-        description: 'Iconic rectangular watch design.'
+        description: 'Iconic rectangular watch design.',
+        imageUrl: '/images/luxury/models/cartier-tank.jpg',
       },
       {
         name: 'Santos',
         newPrice: '$6,000 - $10,000',
         usedPrice: '$5,000 - $9,000',
-        description: 'First pilot watch with distinctive square case.'
+        description: 'First pilot watch with distinctive square case.',
+        imageUrl: '/images/luxury/models/cartier-santos.jpg',
       }
     ],
     imageUrl: '/images/luxury/cartier.jpg'
@@ -263,13 +322,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Speedmaster',
         newPrice: '$5,000 - $8,000',
         usedPrice: '$4,000 - $7,000',
-        description: 'The Moonwatch, first watch on the moon.'
+        description: 'The Moonwatch, first watch on the moon.',
+        imageUrl: '/images/luxury/models/omega-speedmaster.jpg',
       },
       {
         name: 'Seamaster',
         newPrice: '$4,000 - $7,000',
         usedPrice: '$3,000 - $6,000',
-        description: 'Iconic diving watch collection.'
+        description: 'Iconic diving watch collection.',
+        imageUrl: '/images/luxury/models/omega-seamaster.jpg',
       }
     ],
     imageUrl: '/images/luxury/omega.jpg'
@@ -284,13 +345,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Pilot\'s Watch',
         newPrice: '$5,000 - $10,000',
         usedPrice: '$4,000 - $8,000',
-        description: 'Classic pilot watch collection.'
+        description: 'Classic pilot watch collection.',
+        imageUrl: '/images/luxury/models/iwc-pilots-watch.jpg',
       },
       {
         name: 'Portugieser',
         newPrice: '$7,000 - $15,000',
         usedPrice: '$6,000 - $12,000',
-        description: 'Elegant watch with Portuguese heritage.'
+        description: 'Elegant watch with Portuguese heritage.',
+        imageUrl: '/images/luxury/models/iwc-portugieser.jpg',
       }
     ],
     imageUrl: '/images/luxury/iwc.jpg'
@@ -305,13 +368,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Luminor',
         newPrice: '$8,000 - $15,000',
         usedPrice: '$6,000 - $12,000',
-        description: 'Iconic watch with crown protection device.'
+        description: 'Iconic watch with crown protection device.',
+        imageUrl: '/images/luxury/models/panerai-luminor.jpg',
       },
       {
         name: 'Radiomir',
         newPrice: '$7,000 - $12,000',
         usedPrice: '$5,000 - $10,000',
-        description: 'Classic cushion-shaped case design.'
+        description: 'Classic cushion-shaped case design.',
+        imageUrl: '/images/luxury/models/panerai-radiomir.jpg',
       }
     ],
     imageUrl: '/images/luxury/panerai.jpg'
@@ -326,13 +391,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Big Bang',
         newPrice: '$15,000 - $30,000',
         usedPrice: '$12,000 - $25,000',
-        description: 'Iconic modern sports watch.'
+        description: 'Iconic modern sports watch.',
+        imageUrl: '/images/luxury/models/hublot-big-bang.jpg',
       },
       {
         name: 'Classic Fusion',
         newPrice: '$8,000 - $15,000',
         usedPrice: '$6,000 - $12,000',
-        description: 'Elegant fusion of classic and modern design.'
+        description: 'Elegant fusion of classic and modern design.',
+        imageUrl: '/images/luxury/models/hublot-classic-fusion.jpg',
       }
     ],
     imageUrl: '/images/luxury/hublot.jpg'
@@ -347,13 +414,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Chronomaster',
         newPrice: '$8,000 - $12,000',
         usedPrice: '$6,000 - $10,000',
-        description: 'Featuring the legendary El Primero movement.'
+        description: 'Featuring the legendary El Primero movement.',
+        imageUrl: '/images/luxury/models/zenith-chronomaster.jpg',
       },
       {
         name: 'Defy',
         newPrice: '$10,000 - $20,000',
         usedPrice: '$8,000 - $15,000',
-        description: 'Modern collection with innovative materials.'
+        description: 'Modern collection with innovative materials.',
+        imageUrl: '/images/luxury/models/zenith-defy.jpg',
       }
     ],
     imageUrl: '/images/luxury/zenith.jpg'
@@ -368,13 +437,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Marine',
         newPrice: '$10,000 - $20,000',
         usedPrice: '$8,000 - $15,000',
-        description: 'Modern interpretation of marine chronometers.'
+        description: 'Modern interpretation of marine chronometers.',
+        imageUrl: '/images/luxury/models/ulysse-nardin-marine.jpg',
       },
       {
         name: 'Freak',
         newPrice: '$50,000 - $100,000',
         usedPrice: '$40,000 - $80,000',
-        description: 'Revolutionary design with carousel movement.'
+        description: 'Revolutionary design with carousel movement.',
+        imageUrl: '/images/luxury/models/ulysse-nardin-freak.jpg',
       }
     ],
     imageUrl: '/images/luxury/ulysse-nardin.jpg'
@@ -389,13 +460,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'PanoMaticLunar',
         newPrice: '$12,000 - $15,000',
         usedPrice: '$10,000 - $12,000',
-        description: 'Classic dress watch with moon phase.'
+        description: 'Classic dress watch with moon phase.',
+        imageUrl: '/images/luxury/models/glashutte-original-panomatic-lunar.jpg',
       },
       {
         name: 'Senator',
         newPrice: '$15,000 - $25,000',
         usedPrice: '$12,000 - $20,000',
-        description: 'Elegant collection with various complications.'
+        description: 'Elegant collection with various complications.',
+        imageUrl: '/images/luxury/models/glashutte-original-senator.jpg',
       }
     ],
     imageUrl: '/images/luxury/glashutte-original.jpg'
@@ -410,13 +483,15 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         name: 'Crazy Hours',
         newPrice: '$30,000 - $50,000',
         usedPrice: '$25,000 - $40,000',
-        description: 'Revolutionary jumping hours display.'
+        description: 'Revolutionary jumping hours display.',
+        imageUrl: '/images/luxury/models/frank-muller-crazy-hours.jpg',
       },
       {
         name: 'Vanguard',
         newPrice: '$20,000 - $40,000',
         usedPrice: '$15,000 - $30,000',
-        description: 'Modern sports watch collection.'
+        description: 'Modern sports watch collection.',
+        imageUrl: '/images/luxury/models/frank-muller-vanguard.jpg',
       }
     ],
     imageUrl: '/images/luxury/frank-muller.jpg'

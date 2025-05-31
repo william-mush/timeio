@@ -3,6 +3,7 @@ export interface NotableModel {
   newPrice: string;
   usedPrice: string;
   description: string;
+  imageUrl?: string;
 }
 
 export interface LuxuryTimepiece {
@@ -12,4 +13,7 @@ export interface LuxuryTimepiece {
   history: string;
   notableModels: NotableModel[];
   imageUrl: string;
+  standout?: string[];
+  love?: string[];
+  hate?: string[];
 } 

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import Replicate from 'replicate';
 import path from 'path';
 import fs from 'fs/promises';
+import { luxuryTimepieces } from '../src/data/luxuryTimepieces';
 
 if (!process.env.REPLICATE_API_TOKEN) {
   console.error('Error: REPLICATE_API_TOKEN is not set in .env file');
@@ -146,6 +147,45 @@ async function generateImage(key: string, prompt: any) {
   return false;
 }
 
+async function generateModelImages() {
+  for (const brand of luxuryTimepieces) {
+    for (const model of brand.notableModels) {
+      // Create a prompt for the model
+      const prompt = `${brand.name} ${model.name}, luxury watch, professional studio lighting, product photography, 8k, highly detailed, on white background`;
+      const negative_prompt = 'blurry, low quality, distorted, cartoon, illustration, painting, drawing, sketch, modern elements, anachronistic details';
+      const key = `${brand.id}-${model.name.toLowerCase().replace(/\s+/g, '-')}`;
+      const outPath = path.join(process.cwd(), 'public', 'images', 'luxury', 'models', `${key}.jpg`);
+      // Skip if already exists
+      try { await fs.access(outPath); continue; } catch {}
+      console.log(`Generating model image for ${brand.name} - ${model.name}...`);
+      const output = await replicate.run(
+        "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
+        {
+          input: {
+            prompt,
+            negative_prompt,
+            width: 1024,
+            height: 1024,
+            num_outputs: 1,
+            scheduler: "K_EULER",
+            num_inference_steps: 50,
+            guidance_scale: 7.5,
+            refine: "expert_ensemble_refiner",
+            high_noise_frac: 0.8,
+          }
+        }
+      );
+      if (Array.isArray(output) && output[0]) {
+        const imageUrl = output[0];
+        const response = await fetch(imageUrl);
+        const buffer = await response.arrayBuffer();
+        await fs.mkdir(path.dirname(outPath), { recursive: true });
+        await fs.writeFile(outPath, Buffer.from(buffer));
+      }
+    }
+  }
+}
+
 async function main() {
   const cache = await loadCache();
   
@@ -158,6 +198,8 @@ async function main() {
       }
     }
   }
+  // Generate model images
+  await generateModelImages();
 }
 
 main().catch(console.error); 
