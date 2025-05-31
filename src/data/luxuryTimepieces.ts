@@ -85,48 +85,116 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
   {
     id: 'vacheron-constantin',
     name: 'Vacheron Constantin',
-    description: 'Founded in 1755, Vacheron Constantin is the oldest continuously operating watch manufacturer in the world.',
-    history: 'Based in Geneva, Switzerland, Vacheron Constantin is known for their exceptional craftsmanship and complex movements.',
+    description: 'Founded in 1755, Vacheron Constantin is the world\'s oldest watch manufacturer in continuous operation, representing the pinnacle of traditional Swiss watchmaking.',
+    history: 'Established by Jean-Marc Vacheron in Geneva, Switzerland, Vacheron Constantin has maintained uninterrupted production for over 265 years. The brand\'s partnership with François Constantin in 1819 led to the famous motto "Do better if possible, and that is always possible." Throughout its history, Vacheron Constantin has created some of the most complicated watches ever made, including the 57260 (the most complicated mechanical watch ever created) and the Tour de l\'Île (the most complicated wristwatch at its time of creation). The brand has been owned by the Richemont Group since 1996 but maintains its independence in terms of design and production.',
     notableModels: [
       {
         name: 'Overseas',
         newPrice: '$22,000 - $35,000',
         usedPrice: '$18,000 - $30,000',
-        description: 'Luxury sports watch with interchangeable straps.',
+        description: 'The brand\'s luxury sports watch, featuring an interchangeable strap system and a distinctive Maltese cross-inspired bezel. The latest generation includes a 22K gold rotor and improved water resistance.',
         imageUrl: '/images/luxury/models/vacheron-constantin-overseas.jpg',
       },
       {
         name: 'Patrimony',
         newPrice: '$18,000 - $25,000',
         usedPrice: '$15,000 - $22,000',
-        description: 'Classic dress watch with minimalist design.',
+        description: 'A collection of ultra-thin dress watches that embody classical elegance. The Patrimony Traditionnelle models feature traditional watchmaking techniques and the Geneva Seal.',
         imageUrl: '/images/luxury/models/vacheron-constantin-patrimony.jpg',
+      },
+      {
+        name: 'Historiques 222',
+        newPrice: '$65,000 - $75,000',
+        usedPrice: '$55,000 - $65,000',
+        description: 'A modern reissue of the iconic 1977 sports watch that predated the Royal Oak and Nautilus. Features a distinctive integrated bracelet and ultra-thin automatic movement.',
+        imageUrl: '/images/luxury/models/vacheron-constantin-222.jpg',
       }
     ],
-    imageUrl: '/images/luxury/vacheron-constantin.jpg'
+    imageUrl: '/images/luxury/vacheron-constantin.jpg',
+    standout: [
+      'World\'s oldest watch manufacturer in continuous operation',
+      'Creator of the most complicated mechanical watch ever made (57260)',
+      'Exceptional finishing and movement decoration',
+      'Strong commitment to traditional watchmaking techniques',
+      'Innovative complications while maintaining classical aesthetics',
+      'Limited production of only about 20,000 watches annually',
+      'Home to the Les Cabinotiers department for unique pieces'
+    ],
+    love: [
+      'Unparalleled heritage and tradition',
+      'Exceptional attention to detail and finishing',
+      'Strong investment value for rare and complicated pieces',
+      'Elegant, timeless designs that never go out of style',
+      'Commitment to preserving traditional watchmaking techniques',
+      'Excellent customer service and after-sales support',
+      'Strong secondary market performance for limited editions'
+    ],
+    hate: [
+      'Some models can be difficult to obtain at retail',
+      'Limited production numbers mean long waiting lists',
+      'High entry price point for basic models',
+      'Some collectors find the designs too conservative',
+      'Limited availability of sports models compared to competitors',
+      'Complex pieces require regular maintenance',
+      'Some see the Richemont ownership as diluting independence'
+    ]
   },
   {
     id: 'rolex',
     name: 'Rolex',
-    description: 'Founded in 1905, Rolex is the most recognized luxury watch brand globally, known for their reliability and prestige.',
-    history: 'Based in Geneva, Switzerland, Rolex has pioneered numerous innovations in watchmaking, including the first waterproof watch case.',
+    description: 'Founded in 1905 by Hans Wilsdorf, Rolex is the world\'s most recognized luxury watch brand, known for its reliability, innovation, and iconic designs that have defined entire watch categories.',
+    history: 'Rolex revolutionized watchmaking with numerous industry firsts: the first waterproof watch case (Oyster, 1926), the first self-winding mechanism (Perpetual, 1931), and the first watch to show two time zones simultaneously (GMT-Master, 1954). The brand\'s watches have accompanied explorers to the highest peaks (Everest), deepest oceans (Mariana Trench), and even the moon (Apollo missions). Rolex maintains complete vertical integration, manufacturing nearly every component in-house, from the gold alloys to the synthetic rubies. The brand produces approximately 1 million watches annually, each subject to rigorous testing and quality control.',
     notableModels: [
       {
         name: 'Submariner',
         newPrice: '$9,100 - $10,100',
         usedPrice: '$12,000 - $20,000',
-        description: 'Iconic diving watch with rotating bezel.',
+        description: 'The world\'s most iconic diving watch, introduced in 1953. Features a unidirectional rotating bezel, luminescent markers, and water resistance to 300 meters. The latest generation (126610) includes the improved 3235 movement with 70-hour power reserve.',
         imageUrl: '/images/luxury/models/rolex-submariner.jpg',
       },
       {
         name: 'Daytona',
         newPrice: '$13,150 - $14,150',
         usedPrice: '$25,000 - $40,000',
-        description: 'Legendary chronograph watch.',
+        description: 'The legendary chronograph watch, named after the famous Florida race track. Features a tachymetric scale, three sub-dials, and a highly accurate chronograph movement. The latest generation (126500) includes the improved 4131 movement with enhanced chronograph performance.',
         imageUrl: '/images/luxury/models/rolex-daytona.jpg',
+      },
+      {
+        name: 'GMT-Master II',
+        newPrice: '$10,700 - $11,700',
+        usedPrice: '$15,000 - $30,000',
+        description: 'The ultimate travel watch, featuring a 24-hour rotating bezel and an additional hour hand for tracking a second time zone. The latest generation (126710) includes the improved 3285 movement with 70-hour power reserve and enhanced precision.',
+        imageUrl: '/images/luxury/models/rolex-gmt-master.jpg',
       }
     ],
-    imageUrl: '/images/luxury/rolex.jpg'
+    imageUrl: '/images/luxury/rolex.jpg',
+    standout: [
+      'World\'s most recognized luxury watch brand',
+      'Complete vertical integration of manufacturing',
+      'Industry-leading quality control and testing',
+      'Iconic designs that have defined watch categories',
+      'Strong focus on reliability and durability',
+      'Extensive research in materials science',
+      'Unmatched brand recognition and resale value'
+    ],
+    love: [
+      'Exceptional reliability and durability',
+      'Strong investment value and resale market',
+      'Timeless, iconic designs',
+      'Excellent customer service and global support',
+      'Consistent quality across all models',
+      'Wide range of styles and complications',
+      'Strong brand recognition and prestige'
+    ],
+    hate: [
+      'Long waiting lists for popular models',
+      'Limited availability at authorized dealers',
+      'Some models trade significantly above retail',
+      'Conservative design updates',
+      'Limited customization options',
+      'Strict authorized dealer policies',
+      'Some see the brand as too mainstream'
+    ]
   },
   {
     id: 'richard-mille',
@@ -154,25 +222,59 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
   {
     id: 'jaeger-lecoultre',
     name: 'Jaeger-LeCoultre',
-    description: 'Founded in 1833, Jaeger-LeCoultre is known as the "watchmaker\'s watchmaker" for their exceptional movements.',
-    history: 'Based in Le Sentier, Switzerland, JLC has created over 1,200 different calibers and holds hundreds of patents.',
+    description: 'Founded in 1833 by Antoine LeCoultre, Jaeger-LeCoultre is known as the "watchmaker\'s watchmaker" for its exceptional movement manufacturing capabilities and technical innovations.',
+    history: 'Based in the Vallée de Joux, Switzerland, Jaeger-LeCoultre has created over 1,200 different calibers and holds hundreds of patents. The brand\'s partnership with French watchmaker Edmond Jaeger in 1903 led to the creation of ultra-thin movements that revolutionized watchmaking. JLC has supplied movements to other prestigious brands, including Patek Philippe, Vacheron Constantin, and Audemars Piguet. The brand is known for its innovative complications, including the Atmos clock (which runs on temperature changes), the Reverso (with its reversible case), and the Gyrotourbillon (a multi-axis tourbillon).',
     notableModels: [
       {
         name: 'Reverso',
         newPrice: '$7,000 - $15,000',
         usedPrice: '$5,000 - $12,000',
-        description: 'Art Deco-inspired reversible watch.',
+        description: 'The iconic Art Deco-inspired watch with a reversible case, originally designed for polo players. Features a unique swiveling case that protects the dial during sports. The latest generation includes complications like tourbillons, perpetual calendars, and minute repeaters.',
         imageUrl: '/images/luxury/models/jaeger-lecoultre-reverso.jpg',
       },
       {
         name: 'Master Ultra Thin',
         newPrice: '$8,000 - $12,000',
         usedPrice: '$6,000 - $10,000',
-        description: 'Elegant dress watch with ultra-thin movement.',
+        description: 'A collection of elegant dress watches featuring ultra-thin movements. The Perpetual Calendar model is one of the thinnest perpetual calendars ever made, while the Tourbillon model showcases JLC\'s technical expertise.',
         imageUrl: '/images/luxury/models/jaeger-lecoultre-master-ultra-thin.jpg',
+      },
+      {
+        name: 'Polaris',
+        newPrice: '$9,000 - $15,000',
+        usedPrice: '$7,000 - $12,000',
+        description: 'A modern sports watch collection inspired by the 1968 Memovox Polaris. Features an inner rotating bezel, water resistance to 200 meters, and a distinctive three-crown design. The latest generation includes chronograph and perpetual calendar models.',
+        imageUrl: '/images/luxury/models/jaeger-lecoultre-polaris.jpg',
       }
     ],
-    imageUrl: '/images/luxury/jaeger-lecoultre.jpg'
+    imageUrl: '/images/luxury/jaeger-lecoultre.jpg',
+    standout: [
+      'Creator of over 1,200 different calibers',
+      'Supplier of movements to other prestigious brands',
+      'Innovator in ultra-thin watchmaking',
+      'Home to the Atmos clock and Gyrotourbillon',
+      'Strong focus on technical innovation',
+      'Complete in-house manufacturing',
+      'Rich heritage in the Vallée de Joux'
+    ],
+    love: [
+      'Exceptional value for money',
+      'Technical innovation and complexity',
+      'Rich heritage and tradition',
+      'Wide range of styles and complications',
+      'Strong after-sales service',
+      'Commitment to preserving watchmaking skills',
+      'Excellent finishing and movement decoration'
+    ],
+    hate: [
+      'Some models can be difficult to service',
+      'Limited brand recognition compared to competitors',
+      'Some collectors find the designs too traditional',
+      'Complex pieces require regular maintenance',
+      'Limited availability of sports models',
+      'Some see the brand as too technical',
+      'Richemont ownership may limit independence'
+    ]
   },
   {
     id: 'a-lange-sohne',
