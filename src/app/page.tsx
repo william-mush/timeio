@@ -73,6 +73,16 @@ export default function Home() {
             <p className="text-muted text-sm md:text-base">Explore the solar system in 3D.</p>
           </Link>
 
+          <Link href="/history" className="card card-hover p-4 md:p-6">
+            <h2 className="heading-2 mb-2 md:mb-3 text-xl md:text-2xl">
+              History{' '}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                →
+              </span>
+            </h2>
+            <p className="text-muted text-sm md:text-base">Explore the fascinating history of timekeeping.</p>
+          </Link>
+
           <Link href="/settings" className="card card-hover p-4 md:p-6">
             <h2 className="heading-2 mb-2 md:mb-3 text-xl md:text-2xl">
               Settings{' '}
