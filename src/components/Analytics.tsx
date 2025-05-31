@@ -3,6 +3,7 @@
 import Script from 'next/script';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useEffect } from "react";
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 
 // Declare gtag and dataLayer on the window interface for TypeScript
 declare global {
@@ -43,11 +44,12 @@ export function Analytics() {
   // Don't render script if ID is missing
   if (!GA_MEASUREMENT_ID) {
     console.warn("Google Analytics MEASUREMENT ID is missing.");
-    return null;
+    return <VercelAnalytics />;
   }
 
   return (
     <>
+      <VercelAnalytics />
       <Script
         id="gtag-js"
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
