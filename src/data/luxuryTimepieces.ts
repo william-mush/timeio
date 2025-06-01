@@ -6,6 +6,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Patek Philippe',
     description: 'Founded in 1839, Patek Philippe is considered the most prestigious watch manufacturer in the world. Known for their exceptional craftsmanship and complex movements.',
     history: 'Established in Geneva, Switzerland, Patek Philippe has been creating timepieces for over 180 years. They are known for their perpetual calendar, minute repeater, and split-second chronograph complications.',
+    brandWebsite: 'https://www.patek.com',
     notableModels: [
       {
         name: 'Nautilus 5711',
@@ -48,6 +49,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Audemars Piguet',
     description: 'Founded in 1875, Audemars Piguet is renowned for their Royal Oak collection and innovative designs.',
     history: 'Based in Le Brassus, Switzerland, AP has been at the forefront of luxury watchmaking, particularly with their revolutionary Royal Oak design in 1972.',
+    brandWebsite: 'https://www.audemarspiguet.com',
     notableModels: [
       {
         name: 'Royal Oak 15500',
@@ -87,6 +89,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Vacheron Constantin',
     description: 'Founded in 1755, Vacheron Constantin is the world\'s oldest watch manufacturer in continuous operation, representing the pinnacle of traditional Swiss watchmaking.',
     history: 'Established by Jean-Marc Vacheron in Geneva, Switzerland, Vacheron Constantin has maintained uninterrupted production for over 265 years. The brand\'s partnership with François Constantin in 1819 led to the famous motto "Do better if possible, and that is always possible." Throughout its history, Vacheron Constantin has created some of the most complicated watches ever made, including the 57260 (the most complicated mechanical watch ever created) and the Tour de l\'Île (the most complicated wristwatch at its time of creation). The brand has been owned by the Richemont Group since 1996 but maintains its independence in terms of design and production.',
+    brandWebsite: 'https://www.vacheron-constantin.com',
     notableModels: [
       {
         name: 'Overseas',
@@ -144,6 +147,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Rolex',
     description: 'Founded in 1905 by Hans Wilsdorf, Rolex is the world\'s most recognized luxury watch brand, known for its reliability, innovation, and iconic designs that have defined entire watch categories.',
     history: 'Rolex revolutionized watchmaking with numerous industry firsts: the first waterproof watch case (Oyster, 1926), the first self-winding mechanism (Perpetual, 1931), and the first watch to show two time zones simultaneously (GMT-Master, 1954). The brand\'s watches have accompanied explorers to the highest peaks (Everest), deepest oceans (Mariana Trench), and even the moon (Apollo missions). Rolex maintains complete vertical integration, manufacturing nearly every component in-house, from the gold alloys to the synthetic rubies. The brand produces approximately 1 million watches annually, each subject to rigorous testing and quality control.',
+    brandWebsite: 'https://www.rolex.com',
     notableModels: [
       {
         name: 'Submariner',
@@ -201,6 +205,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Richard Mille',
     description: 'Founded in 2001, Richard Mille is known for their ultra-modern, high-tech timepieces often inspired by racing and sports.',
     history: 'A relatively new brand that has quickly risen to prominence through innovative materials and avant-garde designs.',
+    brandWebsite: 'https://www.richardmille.com',
     notableModels: [
       {
         name: 'RM 011',
@@ -217,13 +222,17 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
         imageUrl: '/images/luxury/models/richard-mille-rm-035.jpg',
       }
     ],
-    imageUrl: '/images/luxury/richard-mille.jpg'
+    imageUrl: '/images/luxury/richard-mille.jpg',
+    standout: [],
+    love: [],
+    hate: []
   },
   {
     id: 'jaeger-lecoultre',
     name: 'Jaeger-LeCoultre',
     description: 'Founded in 1833 by Antoine LeCoultre, Jaeger-LeCoultre is known as the "watchmaker\'s watchmaker" for its exceptional movement manufacturing capabilities and technical innovations.',
     history: 'Based in the Vallée de Joux, Switzerland, Jaeger-LeCoultre has created over 1,200 different calibers and holds hundreds of patents. The brand\'s partnership with French watchmaker Edmond Jaeger in 1903 led to the creation of ultra-thin movements that revolutionized watchmaking. JLC has supplied movements to other prestigious brands, including Patek Philippe, Vacheron Constantin, and Audemars Piguet. The brand is known for its innovative complications, including the Atmos clock (which runs on temperature changes), the Reverso (with its reversible case), and the Gyrotourbillon (a multi-axis tourbillon).',
+    brandWebsite: 'https://www.jaeger-lecoultre.com',
     notableModels: [
       {
         name: 'Reverso',
@@ -281,6 +290,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'A. Lange & Söhne',
     description: 'Founded in 1845 by Ferdinand Adolph Lange, A. Lange & Söhne represents the pinnacle of German watchmaking, known for their exceptional finishing, innovative complications, and distinctive design language.',
     history: 'Based in Glashütte, Germany, the brand was nationalized during the Cold War and revived in 1990 by Walter Lange, the great-grandson of the founder. The brand\'s renaissance marked the rebirth of German watchmaking, with the first four watches (Lange 1, Saxonia, Arkade, and Tourbillon "Pour le Mérite") setting new standards in watchmaking. A. Lange & Söhne is known for their distinctive German design elements, including the three-quarter plate, hand-engraved balance cocks, and gold chatons. The brand produces only about 5,000 watches annually, each subject to rigorous quality control.',
+    brandWebsite: 'https://www.alange-soehne.com',
     notableModels: [
       {
         name: 'Lange 1',
@@ -338,6 +348,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Breguet',
     description: 'Founded in 1775 by Abraham-Louis Breguet, Breguet is one of the most influential watch manufacturers in history, known for numerous horological innovations and elegant designs that have shaped watchmaking for over two centuries.',
     history: 'Based in Paris, France, Breguet revolutionized watchmaking with inventions including the tourbillon (1801), the pare-chute shock protection system (1790), and the self-winding mechanism (1780). The brand\'s watches were favored by royalty, including Marie-Antoinette and Napoleon Bonaparte. Today, Breguet continues to produce watches that combine traditional craftsmanship with modern technology, maintaining the distinctive design elements created by its founder, such as the Breguet hands, guilloché dials, and coin-edge cases. The brand is owned by the Swatch Group but maintains its independence in terms of design and production.',
+    brandWebsite: 'https://www.breguet.com',
     notableModels: [
       {
         name: 'Classique',
@@ -395,6 +406,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Blancpain',
     description: 'Founded in 1735 by Jehan-Jacques Blancpain, Blancpain is the oldest watch brand in the world, known for their commitment to traditional watchmaking and the famous "Never an quartz" motto.',
     history: 'Based in Le Brassus, Switzerland, Blancpain has maintained its commitment to mechanical watchmaking throughout its history. The brand was revived in 1983 by Jean-Claude Biver and Jacques Piguet, who famously declared "Since 1735, there has never been a quartz Blancpain watch. And there never will be." Blancpain is credited with saving the mechanical watch industry during the quartz crisis. The brand is known for its Fifty Fathoms diving watch, which was the first modern diving watch (1953), and its commitment to traditional watchmaking techniques. Today, Blancpain produces about 30,000 watches annually, each subject to rigorous quality control.',
+    brandWebsite: 'https://www.blancpain.com',
     notableModels: [
       {
         name: 'Fifty Fathoms',
@@ -452,6 +464,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Piaget',
     description: 'Founded in 1874 by Georges-Édouard Piaget, Piaget is renowned for their ultra-thin movements and luxury jewelry watches, combining exceptional watchmaking with artistic craftsmanship.',
     history: 'Based in La Côte-aux-Fées, Switzerland, Piaget began as a movement manufacturer before becoming a complete watchmaker. The brand gained fame in the 1950s and 1960s for creating the world\'s thinnest movements, including the 2mm-thick 9P manual-wind movement (1957) and the 2.3mm-thick 12P automatic movement (1960). Piaget is also known for their expertise in hard stone dials, gold work, and gem-setting. The brand has been owned by the Richemont Group since 1988 but maintains its independence in terms of design and production. Today, Piaget produces about 40,000 watches annually, each subject to rigorous quality control.',
+    brandWebsite: 'https://www.piaget.com',
     notableModels: [
       {
         name: 'Altiplano',
@@ -509,6 +522,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Girard-Perregaux',
     description: 'Founded in 1791 by Jean-François Bautte, Girard-Perregaux is known for their innovative designs and high-quality movements, particularly the iconic Three Bridges tourbillon.',
     history: 'Based in La Chaux-de-Fonds, Switzerland, Girard-Perregaux has a rich history of innovation and craftsmanship. The brand gained fame in the 1860s with the creation of the Three Bridges tourbillon, a design that has become their signature. Girard-Perregaux is also known for their expertise in chronographs and high-frequency movements. The brand has been owned by the Kering Group since 2011 but maintains its independence in terms of design and production. Today, Girard-Perregaux produces about 12,000 watches annually, each subject to rigorous quality control.',
+    brandWebsite: 'https://www.girard-perregaux.com',
     notableModels: [
       {
         name: 'Laureato',
@@ -566,6 +580,7 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
     name: 'Cartier',
     description: 'Founded in 1847 by Louis-François Cartier, Cartier is one of the world\'s most prestigious jewelry and watch brands, known for their iconic designs and royal connections.',
     history: 'Based in Paris, France, Cartier began as a jewelry house before becoming one of the most influential watchmakers of the 20th century. The brand gained fame for creating the first wristwatch for men, the Santos, in 1904. Cartier has been owned by the Richemont Group since 1988 but maintains its unique design language and heritage. Today, Cartier produces about 500,000 watches annually, combining traditional craftsmanship with modern technology. The brand is known for their distinctive case designs, including the Tank, Santos, and Ballon Bleu.',
+    brandWebsite: 'https://www.cartier.com',
     notableModels: [
       {
         name: 'Tank',
@@ -621,185 +636,407 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
   {
     id: 'omega',
     name: 'Omega',
-    description: 'Founded in 1848, Omega is known for their precision and space exploration heritage.',
-    history: 'Official timekeeper of the Olympic Games and NASA\'s choice for the moon missions.',
+    description: 'Founded in 1848 by Louis Brandt, Omega is renowned for its precision, innovation, and association with space exploration, sports timing, and James Bond. Omega is one of the most recognized Swiss watch brands worldwide.',
+    history: 'Omega began as La Generale Watch Co. in La Chaux-de-Fonds, Switzerland, and adopted the Omega name in 1903. The brand is famous for being the official timekeeper of the Olympic Games since 1932 and for the Speedmaster Professional "Moonwatch," the first watch worn on the moon during the Apollo 11 mission in 1969. Omega has pioneered numerous innovations, including the co-axial escapement, Master Chronometer certification, and significant advancements in anti-magnetic technology. The brand is also known for its association with James Bond films since 1995.',
+    brandWebsite: 'https://www.omegawatches.com',
     notableModels: [
       {
-        name: 'Speedmaster',
-        newPrice: '$5,000 - $8,000',
-        usedPrice: '$4,000 - $7,000',
-        description: 'The Moonwatch, first watch on the moon.',
+        name: 'Speedmaster Professional Moonwatch',
+        newPrice: '$6,500 - $8,000',
+        usedPrice: '$4,500 - $7,000',
+        description: 'The legendary chronograph that accompanied NASA astronauts to the moon. Features a hand-wound movement, Hesalite or sapphire crystal, and a classic black dial. The latest generation includes the caliber 3861 movement with Master Chronometer certification.',
         imageUrl: '/images/luxury/models/omega-speedmaster.jpg',
       },
       {
-        name: 'Seamaster',
-        newPrice: '$4,000 - $7,000',
-        usedPrice: '$3,000 - $6,000',
-        description: 'Iconic diving watch collection.',
+        name: 'Seamaster Diver 300M',
+        newPrice: '$5,000 - $7,000',
+        usedPrice: '$3,500 - $6,000',
+        description: 'The iconic diving watch, known for its helium escape valve, wave-pattern dial, and association with James Bond. The latest generation features the co-axial Master Chronometer movement and ceramic bezel.',
         imageUrl: '/images/luxury/models/omega-seamaster.jpg',
-      }
-    ],
-    imageUrl: '/images/luxury/omega.jpg'
-  },
-  {
-    id: 'iwc',
-    name: 'IWC Schaffhausen',
-    description: 'Founded in 1868, IWC is known for their pilot watches and engineering excellence.',
-    history: 'Based in Schaffhausen, Switzerland, IWC combines traditional watchmaking with modern technology.',
-    notableModels: [
-      {
-        name: 'Pilot\'s Watch',
-        newPrice: '$5,000 - $10,000',
-        usedPrice: '$4,000 - $8,000',
-        description: 'Classic pilot watch collection.',
-        imageUrl: '/images/luxury/models/iwc-pilots-watch.jpg',
       },
       {
-        name: 'Portugieser',
-        newPrice: '$7,000 - $15,000',
-        usedPrice: '$6,000 - $12,000',
-        description: 'Elegant watch with Portuguese heritage.',
-        imageUrl: '/images/luxury/models/iwc-portugieser.jpg',
+        name: 'Constellation',
+        newPrice: '$4,000 - $10,000',
+        usedPrice: '$2,500 - $8,000',
+        description: 'A classic dress watch collection featuring the signature "Griffes" or claws and integrated bracelet. The latest generation includes Master Chronometer movements and a variety of dial options.',
+        imageUrl: '/images/luxury/models/omega-constellation.jpg',
       }
     ],
-    imageUrl: '/images/luxury/iwc.jpg'
+    imageUrl: '/images/luxury/omega.jpg',
+    standout: [
+      'First watch on the moon (Speedmaster)',
+      'Official timekeeper of the Olympic Games',
+      'Innovator in anti-magnetic and co-axial technology',
+      'Strong association with James Bond',
+      'Wide range of models and price points',
+      'Master Chronometer certification',
+      'Excellent value for money'
+    ],
+    love: [
+      'Rich history and heritage',
+      'Technical innovation and reliability',
+      'Strong brand recognition',
+      'Excellent finishing and quality control',
+      'Wide variety of styles and complications',
+      'Good investment value for certain models',
+      'Strong after-sales service'
+    ],
+    hate: [
+      'High production numbers reduce exclusivity',
+      'Some models can be difficult to service',
+      'Depreciation on less popular models',
+      'Some collectors find the designs too commercial',
+      'Limited availability of special editions',
+      'Brand sometimes overshadowed by Rolex',
+      'Complex pieces require regular maintenance'
+    ]
   },
   {
     id: 'panerai',
     name: 'Panerai',
-    description: 'Founded in 1860, Panerai is known for their distinctive Italian design and military heritage.',
-    history: 'Originally supplied watches to the Italian Navy, now known for their large, distinctive cases.',
+    description: 'Founded in 1860 by Giovanni Panerai in Florence, Italy, Panerai is celebrated for its bold Italian design, military heritage, and oversized cushion-shaped cases. The brand is known for its luminous dials and strong collector community, the "Paneristi."',
+    history: 'Panerai began as a watch shop and workshop in Florence, supplying precision instruments to the Italian Navy. The brand developed the Radiomir and Luminor models for military divers, featuring large, legible dials and robust water resistance. Panerai introduced the first civilian models in the 1990s, quickly gaining a cult following. Today, Panerai combines Swiss watchmaking expertise with Italian design, producing both in-house and outsourced movements.',
+    brandWebsite: 'https://www.panerai.com',
     notableModels: [
       {
-        name: 'Luminor',
-        newPrice: '$8,000 - $15,000',
-        usedPrice: '$6,000 - $12,000',
-        description: 'Iconic watch with crown protection device.',
+        name: 'Luminor Marina',
+        newPrice: '$8,000 - $12,000',
+        usedPrice: '$6,000 - $10,000',
+        description: 'The quintessential Panerai, featuring the signature crown protection device, sandwich dial, and robust water resistance. The latest generation includes in-house automatic movements and a variety of case materials.',
         imageUrl: '/images/luxury/models/panerai-luminor.jpg',
       },
       {
-        name: 'Radiomir',
-        newPrice: '$7,000 - $12,000',
-        usedPrice: '$5,000 - $10,000',
-        description: 'Classic cushion-shaped case design.',
+        name: 'Radiomir 1940',
+        newPrice: '$7,000 - $11,000',
+        usedPrice: '$5,000 - $9,000',
+        description: 'A modern take on the original Radiomir, featuring a cushion-shaped case, wire lugs, and minimalist dial. The latest generation includes both hand-wound and automatic movements.',
         imageUrl: '/images/luxury/models/panerai-radiomir.jpg',
+      },
+      {
+        name: 'Submersible',
+        newPrice: '$9,000 - $15,000',
+        usedPrice: '$7,000 - $12,000',
+        description: 'Panerai\'s professional diving watch, featuring a unidirectional rotating bezel, high water resistance, and bold design. The latest generation includes in-house automatic movements and a variety of case materials.',
+        imageUrl: '/images/luxury/models/panerai-submersible.jpg',
       }
     ],
-    imageUrl: '/images/luxury/panerai.jpg'
+    imageUrl: '/images/luxury/panerai.jpg',
+    standout: [
+      'Iconic Italian design and military heritage',
+      'Oversized cushion-shaped cases',
+      'Luminous sandwich dials',
+      'Strong collector community (Paneristi)',
+      'Wide range of case materials',
+      'Distinctive crown protection device',
+      'Limited production numbers'
+    ],
+    love: [
+      'Bold, distinctive designs',
+      'Rich military history',
+      'Strong collector community',
+      'Excellent water resistance',
+      'Good value for money',
+      'Wide range of options',
+      'Strong resale value for limited editions'
+    ],
+    hate: [
+      'Large case sizes may not suit all wrists',
+      'Depreciation on some models',
+      'Limited availability of special editions',
+      'Some models use outsourced movements',
+      'Brand sometimes seen as repetitive',
+      'Complex pieces require regular maintenance',
+      'High price point for in-house models'
+    ]
   },
   {
     id: 'hublot',
     name: 'Hublot',
-    description: 'Founded in 1980, Hublot is known for their "Art of Fusion" combining traditional watchmaking with modern materials.',
-    history: 'Revolutionized the industry with the first natural rubber strap on a gold watch.',
+    description: 'Founded in 1980 by Carlo Crocco, Hublot is known for its "Art of Fusion" philosophy, combining traditional Swiss watchmaking with innovative materials and bold designs. The brand is famous for its disruptive marketing and celebrity partnerships.',
+    history: 'Hublot introduced the first luxury watch with a natural rubber strap in 1980, revolutionizing the industry. The brand gained global recognition with the launch of the Big Bang in 2005, which combined gold, ceramic, and rubber. Hublot is a pioneer in using materials like Magic Gold, carbon fiber, and sapphire. The brand is also known for its high-profile sponsorships in sports and collaborations with artists and athletes.',
+    brandWebsite: 'https://www.hublot.com',
     notableModels: [
       {
-        name: 'Big Bang',
-        newPrice: '$15,000 - $30,000',
-        usedPrice: '$12,000 - $25,000',
-        description: 'Iconic modern sports watch.',
+        name: 'Big Bang Unico',
+        newPrice: '$18,000 - $30,000',
+        usedPrice: '$14,000 - $25,000',
+        description: 'The flagship chronograph, featuring an in-house Unico movement, modular case construction, and a wide range of materials and colors. The latest generation includes sapphire cases and skeletonized dials.',
         imageUrl: '/images/luxury/models/hublot-big-bang.jpg',
       },
       {
         name: 'Classic Fusion',
-        newPrice: '$8,000 - $15,000',
-        usedPrice: '$6,000 - $12,000',
-        description: 'Elegant fusion of classic and modern design.',
+        newPrice: '$7,000 - $15,000',
+        usedPrice: '$5,000 - $12,000',
+        description: 'A more understated collection, blending classic design with modern materials. Available in a variety of sizes, complications, and case materials.',
         imageUrl: '/images/luxury/models/hublot-classic-fusion.jpg',
+      },
+      {
+        name: 'Spirit of Big Bang',
+        newPrice: '$20,000 - $40,000',
+        usedPrice: '$16,000 - $30,000',
+        description: 'A tonneau-shaped extension of the Big Bang line, featuring the Unico movement and bold design elements. Available in a wide range of materials and limited editions.',
+        imageUrl: '/images/luxury/models/hublot-spirit-of-big-bang.jpg',
       }
     ],
-    imageUrl: '/images/luxury/hublot.jpg'
+    imageUrl: '/images/luxury/hublot.jpg',
+    standout: [
+      'Pioneer of the "Art of Fusion"',
+      'Innovative use of materials',
+      'Bold, disruptive designs',
+      'Strong marketing and celebrity partnerships',
+      'Wide range of limited editions',
+      'In-house Unico movement',
+      'Strong brand recognition among younger collectors'
+    ],
+    love: [
+      'Bold, modern designs',
+      'Innovative materials',
+      'Wide range of options',
+      'Strong resale value for limited editions',
+      'Excellent customer service',
+      'Good value for money',
+      'Strong brand identity'
+    ],
+    hate: [
+      'High price point for basic models',
+      'Depreciation on some models',
+      'Some collectors find designs too flashy',
+      'Limited technical innovation in some lines',
+      'Brand sometimes seen as marketing-driven',
+      'Complex pieces require regular maintenance',
+      'Limited availability of special editions'
+    ]
   },
   {
     id: 'zenith',
     name: 'Zenith',
-    description: 'Founded in 1865, Zenith is known for their high-frequency chronograph movements.',
-    history: 'Creator of the El Primero movement, one of the first automatic chronographs.',
+    description: 'Founded in 1865 by Georges Favre-Jacot, Zenith is celebrated for its high-frequency chronograph movements, especially the legendary El Primero. The brand is known for its technical innovation and precision.',
+    history: 'Zenith was established in Le Locle, Switzerland, and quickly gained a reputation for precision and innovation. In 1969, Zenith introduced the El Primero, one of the world\'s first automatic chronograph movements, beating at 36,000 vibrations per hour. The brand has won over 2,300 chronometry prizes and continues to innovate with the Defy collection, featuring high-frequency and ultra-light movements.',
+    brandWebsite: 'https://www.zenith-watches.com',
     notableModels: [
       {
-        name: 'Chronomaster',
-        newPrice: '$8,000 - $12,000',
-        usedPrice: '$6,000 - $10,000',
-        description: 'Featuring the legendary El Primero movement.',
-        imageUrl: '/images/luxury/models/zenith-chronomaster.jpg',
+        name: 'Chronomaster Sport',
+        newPrice: '$10,000 - $14,000',
+        usedPrice: '$8,000 - $12,000',
+        description: 'A modern chronograph inspired by the original El Primero, featuring a ceramic bezel, tri-color subdials, and the latest El Primero 3600 movement.',
+        imageUrl: '/images/luxury/models/zenith-chronomaster.jpg'
       },
       {
-        name: 'Defy',
-        newPrice: '$10,000 - $20,000',
-        usedPrice: '$8,000 - $15,000',
-        description: 'Modern collection with innovative materials.',
-        imageUrl: '/images/luxury/models/zenith-defy.jpg',
+        name: 'Defy El Primero 21',
+        newPrice: '$12,000 - $18,000',
+        usedPrice: '$10,000 - $15,000',
+        description: 'A cutting-edge chronograph capable of measuring 1/100th of a second, featuring a skeletonized dial and innovative materials.',
+        imageUrl: '/images/luxury/models/zenith-defy.jpg'
+      },
+      {
+        name: 'Pilot Type 20',
+        newPrice: '$7,000 - $10,000',
+        usedPrice: '$5,000 - $8,000',
+        description: 'A vintage-inspired pilot\'s watch, featuring an oversized onion crown, bold Arabic numerals, and a robust case. The latest generation includes in-house movements and a variety of case materials.',
+        imageUrl: '/images/luxury/models/zenith-pilot-type-20.jpg'
       }
     ],
-    imageUrl: '/images/luxury/zenith.jpg'
+    imageUrl: '/images/luxury/zenith.jpg',
+    standout: [
+      'Creator of the El Primero movement',
+      'High-frequency chronograph innovation',
+      'Strong focus on precision and accuracy',
+      'Award-winning chronometry',
+      'Distinctive design language',
+      'Wide range of models and complications',
+      'Rich heritage in Swiss watchmaking'
+    ],
+    love: [
+      'Technical innovation and precision',
+      'Rich history and heritage',
+      'Strong value for money',
+      'Excellent finishing and quality',
+      'Wide range of options',
+      'Strong collector following',
+      'Good resale value for El Primero models'
+    ],
+    hate: [
+      'Limited brand recognition compared to competitors',
+      'Depreciation on some models',
+      'Some collectors find designs too traditional',
+      'Complex pieces require regular maintenance',
+      'Limited availability of special editions',
+      'Brand sometimes overshadowed by larger groups',
+      'High price point for limited editions'
+    ]
   },
   {
     id: 'ulysse-nardin',
     name: 'Ulysse Nardin',
-    description: 'Founded in 1846, Ulysse Nardin is known for their marine chronometers and innovative complications.',
-    history: 'Originally specialized in marine chronometers, now known for their innovative designs.',
+    description: 'Founded in 1846 by Ulysse Nardin in Le Locle, Switzerland, the brand is renowned for its marine chronometers, innovative complications, and avant-garde designs. Ulysse Nardin is a pioneer in the use of silicon technology in watchmaking.',
+    history: 'Ulysse Nardin began as a manufacturer of marine chronometers, supplying navies and shipping companies worldwide. The brand is known for its technical innovation, including the use of silicon escapements, the Freak collection with its revolutionary carousel movement, and the Marine collection inspired by traditional chronometers. Ulysse Nardin is also recognized for its bold, avant-garde designs and limited production numbers.',
+    brandWebsite: 'https://www.ulysse-nardin.com',
     notableModels: [
       {
-        name: 'Marine',
+        name: 'Marine Chronometer',
         newPrice: '$10,000 - $20,000',
         usedPrice: '$8,000 - $15,000',
-        description: 'Modern interpretation of marine chronometers.',
+        description: 'A modern interpretation of the classic marine chronometer, featuring a power reserve indicator, small seconds, and date. The latest generation includes in-house movements and silicon technology.',
         imageUrl: '/images/luxury/models/ulysse-nardin-marine.jpg',
       },
       {
-        name: 'Freak',
-        newPrice: '$50,000 - $100,000',
-        usedPrice: '$40,000 - $80,000',
-        description: 'Revolutionary design with carousel movement.',
+        name: 'Freak X',
+        newPrice: '$25,000 - $35,000',
+        usedPrice: '$20,000 - $30,000',
+        description: 'A revolutionary watch with no traditional hands or crown, featuring a rotating movement to indicate the time. The Freak X is a more accessible version of the original Freak, featuring silicon technology and a bold design.',
         imageUrl: '/images/luxury/models/ulysse-nardin-freak.jpg',
+      },
+      {
+        name: 'Diver',
+        newPrice: '$8,000 - $12,000',
+        usedPrice: '$6,000 - $10,000',
+        description: 'A robust diving watch collection, featuring high water resistance, bold design, and in-house movements. The latest generation includes models with chronograph and GMT complications.',
+        imageUrl: '/images/luxury/models/ulysse-nardin-diver.jpg'
       }
     ],
-    imageUrl: '/images/luxury/ulysse-nardin.jpg'
+    imageUrl: '/images/luxury/ulysse-nardin.jpg',
+    standout: [
+      'Pioneer in marine chronometers',
+      'Innovator in silicon technology',
+      'Avant-garde designs',
+      'Limited production numbers',
+      'Strong focus on technical innovation',
+      'Distinctive design language',
+      'Rich heritage in marine watchmaking'
+    ],
+    love: [
+      'Technical innovation and creativity',
+      'Rich history and tradition',
+      'Strong value for money',
+      'Excellent finishing and quality',
+      'Wide range of options',
+      'Strong collector following',
+      'Good resale value for limited editions'
+    ],
+    hate: [
+      'Limited brand recognition compared to competitors',
+      'Depreciation on some models',
+      'Some collectors find designs too avant-garde',
+      'Complex pieces require regular maintenance',
+      'Limited availability of special editions',
+      'Brand sometimes overshadowed by larger groups',
+      'High price point for limited editions'
+    ]
   },
   {
     id: 'glashutte-original',
     name: 'Glashütte Original',
-    description: 'Founded in 1845, Glashütte Original is one of Germany\'s finest watch manufacturers.',
-    history: 'Based in Glashütte, Germany, known for their traditional German watchmaking.',
+    description: 'Founded in 1845 in Glashütte, Germany, Glashütte Original is celebrated for its traditional German watchmaking, in-house movements, and Saxon craftsmanship. The brand is known for its elegant designs and technical innovation.',
+    history: 'Glashütte Original traces its roots to the founding of the watchmaking industry in Glashütte, Saxony. The brand survived nationalization during the Cold War and was revived after German reunification. Glashütte Original is known for its in-house movements, traditional three-quarter plate, and hand-engraved decorations. The brand produces a wide range of complications, including the PanoMaticLunar, Senator, and innovative chronographs.',
+    brandWebsite: 'https://www.glashuette-original.com',
     notableModels: [
       {
         name: 'PanoMaticLunar',
         newPrice: '$12,000 - $15,000',
         usedPrice: '$10,000 - $12,000',
-        description: 'Classic dress watch with moon phase.',
+        description: 'A signature model featuring an off-center dial, moon phase complication, and panorama date. The latest generation includes in-house automatic movements and exquisite finishing.',
         imageUrl: '/images/luxury/models/glashutte-original-panomatic-lunar.jpg',
       },
       {
-        name: 'Senator',
+        name: 'Senator Chronograph Panorama Date',
         newPrice: '$15,000 - $25,000',
         usedPrice: '$12,000 - $20,000',
-        description: 'Elegant collection with various complications.',
+        description: 'An elegant chronograph with a large panorama date, flyback function, and in-house movement. The latest generation features hand-engraved decorations and a variety of dial options.',
         imageUrl: '/images/luxury/models/glashutte-original-senator.jpg',
+      },
+      {
+        name: 'SeaQ',
+        newPrice: '$10,000 - $14,000',
+        usedPrice: '$8,000 - $12,000',
+        description: 'A modern diving watch inspired by the brand\'s historic Spezimatic Type RP TS 200 from 1969. Features a unidirectional rotating bezel, high water resistance, and in-house movement.',
+        imageUrl: '/images/luxury/models/glashutte-original-seaq.jpg'
       }
     ],
-    imageUrl: '/images/luxury/glashutte-original.jpg'
+    imageUrl: '/images/luxury/glashutte-original.jpg',
+    standout: [
+      'Traditional German watchmaking',
+      'In-house movements and complications',
+      'Hand-engraved decorations',
+      'Elegant, distinctive designs',
+      'Rich Saxon heritage',
+      'Wide range of complications',
+      'Strong value for money'
+    ],
+    love: [
+      'Exceptional finishing and craftsmanship',
+      'Rich history and tradition',
+      'Strong value for money',
+      'Wide range of options',
+      'Strong collector following',
+      'Good resale value for limited editions',
+      'Excellent after-sales service'
+    ],
+    hate: [
+      'Limited brand recognition compared to Swiss competitors',
+      'Depreciation on some models',
+      'Some collectors find designs too traditional',
+      'Complex pieces require regular maintenance',
+      'Limited availability of special editions',
+      'Brand sometimes overshadowed by larger groups',
+      'High price point for limited editions'
+    ]
   },
   {
     id: 'frank-muller',
     name: 'Franck Muller',
-    description: 'Founded in 1991, Franck Muller is known for their complex movements and distinctive tonneau-shaped cases.',
-    history: 'Known as the "Master of Complications" for their innovative watch designs.',
+    description: 'Founded in 1991 by Franck Muller and Vartan Sirmakes, Franck Muller is known as the "Master of Complications" for its innovative, complex movements and bold, tonneau-shaped cases. The brand is celebrated for its avant-garde designs and technical prowess.',
+    history: 'Franck Muller began as a small workshop in Geneva, quickly gaining fame for its highly complicated watches, including tourbillons, perpetual calendars, and unique time displays. The brand is known for its Crazy Hours, which features a jumping hour display, and the Vanguard collection, which combines sporty aesthetics with technical innovation. Franck Muller produces all movements in-house and is recognized for its colorful, artistic dials.',
+    brandWebsite: 'https://www.frank-muller.com',
     notableModels: [
       {
         name: 'Crazy Hours',
         newPrice: '$30,000 - $50,000',
         usedPrice: '$25,000 - $40,000',
-        description: 'Revolutionary jumping hours display.',
+        description: 'A revolutionary watch featuring a jumping hour display, where the hour hand jumps to the next correct numeral in a non-sequential order. The latest generation includes a variety of case materials and dial colors.',
         imageUrl: '/images/luxury/models/frank-muller-crazy-hours.jpg',
       },
       {
         name: 'Vanguard',
         newPrice: '$20,000 - $40,000',
         usedPrice: '$15,000 - $30,000',
-        description: 'Modern sports watch collection.',
+        description: 'A modern sports watch collection featuring bold, tonneau-shaped cases, colorful dials, and a variety of complications. The latest generation includes chronographs, tourbillons, and skeletonized models.',
         imageUrl: '/images/luxury/models/frank-muller-vanguard.jpg',
+      },
+      {
+        name: 'Aeternitas Mega',
+        newPrice: '$2,000,000+',
+        usedPrice: 'Rarely available',
+        description: 'The world\'s most complicated wristwatch, featuring 36 complications, 1,483 components, and a perpetual calendar good for 1,000 years. Produced in extremely limited numbers.',
+        imageUrl: '/images/luxury/models/frank-muller-aeternitas-mega.jpg'
       }
     ],
-    imageUrl: '/images/luxury/frank-muller.jpg'
+    imageUrl: '/images/luxury/frank-muller.jpg',
+    standout: [
+      'Master of Complications',
+      'Innovative, complex movements',
+      'Bold, avant-garde designs',
+      'Tonneau-shaped cases',
+      'Colorful, artistic dials',
+      'In-house movement manufacturing',
+      'Limited production numbers'
+    ],
+    love: [
+      'Technical innovation and creativity',
+      'Bold, distinctive designs',
+      'Strong collector following',
+      'Good resale value for limited editions',
+      'Excellent finishing and quality',
+      'Wide range of complications',
+      'Strong brand identity'
+    ],
+    hate: [
+      'High price point for complicated models',
+      'Depreciation on some models',
+      'Some collectors find designs too bold',
+      'Complex pieces require regular maintenance',
+      'Limited availability of special editions',
+      'Brand sometimes overshadowed by older houses',
+      'High service costs for complicated pieces'
+    ]
   }
 ]; 

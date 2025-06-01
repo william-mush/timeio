@@ -13,6 +13,7 @@ export interface LuxuryTimepiece {
   history: string;
   notableModels: NotableModel[];
   imageUrl: string;
+  brandWebsite: string;
   standout?: string[];
   love?: string[];
   hate?: string[];
