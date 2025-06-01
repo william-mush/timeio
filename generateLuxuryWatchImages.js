@@ -76,6 +76,22 @@ const imagesToGenerate = [
   {
     filename: 'frank-muller-aeternitas-mega.png',
     prompt: "A photorealistic image of a Franck Muller Aeternitas Mega, platinum case, highly complicated dial with multiple subdials and indicators, blue alligator strap, front view, on a plain white background, luxury product photography."
+  },
+  {
+    filename: 'fp-journe-resonance.png',
+    prompt: 'A photorealistic image of an F.P. Journe Chronomètre à Résonance wristwatch, dual time dials, elegant silver dial, rose gold case, hand-finished movement visible, luxury independent Swiss watch, on a leather strap, studio lighting, high detail.'
+  },
+  {
+    filename: 'fp-journe-tourbillon.png',
+    prompt: 'A photorealistic image of an F.P. Journe Tourbillon Souverain wristwatch, off-center time display, visible tourbillon cage, platinum case, intricate guilloché dial, high horology, on a leather strap, luxury Swiss independent watch, studio lighting.'
+  },
+  {
+    filename: 'fp-journe-octa.png',
+    prompt: 'A photorealistic image of an F.P. Journe Octa Automatique Lune wristwatch, moonphase display, large date, gold movement, silver dial, elegant and modern, on a leather strap, luxury independent Swiss watch, studio lighting.'
+  },
+  {
+    filename: 'fp-journe.png',
+    prompt: 'A photorealistic image of an F.P. Journe wristwatch collection, showing Chronomètre à Résonance, Tourbillon Souverain, and Octa Automatique Lune models together, elegant display, luxury Swiss independent watch brand, studio lighting.'
   }
 ];
 

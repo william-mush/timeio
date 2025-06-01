@@ -22,6 +22,16 @@ export default function LuxuryTimepieceCard({ timepiece }: LuxuryTimepieceCardPr
         <div className="p-6">
           <h2 className="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{timepiece.name}</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-4">{timepiece.description}</p>
+          {timepiece.brandWebsite && (
+            <a
+              href={timepiece.brandWebsite}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            >
+              Visit Official Website
+            </a>
+          )}
           <div className="mb-4">
             <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">History</h3>
             <p className="text-gray-600 dark:text-gray-300">{timepiece.history}</p>
