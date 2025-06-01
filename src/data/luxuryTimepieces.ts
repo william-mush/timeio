@@ -1038,5 +1038,63 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
       'Brand sometimes overshadowed by older houses',
       'High service costs for complicated pieces'
     ]
+  },
+  {
+    id: 'fp-journe',
+    name: 'F.P. Journe',
+    description: 'Founded in 1999 by François-Paul Journe, F.P. Journe is a celebrated independent Swiss watchmaker renowned for its technical innovation, unique design language, and extremely limited production. The brand is revered by collectors for its in-house movements, creative complications, and the personal vision of its founder.',
+    history: 'F.P. Journe began as the vision of François-Paul Journe, who had previously restored antique clocks and watches before launching his own brand in Geneva. The brand quickly gained acclaim for its inventive complications, such as the Chronomètre à Résonance (the first wristwatch to use resonance for improved accuracy), the Tourbillon Souverain (the first tourbillon wristwatch with a remontoir d\'égalité), and the Octa collection (featuring the first automatic movement with a 120-hour power reserve). F.P. Journe is known for its distinctive dial layouts, precious metal movements, and a philosophy of "Invenit et Fecit" (He invented it and made it). Production is extremely limited, with fewer than 1,000 watches made per year, making each piece highly sought after by connoisseurs.',
+    brandWebsite: 'https://www.fpjourne.com',
+    notableModels: [
+      {
+        name: 'Chronomètre à Résonance',
+        newPrice: '$120,000 - $180,000',
+        usedPrice: '$180,000 - $350,000',
+        description: 'The world\'s first wristwatch to use resonance, featuring two balances that synchronize for improved accuracy. A technical marvel and a collector favorite.',
+        imageUrl: '/images/luxury/models/fp-journe-resonance.jpg',
+      },
+      {
+        name: 'Tourbillon Souverain',
+        newPrice: '$150,000 - $200,000',
+        usedPrice: '$200,000 - $400,000',
+        description: 'A groundbreaking tourbillon wristwatch with a remontoir d\'égalité for constant force delivery. Known for its beautiful finishing and technical sophistication.',
+        imageUrl: '/images/luxury/models/fp-journe-tourbillon.jpg',
+      },
+      {
+        name: 'Octa Automatique Lune',
+        newPrice: '$60,000 - $80,000',
+        usedPrice: '$80,000 - $120,000',
+        description: 'Part of the Octa collection, this model features a moonphase, large date, and a 120-hour power reserve. Praised for its practicality and elegant design.',
+        imageUrl: '/images/luxury/models/fp-journe-octa.jpg',
+      }
+    ],
+    imageUrl: '/images/luxury/fp-journe.jpg',
+    standout: [
+      'Independent Swiss watchmaker with a cult following',
+      'Inventor of the resonance wristwatch',
+      'Movements crafted from solid gold',
+      'Extremely limited production (under 1,000 watches per year)',
+      'Distinctive, instantly recognizable design language',
+      'Personal involvement of François-Paul Journe in every watch',
+      'Multiple Grand Prix d\'Horlogerie de Genève (GPHG) awards'
+    ],
+    love: [
+      'Technical innovation and horological creativity',
+      'Exquisite finishing and attention to detail',
+      'Strong investment value and collector demand',
+      'Unique complications not found elsewhere',
+      'Personal touch and vision of the founder',
+      'Movements made from precious metals',
+      'Highly exclusive and rare'
+    ],
+    hate: [
+      'Extremely difficult to acquire at retail',
+      'High prices and strong secondary market premiums',
+      'Very limited production and long waiting lists',
+      'Design language may not appeal to everyone',
+      'Servicing can be complex and costly',
+      'Some collectors find the brand\'s cult status intimidating',
+      'Limited model variety compared to larger brands'
+    ]
   }
 ]; 
