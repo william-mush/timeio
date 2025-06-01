@@ -450,71 +450,173 @@ export const luxuryTimepieces: LuxuryTimepiece[] = [
   {
     id: 'piaget',
     name: 'Piaget',
-    description: 'Founded in 1874, Piaget is known for their ultra-thin movements and luxury jewelry watches.',
-    history: 'Started as a movement manufacturer before becoming a complete watchmaker.',
+    description: 'Founded in 1874 by Georges-Édouard Piaget, Piaget is renowned for their ultra-thin movements and luxury jewelry watches, combining exceptional watchmaking with artistic craftsmanship.',
+    history: 'Based in La Côte-aux-Fées, Switzerland, Piaget began as a movement manufacturer before becoming a complete watchmaker. The brand gained fame in the 1950s and 1960s for creating the world\'s thinnest movements, including the 2mm-thick 9P manual-wind movement (1957) and the 2.3mm-thick 12P automatic movement (1960). Piaget is also known for their expertise in hard stone dials, gold work, and gem-setting. The brand has been owned by the Richemont Group since 1988 but maintains its independence in terms of design and production. Today, Piaget produces about 40,000 watches annually, each subject to rigorous quality control.',
     notableModels: [
       {
         name: 'Altiplano',
         newPrice: '$20,000 - $30,000',
         usedPrice: '$15,000 - $25,000',
-        description: 'Ultra-thin dress watch.',
+        description: 'The brand\'s signature ultra-thin watch collection. Features the world\'s thinnest automatic movement (2.3mm) and a minimalist design. The latest generation includes models with complications like perpetual calendars and tourbillons.',
         imageUrl: '/images/luxury/models/piaget-altiplano.jpg',
       },
       {
         name: 'Polo',
         newPrice: '$25,000 - $35,000',
         usedPrice: '$20,000 - $30,000',
-        description: 'Sporty luxury watch with distinctive design.',
+        description: 'A modern sports watch collection featuring an integrated bracelet and distinctive design. The latest generation includes models with chronographs, perpetual calendars, and tourbillons.',
         imageUrl: '/images/luxury/models/piaget-polo.jpg',
+      },
+      {
+        name: 'Limelight',
+        newPrice: '$30,000 - $50,000',
+        usedPrice: '$25,000 - $40,000',
+        description: 'A collection of luxury jewelry watches featuring precious stones and artistic dials. Includes models with complications like moon phases and date displays.',
+        imageUrl: '/images/luxury/models/piaget-limelight.jpg',
       }
     ],
-    imageUrl: '/images/luxury/piaget.jpg'
+    imageUrl: '/images/luxury/piaget.jpg',
+    standout: [
+      'Creator of the world\'s thinnest movements',
+      'Expertise in hard stone dials and gem-setting',
+      'Strong focus on artistic craftsmanship',
+      'Complete in-house manufacturing',
+      'Rich heritage in ultra-thin watchmaking',
+      'Limited production numbers',
+      'Distinctive design language'
+    ],
+    love: [
+      'Exceptional finishing and craftsmanship',
+      'Ultra-thin movements',
+      'Strong investment value for rare pieces',
+      'Excellent customer service',
+      'Commitment to preserving traditional techniques',
+      'Distinctive design language',
+      'Strong secondary market performance'
+    ],
+    hate: [
+      'Some models can be difficult to obtain',
+      'High price point for basic models',
+      'Limited availability of sports watches',
+      'Some collectors find the designs too traditional',
+      'Complex pieces require regular maintenance',
+      'Limited brand recognition compared to competitors',
+      'Richemont ownership may limit independence'
+    ]
   },
   {
     id: 'girard-perregaux',
     name: 'Girard-Perregaux',
-    description: 'Founded in 1791, Girard-Perregaux is known for their innovative designs and high-quality movements.',
-    history: 'One of the oldest watch manufacturers, known for the iconic Three Bridges tourbillon.',
+    description: 'Founded in 1791 by Jean-François Bautte, Girard-Perregaux is known for their innovative designs and high-quality movements, particularly the iconic Three Bridges tourbillon.',
+    history: 'Based in La Chaux-de-Fonds, Switzerland, Girard-Perregaux has a rich history of innovation and craftsmanship. The brand gained fame in the 1860s with the creation of the Three Bridges tourbillon, a design that has become their signature. Girard-Perregaux is also known for their expertise in chronographs and high-frequency movements. The brand has been owned by the Kering Group since 2011 but maintains its independence in terms of design and production. Today, Girard-Perregaux produces about 12,000 watches annually, each subject to rigorous quality control.',
     notableModels: [
       {
         name: 'Laureato',
         newPrice: '$12,000 - $20,000',
         usedPrice: '$10,000 - $18,000',
-        description: 'Sporty luxury watch with integrated bracelet.',
+        description: 'The brand\'s signature sports watch collection, introduced in 1975. Features an integrated bracelet and distinctive octagonal bezel. The latest generation includes models with chronographs, perpetual calendars, and tourbillons.',
         imageUrl: '/images/luxury/models/girard-perregaux-laureato.jpg',
       },
       {
         name: '1966',
         newPrice: '$15,000 - $25,000',
         usedPrice: '$12,000 - $20,000',
-        description: 'Classic dress watch collection.',
+        description: 'A collection of elegant dress watches featuring traditional watchmaking techniques. Includes models with complications like moon phases, perpetual calendars, and tourbillons.',
         imageUrl: '/images/luxury/models/girard-perregaux-1966.jpg',
+      },
+      {
+        name: 'Three Bridges',
+        newPrice: '$80,000 - $100,000',
+        usedPrice: '$70,000 - $90,000',
+        description: 'The brand\'s iconic tourbillon watch, featuring a distinctive three-bridge design. The latest generation includes models with automatic winding and enhanced finishing.',
+        imageUrl: '/images/luxury/models/girard-perregaux-three-bridges.jpg',
       }
     ],
-    imageUrl: '/images/luxury/girard-perregaux.jpg'
+    imageUrl: '/images/luxury/girard-perregaux.jpg',
+    standout: [
+      'Creator of the iconic Three Bridges tourbillon',
+      'Expertise in chronographs and high-frequency movements',
+      'Strong focus on traditional craftsmanship',
+      'Complete in-house manufacturing',
+      'Rich heritage in watchmaking',
+      'Limited production numbers',
+      'Distinctive design language'
+    ],
+    love: [
+      'Exceptional finishing and craftsmanship',
+      'Innovative complications',
+      'Strong investment value for rare pieces',
+      'Excellent customer service',
+      'Commitment to preserving traditional techniques',
+      'Distinctive design language',
+      'Strong secondary market performance'
+    ],
+    hate: [
+      'Some models can be difficult to obtain',
+      'High price point for basic models',
+      'Limited availability of sports watches',
+      'Some collectors find the designs too traditional',
+      'Complex pieces require regular maintenance',
+      'Limited brand recognition compared to competitors',
+      'Kering Group ownership may limit independence'
+    ]
   },
   {
     id: 'cartier',
     name: 'Cartier',
-    description: 'Founded in 1847, Cartier is known for their iconic watch designs and jewelry expertise.',
-    history: 'Started as a jewelry house before becoming a major watch manufacturer.',
+    description: 'Founded in 1847 by Louis-François Cartier, Cartier is one of the world\'s most prestigious jewelry and watch brands, known for their iconic designs and royal connections.',
+    history: 'Based in Paris, France, Cartier began as a jewelry house before becoming one of the most influential watchmakers of the 20th century. The brand gained fame for creating the first wristwatch for men, the Santos, in 1904. Cartier has been owned by the Richemont Group since 1988 but maintains its unique design language and heritage. Today, Cartier produces about 500,000 watches annually, combining traditional craftsmanship with modern technology. The brand is known for their distinctive case designs, including the Tank, Santos, and Ballon Bleu.',
     notableModels: [
       {
         name: 'Tank',
-        newPrice: '$3,000 - $8,000',
-        usedPrice: '$2,500 - $7,000',
-        description: 'Iconic rectangular watch design.',
+        newPrice: '$3,000 - $30,000',
+        usedPrice: '$2,500 - $25,000',
+        description: 'One of the most iconic watch designs ever created, introduced in 1917. Inspired by the Renault tanks of World War I, the Tank has been worn by numerous celebrities and dignitaries. Available in various sizes and complications.',
         imageUrl: '/images/luxury/models/cartier-tank.jpg',
       },
       {
         name: 'Santos',
-        newPrice: '$6,000 - $10,000',
-        usedPrice: '$5,000 - $9,000',
-        description: 'First pilot watch with distinctive square case.',
+        newPrice: '$6,000 - $15,000',
+        usedPrice: '$5,000 - $12,000',
+        description: 'The first purpose-designed men\'s wristwatch, created in 1904 for aviator Alberto Santos-Dumont. Features a distinctive square case with exposed screws and an integrated bracelet.',
         imageUrl: '/images/luxury/models/cartier-santos.jpg',
+      },
+      {
+        name: 'Ballon Bleu',
+        newPrice: '$5,000 - $20,000',
+        usedPrice: '$4,000 - $15,000',
+        description: 'A modern classic introduced in 2007. Features a distinctive round case with a unique crown guard and floating crown. Available in various sizes and complications.',
+        imageUrl: '/images/luxury/models/cartier-ballon-bleu.jpg',
       }
     ],
-    imageUrl: '/images/luxury/cartier.jpg'
+    imageUrl: '/images/luxury/cartier.jpg',
+    standout: [
+      'Creator of iconic watch designs',
+      'Strong jewelry heritage',
+      'Royal connections',
+      'Distinctive design language',
+      'Wide range of price points',
+      'Strong brand recognition',
+      'Excellent resale value'
+    ],
+    love: [
+      'Timeless, iconic designs',
+      'Strong brand heritage',
+      'Excellent finishing',
+      'Wide range of options',
+      'Strong secondary market',
+      'Excellent customer service',
+      'Good value for money'
+    ],
+    hate: [
+      'Some models use basic movements',
+      'Limited technical innovation',
+      'High price for basic models',
+      'Some collectors find designs too fashion-oriented',
+      'Limited availability of complex pieces',
+      'Some models lack water resistance',
+      'Richemont Group ownership may limit independence'
+    ]
   },
   {
     id: 'omega',
