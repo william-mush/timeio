@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CITIES } from '@/data/cities';
 import { useSession, signIn } from 'next-auth/react';
+import { calculateSunTimes, formatCoordinates, SunTimes } from '@/lib/sunCalculations';
 
 interface TimeZone {
   id: string;
@@ -196,6 +197,43 @@ export const WorldClock = () => {
     return timeStr.join(':') + period;
   };
 
+  const formatSunTime = (date: Date) => {
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    
+    let period = '';
+    if (!format24Hour) {
+      period = hours >= 12 ? ' PM' : ' AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12; // Convert 0 to 12
+    }
+    
+    return `${hours.toString().padStart(2, '0')}:${minutes}${period}`;
+  };
+
+  const getSunTimesForCity = (cityId: string): SunTimes | null => {
+    const city = CITIES.find(c => c.id === cityId);
+    if (!city) return null;
+    
+    const [longitude, latitude] = city.coordinates;
+    const localTime = getTimeInZone(city.offset);
+    
+    try {
+      return calculateSunTimes(latitude, longitude, localTime);
+    } catch (error) {
+      console.error('Error calculating sun times:', error);
+      return null;
+    }
+  };
+
+  const getCityCoordinates = (cityId: string): { lat: string; lng: string } | null => {
+    const city = CITIES.find(c => c.id === cityId);
+    if (!city) return null;
+    
+    const [longitude, latitude] = city.coordinates;
+    return formatCoordinates(longitude, latitude);
+  };
+
   const addTimeZone = async (zone: TimeZone) => {
     if (!session) {
       signIn('google');
@@ -329,36 +367,78 @@ export const WorldClock = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {selectedZones.map((zone) => (
-              <motion.div
-                key={zone.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="card p-4 md:p-6"
-              >
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3 md:mb-4">
-                  <div>
-                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">{zone.city}</h3>
-                    <p className="text-sm md:text-base text-muted">{zone.country}</p>
-                    <p className="text-xs md:text-sm text-muted">{zone.region}</p>
+            {selectedZones.map((zone) => {
+              const sunTimes = getSunTimesForCity(zone.id);
+              const coordinates = getCityCoordinates(zone.id);
+              
+              return (
+                <motion.div
+                  key={zone.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="card p-4 md:p-6"
+                >
+                  <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3 md:mb-4">
+                    <div>
+                      <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white">{zone.city}</h3>
+                      <p className="text-sm md:text-base text-muted">{zone.country}</p>
+                      <p className="text-xs md:text-sm text-muted">{zone.region}</p>
+                    </div>
+                    {session && (
+                      <button
+                        onClick={() => removeTimeZone(zone.id)}
+                        className="text-gray-400 hover:text-red-500 text-sm md:text-base"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
-                  {session && (
-                    <button
-                      onClick={() => removeTimeZone(zone.id)}
-                      className="text-gray-400 hover:text-red-500 text-sm md:text-base"
-                    >
-                      Remove
-                    </button>
+                  
+                  {/* Current Time */}
+                  <div className="text-2xl md:text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
+                    {formatTime(getTimeInZone(zone.offset))}
+                  </div>
+                  <div className="text-xs md:text-sm text-muted mt-1">
+                    GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                  </div>
+
+                  {/* Coordinates */}
+                  {coordinates && (
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <div className="text-xs md:text-sm text-muted">
+                        <span className="font-semibold">Coordinates:</span> {coordinates.lat}, {coordinates.lng}
+                      </div>
+                    </div>
                   )}
-                </div>
-                <div className="text-2xl md:text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
-                  {formatTime(getTimeInZone(zone.offset))}
-                </div>
-                <div className="text-xs md:text-sm text-muted mt-1">
-                  GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
-                </div>
-              </motion.div>
-            ))}
+
+                  {/* Sun Times */}
+                  {sunTimes && (
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                      <div className="grid grid-cols-2 gap-2 text-xs md:text-sm">
+                        <div>
+                          <span className="font-semibold text-yellow-600 dark:text-yellow-400">🌅 Sunrise:</span>
+                          <div className="text-gray-900 dark:text-white font-mono">
+                            {formatSunTime(sunTimes.sunrise)}
+                          </div>
+                        </div>
+                        <div>
+                          <span className="font-semibold text-orange-600 dark:text-orange-400">🌇 Sunset:</span>
+                          <div className="text-gray-900 dark:text-white font-mono">
+                            {formatSunTime(sunTimes.sunset)}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs md:text-sm">
+                        <span className="font-semibold text-blue-600 dark:text-blue-400">☀️ Day Length:</span>
+                        <span className="ml-2 text-gray-900 dark:text-white font-mono">
+                          {sunTimes.dayLengthFormatted}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              );
+            })}
           </div>
         )}
 
@@ -418,19 +498,34 @@ export const WorldClock = () => {
                         zone.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         zone.country.toLowerCase().includes(searchQuery.toLowerCase())
                       )
-                      .map(zone => (
-                        <button
-                          key={zone.id}
-                          onClick={() => addTimeZone(zone)}
-                          className="text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
-                          <div className="text-xs text-gray-400 dark:text-gray-500">
-                            GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
-                          </div>
-                        </button>
-                      ))}
+                      .map(zone => {
+                        const sunTimes = getSunTimesForCity(zone.id);
+                        const coordinates = getCityCoordinates(zone.id);
+                        
+                        return (
+                          <button
+                            key={zone.id}
+                            onClick={() => addTimeZone(zone)}
+                            className="text-left p-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                          >
+                            <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
+                            <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
+                            <div className="text-xs text-gray-400 dark:text-gray-500">
+                              GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                            </div>
+                            {coordinates && (
+                              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                {coordinates.lat}, {coordinates.lng}
+                              </div>
+                            )}
+                            {sunTimes && (
+                              <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                🌅 {formatSunTime(sunTimes.sunrise)} • 🌇 {formatSunTime(sunTimes.sunset)} • ☀️ {sunTimes.dayLengthFormatted}
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
                   </div>
                 </div>
               </div>

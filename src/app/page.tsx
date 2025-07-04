@@ -43,6 +43,16 @@ export default function Home() {
             <p className="text-muted text-sm md:text-base">Track time across the globe.</p>
           </Link>
 
+          <Link href="/cities" className="card card-hover p-4 md:p-6">
+            <h2 className="heading-2 mb-2 md:mb-3 text-xl md:text-2xl">
+              World Cities{' '}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                →
+              </span>
+            </h2>
+            <p className="text-muted text-sm md:text-base">Explore cities with sunrise, sunset, and coordinates.</p>
+          </Link>
+
           <Link href="/world-map" className="card card-hover p-4 md:p-6">
             <h2 className="heading-2 mb-2 md:mb-3 text-xl md:text-2xl">
               World Map{' '}

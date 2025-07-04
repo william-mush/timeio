@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings, Sun, Home, Menu, X, History, Star } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, Sun, Home, Menu, X, History, Star, Globe } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -84,6 +84,7 @@ const navItems = [
   { href: '/', label: 'Home', icon: Home },
   { href: '/alarms', label: 'Alarms', icon: Bell },
   { href: '/world-clock', label: 'World Clock', icon: Clock },
+  { href: '/cities', label: 'World Cities', icon: Globe },
   { href: '/world-map', label: 'World Map', icon: MapPin },
   { href: '/solar-clock', label: 'Solar Clock 2D', icon: Sun },
   { href: '/solar-clock-3d', label: 'Solar Clock 3D', icon: Sun },
