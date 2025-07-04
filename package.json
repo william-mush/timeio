@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && PORT=3000 next dev",
     "dev:clean": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && next dev",
-    "build": "node scripts/build.js",
+    "build": "prisma generate && next build",
     "build:static": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
