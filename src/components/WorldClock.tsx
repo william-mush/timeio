@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CITIES } from '@/data/cities';
 import { useSession, signIn } from 'next-auth/react';
+import { getTimeInTimezone, getCurrentOffset, US_CITY_TIMEZONES } from '@/lib/timezones';
 
 interface TimeZone {
   id: string;
@@ -160,11 +161,8 @@ export const WorldClock = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const getTimeInZone = (offset: number) => {
-    const localTime = currentTime.getTime();
-    const localOffset = currentTime.getTimezoneOffset() * 60000;
-    const targetTime = new Date(localTime + localOffset + (offset * 3600000));
-    return targetTime;
+  const getTimeInZone = (cityId: string, offset: number) => {
+    return getTimeInTimezone(offset.toString(), cityId);
   };
 
   const formatTime = (date: Date) => {
@@ -352,10 +350,10 @@ export const WorldClock = () => {
                   )}
                 </div>
                 <div className="text-2xl md:text-3xl font-mono whitespace-nowrap text-gray-900 dark:text-white">
-                  {formatTime(getTimeInZone(zone.offset))}
+                  {formatTime(getTimeInZone(zone.id, zone.offset))}
                 </div>
                 <div className="text-xs md:text-sm text-muted mt-1">
-                  GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                  GMT {getCurrentOffset(zone.id, zone.offset) >= 0 ? '+' : ''}{getCurrentOffset(zone.id, zone.offset)}
                 </div>
               </motion.div>
             ))}
@@ -427,7 +425,7 @@ export const WorldClock = () => {
                           <div className="font-medium text-gray-900 dark:text-white">{zone.city}</div>
                           <div className="text-sm text-gray-500 dark:text-gray-400">{zone.country}</div>
                           <div className="text-xs text-gray-400 dark:text-gray-500">
-                            GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}
+                            GMT {getCurrentOffset(zone.id, zone.offset) >= 0 ? '+' : ''}{getCurrentOffset(zone.id, zone.offset)}
                           </div>
                         </button>
                       ))}

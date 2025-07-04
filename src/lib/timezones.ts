@@ -8,6 +8,79 @@ export interface TimezoneGroup {
   timezones: Timezone[];
 }
 
+// Map US cities to their proper IANA timezone identifiers
+export const US_CITY_TIMEZONES: Record<string, string> = {
+  'nyc': 'America/New_York',
+  'new_york': 'America/New_York',
+  'boston': 'America/New_York',
+  'philadelphia': 'America/New_York',
+  'atlanta': 'America/New_York',
+  'miami': 'America/New_York',
+  'detroit': 'America/Detroit',
+  'chicago': 'America/Chicago',
+  'houston': 'America/Chicago',
+  'dallas': 'America/Chicago',
+  'minneapolis': 'America/Chicago',
+  'denver': 'America/Denver',
+  'salt_lake_city': 'America/Denver',
+  'phoenix': 'America/Phoenix', // Arizona doesn't observe DST
+  'la': 'America/Los_Angeles',
+  'los_angeles': 'America/Los_Angeles',
+  'san_francisco': 'America/Los_Angeles',
+  'seattle': 'America/Los_Angeles',
+  'las_vegas': 'America/Los_Angeles',
+  'san_diego': 'America/Los_Angeles',
+  'portland': 'America/Los_Angeles',
+  'sacramento': 'America/Los_Angeles',
+};
+
+// Get the current time in a specific timezone
+export function getTimeInTimezone(timezoneId: string, cityId?: string): Date {
+  // Check if this is a US city that needs DST handling
+  const timezone = cityId && US_CITY_TIMEZONES[cityId] ? US_CITY_TIMEZONES[cityId] : null;
+  
+  if (timezone) {
+    // Use proper IANA timezone for US cities
+    const now = new Date();
+    return new Date(now.toLocaleString("en-US", {timeZone: timezone}));
+  }
+  
+  // Fallback to manual calculation for non-US cities
+  const now = new Date();
+  const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+  const offset = parseFloat(timezoneId); // Assuming timezoneId is the offset for non-US cities
+  return new Date(utc + (3600000 * offset));
+}
+
+// Get the current offset for a timezone (including DST)
+export function getCurrentOffset(cityId: string, staticOffset: number): number {
+  const timezone = US_CITY_TIMEZONES[cityId];
+  
+  if (timezone) {
+    // Calculate current offset for US cities using Intl.DateTimeFormat
+    const now = new Date();
+    const formatter = new Intl.DateTimeFormat('en-US', {
+      timeZone: timezone,
+      timeZoneName: 'longOffset'
+    });
+    
+    const parts = formatter.formatToParts(now);
+    const timeZoneName = parts.find(p => p.type === 'timeZoneName')?.value || '';
+    
+    // Parse the offset from the timezone name (e.g., "GMT-05:00" or "GMT-04:00")
+    const match = timeZoneName.match(/GMT([+-])(\d{2}):(\d{2})/);
+    if (match) {
+      const sign = match[1] === '+' ? 1 : -1;
+      const hours = parseInt(match[2]);
+      const minutes = parseInt(match[3]);
+      return sign * (hours + minutes / 60);
+    }
+  }
+  
+  // Return static offset for non-US cities
+  return staticOffset;
+}
+
 export const TIMEZONE_GROUPS: TimezoneGroup[] = [
   {
     name: 'UTC-12',

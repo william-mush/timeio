@@ -14,6 +14,7 @@ import { Search } from 'lucide-react';
 import { CityMarker } from '@/data/types';
 import { CITIES } from '@/data/cities';
 import { LANDMARKS } from '@/data/landmarks';
+import { getTimeInTimezone, getCurrentOffset, US_CITY_TIMEZONES } from '@/lib/timezones';
 
 const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
 
@@ -82,10 +83,9 @@ export function WorldMap() {
     setPosition(pos => ({ ...pos, zoom }));
   };
 
-  const formatTime = (offset: number) => {
-    const now = new Date();
-    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
-    const cityTime = new Date(utc + (3600000 * offset));
+  const formatTime = (cityId: string, offset: number) => {
+    // Use proper timezone handling for US cities
+    const cityTime = getTimeInTimezone(offset.toString(), cityId);
     
     const options: Intl.DateTimeFormatOptions = {
       hour: timeSettings.format24Hour ? '2-digit' : 'numeric',
@@ -123,8 +123,8 @@ export function WorldMap() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-lg font-mono">{formatTime(selectedCity.offset)}</p>
-                <p className="text-sm text-gray-500">GMT {selectedCity.offset >= 0 ? '+' : ''}{selectedCity.offset}</p>
+                <p className="text-lg font-mono">{formatTime(selectedCity.id, selectedCity.offset)}</p>
+                <p className="text-sm text-gray-500">GMT {getCurrentOffset(selectedCity.id, selectedCity.offset) >= 0 ? '+' : ''}{getCurrentOffset(selectedCity.id, selectedCity.offset)}</p>
               </div>
             </div>
             {selectedCity.description && (
