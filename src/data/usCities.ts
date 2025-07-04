@@ -329,7 +329,7 @@ export function searchCities(query: string): USCity[] {
 
 // Get all unique states
 export function getStates(): string[] {
-  const states = [...new Set(US_CITIES_OVER_100K.map(city => city.state))];
+  const states = Array.from(new Set(US_CITIES_OVER_100K.map(city => city.state)));
   return states.sort();
 }
 
