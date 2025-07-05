@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings, Sun, Home, Menu, X, History, Star } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, Sun, Home, Menu, X, History, Star, Building2 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
@@ -82,6 +82,7 @@ const TimeDisplay = () => {
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
+  { href: '/search', label: 'US Cities', icon: Building2 },
   { href: '/alarms', label: 'Alarms', icon: Bell },
   { href: '/world-clock', label: 'World Clock', icon: Clock },
   { href: '/world-map', label: 'World Map', icon: MapPin },

@@ -23,6 +23,16 @@ export default function Home() {
         </div>
 
         <div className="grid w-full text-center grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 max-w-7xl">
+          <Link href="/search" className="card card-hover p-4 md:p-6">
+            <h2 className="heading-2 mb-2 md:mb-3 text-xl md:text-2xl">
+              US Cities{' '}
+              <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+                →
+              </span>
+            </h2>
+            <p className="text-muted text-sm md:text-base">Find current time for any US city with 100,000+ people.</p>
+          </Link>
+
           <Link href="/alarms" className="card card-hover p-4 md:p-6">
             <h2 className="heading-2 mb-2 md:mb-3 text-xl md:text-2xl">
               Alarms{' '}
