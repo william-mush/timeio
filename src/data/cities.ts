@@ -1,42 +1,27 @@
 import { CityMarker } from './types';
+import { US_CITIES } from './usCities';
 
 export const CITIES: CityMarker[] = [
-  // North America (35 cities)
-  { id: 'nyc', type: 'city', city: 'New York', country: 'United States', coordinates: [-74.006, 40.7128], offset: -4 },
-  { id: 'la', type: 'city', city: 'Los Angeles', country: 'United States', coordinates: [-118.2437, 34.0522], offset: -7 },
-  { id: 'chicago', type: 'city', city: 'Chicago', country: 'United States', coordinates: [-87.6298, 41.8781], offset: -5 },
-  { id: 'toronto', type: 'city', city: 'Toronto', country: 'Canada', coordinates: [-79.3832, 43.6532], offset: -4 },
-  { id: 'mexico_city', type: 'city', city: 'Mexico City', country: 'Mexico', coordinates: [-99.1332, 19.4326], offset: -5 },
-  { id: 'miami', type: 'city', city: 'Miami', country: 'United States', coordinates: [-80.1918, 25.7617], offset: -4 },
-  { id: 'vancouver', type: 'city', city: 'Vancouver', country: 'Canada', coordinates: [-123.1207, 49.2827], offset: -7 },
-  { id: 'houston', type: 'city', city: 'Houston', country: 'United States', coordinates: [-95.3698, 29.7604], offset: -5 },
-  { id: 'montreal', type: 'city', city: 'Montreal', country: 'Canada', coordinates: [-73.5673, 45.5017], offset: -4 },
-  { id: 'san_francisco', type: 'city', city: 'San Francisco', country: 'United States', coordinates: [-122.4194, 37.7749], offset: -7 },
-  { id: 'seattle', type: 'city', city: 'Seattle', country: 'United States', coordinates: [-122.3321, 47.6062], offset: -7 },
-  { id: 'dallas', type: 'city', city: 'Dallas', country: 'United States', coordinates: [-96.7970, 32.7767], offset: -5 },
-  { id: 'boston', type: 'city', city: 'Boston', country: 'United States', coordinates: [-71.0589, 42.3601], offset: -4 },
-  { id: 'atlanta', type: 'city', city: 'Atlanta', country: 'United States', coordinates: [-84.3880, 33.7490], offset: -4 },
-  { id: 'denver', type: 'city', city: 'Denver', country: 'United States', coordinates: [-104.9903, 39.7392], offset: -6 },
-  { id: 'phoenix', type: 'city', city: 'Phoenix', country: 'United States', coordinates: [-112.0740, 33.4484], offset: -7 },
-  { id: 'philadelphia', type: 'city', city: 'Philadelphia', country: 'United States', coordinates: [-75.1652, 39.9526], offset: -4 },
-  { id: 'calgary', type: 'city', city: 'Calgary', country: 'Canada', coordinates: [-114.0719, 51.0447], offset: -6 },
-  { id: 'guadalajara', type: 'city', city: 'Guadalajara', country: 'Mexico', coordinates: [-103.3496, 20.6597], offset: -5 },
-  { id: 'ottawa', type: 'city', city: 'Ottawa', country: 'Canada', coordinates: [-75.6972, 45.4215], offset: -4 },
-  { id: 'las_vegas', type: 'city', city: 'Las Vegas', country: 'United States', coordinates: [-115.1398, 36.1699], offset: -7 },
-  { id: 'monterrey', type: 'city', city: 'Monterrey', country: 'Mexico', coordinates: [-100.3161, 25.6866], offset: -5 },
-  { id: 'quebec_city', type: 'city', city: 'Quebec City', country: 'Canada', coordinates: [-71.2108, 46.8139], offset: -4 },
-  { id: 'portland', type: 'city', city: 'Portland', country: 'United States', coordinates: [-122.6765, 45.5155], offset: -7 },
-  { id: 'san_diego', type: 'city', city: 'San Diego', country: 'United States', coordinates: [-117.1611, 32.7157], offset: -7 },
-  { id: 'edmonton', type: 'city', city: 'Edmonton', country: 'Canada', coordinates: [-113.4938, 53.5461], offset: -6 },
-  { id: 'tijuana', type: 'city', city: 'Tijuana', country: 'Mexico', coordinates: [-117.0382, 32.5149], offset: -7 },
-  { id: 'minneapolis', type: 'city', city: 'Minneapolis', country: 'United States', coordinates: [-93.2650, 44.9778], offset: -5 },
-  { id: 'detroit', type: 'city', city: 'Detroit', country: 'United States', coordinates: [-83.0458, 42.3314], offset: -4 },
-  { id: 'cancun', type: 'city', city: 'Cancun', country: 'Mexico', coordinates: [-86.8515, 21.1619], offset: -5 },
-  { id: 'sacramento', type: 'city', city: 'Sacramento', country: 'United States', coordinates: [-121.4944, 38.5816], offset: -7 },
-  { id: 'winnipeg', type: 'city', city: 'Winnipeg', country: 'Canada', coordinates: [-97.1384, 49.8951], offset: -5 },
-  { id: 'puerto_vallarta', type: 'city', city: 'Puerto Vallarta', country: 'Mexico', coordinates: [-105.2253, 20.6534], offset: -5 },
-  { id: 'salt_lake_city', type: 'city', city: 'Salt Lake City', country: 'United States', coordinates: [-111.8910, 40.7608], offset: -6 },
-  { id: 'halifax', type: 'city', city: 'Halifax', country: 'Canada', coordinates: [-63.5724, 44.6488], offset: -3 },
+  // Comprehensive US Cities (500+ cities with population over 10,000)
+  ...US_CITIES,
+  // International Cities - Canada
+  { id: 'toronto', type: 'city', city: 'Toronto', country: 'Canada', coordinates: [-79.3832, 43.6532], offset: -4, region: 'North America' },
+  { id: 'vancouver', type: 'city', city: 'Vancouver', country: 'Canada', coordinates: [-123.1207, 49.2827], offset: -7, region: 'North America' },
+  { id: 'montreal', type: 'city', city: 'Montreal', country: 'Canada', coordinates: [-73.5673, 45.5017], offset: -4, region: 'North America' },
+  { id: 'calgary', type: 'city', city: 'Calgary', country: 'Canada', coordinates: [-114.0719, 51.0447], offset: -6, region: 'North America' },
+  { id: 'ottawa', type: 'city', city: 'Ottawa', country: 'Canada', coordinates: [-75.6972, 45.4215], offset: -4, region: 'North America' },
+  { id: 'edmonton', type: 'city', city: 'Edmonton', country: 'Canada', coordinates: [-113.4938, 53.5461], offset: -6, region: 'North America' },
+  { id: 'quebec_city', type: 'city', city: 'Quebec City', country: 'Canada', coordinates: [-71.2108, 46.8139], offset: -4, region: 'North America' },
+  { id: 'winnipeg', type: 'city', city: 'Winnipeg', country: 'Canada', coordinates: [-97.1384, 49.8951], offset: -5, region: 'North America' },
+  { id: 'halifax', type: 'city', city: 'Halifax', country: 'Canada', coordinates: [-63.5724, 44.6488], offset: -3, region: 'North America' },
+
+  // Mexico
+  { id: 'mexico_city', type: 'city', city: 'Mexico City', country: 'Mexico', coordinates: [-99.1332, 19.4326], offset: -5, region: 'North America' },
+  { id: 'guadalajara', type: 'city', city: 'Guadalajara', country: 'Mexico', coordinates: [-103.3496, 20.6597], offset: -5, region: 'North America' },
+  { id: 'monterrey', type: 'city', city: 'Monterrey', country: 'Mexico', coordinates: [-100.3161, 25.6866], offset: -5, region: 'North America' },
+  { id: 'tijuana', type: 'city', city: 'Tijuana', country: 'Mexico', coordinates: [-117.0382, 32.5149], offset: -7, region: 'North America' },
+  { id: 'cancun', type: 'city', city: 'Cancun', country: 'Mexico', coordinates: [-86.8515, 21.1619], offset: -5, region: 'North America' },
+  { id: 'puerto_vallarta', type: 'city', city: 'Puerto Vallarta', country: 'Mexico', coordinates: [-105.2253, 20.6534], offset: -5, region: 'North America' },
 
   // South America (20 cities)
   { id: 'sao_paulo', type: 'city', city: 'São Paulo', country: 'Brazil', coordinates: [-46.6333, -23.5505], offset: -3 },
