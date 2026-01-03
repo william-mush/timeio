@@ -9,12 +9,13 @@ import {
   Marker,
   ZoomableGroup,
 } from 'react-simple-maps';
-import { Search, ZoomIn, ZoomOut, MapPin, Clock } from 'lucide-react';
+import { Search, ZoomIn, ZoomOut, MapPin, Clock, Loader2, AlertCircle } from 'lucide-react';
 import { CityMarker } from '@/data/types';
 import { CITIES } from '@/data/cities';
 import { LANDMARKS } from '@/data/landmarks';
 
-const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+// Use the Natural Earth 110m countries from reliable CDN
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 const CITY_MARKERS = [...CITIES, ...LANDMARKS];
 
@@ -31,6 +32,7 @@ export function WorldMap() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
   const [position, setPosition] = useState<Position>({ coordinates: [0, 20], zoom: 1 });
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [timeSettings, setTimeSettings] = useState({
     format24Hour: false,
     showSeconds: true,
@@ -118,8 +120,8 @@ export function WorldMap() {
               key={type}
               onClick={() => setFilterType(type)}
               className={`px-4 py-2 rounded-xl font-medium transition-all ${filterType === type
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
                 }`}
             >
               {type === 'all' ? 'All' : type === 'city' ? 'Cities' : 'Landmarks'}
@@ -130,6 +132,16 @@ export function WorldMap() {
 
       {/* Map Container */}
       <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+        {/* Loading indicator */}
+        {!mapLoaded && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-blue-50/80 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-3">
+              <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+              <span className="text-sm text-gray-600">Loading map...</span>
+            </div>
+          </div>
+        )}
+
         {/* Selected/Hovered City Info Panel */}
         {(selectedCity || hoveredCity) && (
           <motion.div
@@ -198,8 +210,8 @@ export function WorldMap() {
           <ComposableMap
             projection="geoMercator"
             projectionConfig={{
-              scale: 120,
-              center: [0, 30]
+              scale: 130,
+              center: [0, 25]
             }}
             style={{ width: '100%', height: '100%' }}
           >
@@ -214,22 +226,30 @@ export function WorldMap() {
               <rect x="-1000" y="-500" width="3000" height="1500" fill="#e0f2fe" />
 
               <Geographies geography={geoUrl}>
-                {({ geographies }) =>
-                  geographies.map((geo) => (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      fill="#f8fafc"
-                      stroke="#cbd5e1"
-                      strokeWidth={0.5}
-                      style={{
-                        default: { outline: 'none' },
-                        hover: { fill: '#e2e8f0', outline: 'none', cursor: 'grab' },
-                        pressed: { fill: '#cbd5e1', outline: 'none' },
-                      }}
-                    />
-                  ))
-                }
+                {({ geographies }) => {
+                  // Set loaded state when geographies are available
+                  if (geographies.length > 0 && !mapLoaded) {
+                    setTimeout(() => setMapLoaded(true), 100);
+                  }
+                  return (
+                    <>
+                      {geographies.map((geo) => (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          fill="#f1f5f9"
+                          stroke="#94a3b8"
+                          strokeWidth={0.5}
+                          style={{
+                            default: { outline: 'none' },
+                            hover: { fill: '#e2e8f0', outline: 'none', cursor: 'grab' },
+                            pressed: { fill: '#cbd5e1', outline: 'none' },
+                          }}
+                        />
+                      ))}
+                    </>
+                  );
+                }}
               </Geographies>
 
               {/* City markers */}
