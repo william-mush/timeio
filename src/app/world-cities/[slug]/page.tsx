@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { WORLD_CITIES, getWorldCityById } from '@/data/world-cities';
+import { ALL_WORLD_CITIES, getAllCityById } from '@/data/all-world-cities';
 import { notFound } from 'next/navigation';
 import { WorldCityTimeClient } from './WorldCityTimeClient';
 
@@ -11,14 +11,14 @@ interface PageProps {
 
 // Generate static params for all world cities
 export async function generateStaticParams() {
-    return WORLD_CITIES.map((city) => ({
+    return ALL_WORLD_CITIES.map((city) => ({
         slug: city.id,
     }));
 }
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const city = getWorldCityById(params.slug);
+    const city = getAllCityById(params.slug);
 
     if (!city) {
         return {
@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 }
 
 export default function WorldCityPage({ params }: PageProps) {
-    const city = getWorldCityById(params.slug);
+    const city = getAllCityById(params.slug);
 
     if (!city) {
         notFound();

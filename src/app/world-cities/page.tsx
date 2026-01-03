@@ -1,10 +1,10 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { WORLD_CITIES, getUniqueCountries, getWorldCitiesByContinent } from "@/data/world-cities";
+import { ALL_WORLD_CITIES, getAllUniqueCountries, getAllCitiesByContinent } from "@/data/all-world-cities";
 import { Clock, Globe, Users, MapPin } from "lucide-react";
 
 export const metadata: Metadata = {
-    title: "World Cities Time - Current Time in 200+ International Cities",
+    title: "World Cities Time - Current Time in 500+ International Cities",
     description: "Find the current local time in major cities around the world. Browse by continent or country. Track time in Tokyo, London, Paris, Sydney, and hundreds more.",
     keywords: [
         "world cities time",
@@ -32,11 +32,11 @@ export const metadata: Metadata = {
 const continents = ['Asia', 'Europe', 'Africa', 'South America', 'North America', 'Oceania'];
 
 export default function WorldCitiesPage() {
-    const cityCount = WORLD_CITIES.length;
-    const countries = getUniqueCountries();
+    const cityCount = ALL_WORLD_CITIES.length;
+    const countries = getAllUniqueCountries();
 
     // Get top cities by population
-    const topCities = [...WORLD_CITIES]
+    const topCities = [...ALL_WORLD_CITIES]
         .sort((a, b) => b.population - a.population)
         .slice(0, 20);
 
@@ -109,7 +109,7 @@ export default function WorldCitiesPage() {
                     <h2 className="text-2xl font-semibold text-gray-900 mb-6">Browse by Continent</h2>
                     <div className="space-y-8">
                         {continents.map((continent) => {
-                            const continentCities = getWorldCitiesByContinent(continent)
+                            const continentCities = getAllCitiesByContinent(continent)
                                 .sort((a, b) => b.population - a.population)
                                 .slice(0, 8);
 
@@ -121,7 +121,7 @@ export default function WorldCitiesPage() {
                                         <MapPin className="w-5 h-5 text-gray-400" />
                                         <h3 className="text-lg font-semibold text-gray-800">{continent}</h3>
                                         <span className="text-sm text-gray-400">
-                                            ({getWorldCitiesByContinent(continent).length} cities)
+                                            ({getAllCitiesByContinent(continent).length} cities)
                                         </span>
                                     </div>
                                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2">

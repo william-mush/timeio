@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { US_CITIES } from '@/data/us-cities';
-import { WORLD_CITIES } from '@/data/world-cities';
+import { ALL_WORLD_CITIES } from '@/data/all-world-cities';
 
 const BASE_URL = 'https://time.io';
 
@@ -32,7 +32,7 @@ function generateSitemap() {
   }));
 
   // Dynamic World city pages
-  const worldCityPages = WORLD_CITIES.map((city) => ({
+  const worldCityPages = ALL_WORLD_CITIES.map((city) => ({
     url: `/world-cities/${city.id}`,
     priority: '0.6',
     changefreq: 'weekly' as const,
