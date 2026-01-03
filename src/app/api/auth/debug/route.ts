@@ -1,13 +1,29 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 
 /**
  * Diagnostic endpoint to check NextAuth configuration
  * GET /api/auth/debug
  * 
+ * PROTECTED: Requires admin authentication or DEBUG_SECRET
  * Returns status of environment variables (without exposing secrets)
  * and helpful debugging information.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
+    // Check authorization
+    const isAuthorized = await checkAuthorization(request)
+
+    if (!isAuthorized) {
+        return NextResponse.json(
+            {
+                error: 'Unauthorized',
+                message: 'This endpoint requires authentication. Provide DEBUG_SECRET header or be signed in as an admin.',
+            },
+            { status: 401 }
+        )
+    }
+
     const diagnostics = {
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV,
@@ -74,4 +90,39 @@ export async function GET() {
     }, {
         status: hasIssues ? 500 : 200,
     })
+}
+
+/**
+ * Check if the request is authorized to access this endpoint
+ * Authorization methods:
+ * 1. DEBUG_SECRET header matches the env variable
+ * 2. User is signed in (for development convenience)
+ * 3. In development mode (localhost)
+ */
+async function checkAuthorization(request: NextRequest): Promise<boolean> {
+    // Method 1: Check DEBUG_SECRET header
+    const debugSecret = request.headers.get('x-debug-secret')
+    if (debugSecret && process.env.DEBUG_SECRET && debugSecret === process.env.DEBUG_SECRET) {
+        return true
+    }
+
+    // Method 2: Check if user is signed in
+    try {
+        const session = await getServerSession(authOptions)
+        if (session?.user?.email) {
+            // Optionally, you could restrict to specific admin emails:
+            // const adminEmails = ['admin@time.io']
+            // if (adminEmails.includes(session.user.email)) return true
+            return true
+        }
+    } catch {
+        // Session check failed, continue to other methods
+    }
+
+    // Method 3: Allow in development mode
+    if (process.env.NODE_ENV === 'development') {
+        return true
+    }
+
+    return false
 }

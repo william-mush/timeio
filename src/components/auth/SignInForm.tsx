@@ -3,8 +3,7 @@
 import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { Mail, ArrowRight, Loader2, AlertCircle } from 'lucide-react';
-import Image from 'next/image';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 const errorMessages: Record<string, string> = {
     OAuthSignin: 'There was a problem starting the sign-in process. Please try again.',
