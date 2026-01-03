@@ -1,199 +1,168 @@
-'use client';
+import { Metadata } from "next";
+import Link from "next/link";
+import { US_CITIES, type USCity } from "@/data/us-cities";
+import { Clock, MapPin, Users, Search } from "lucide-react";
 
-import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { CITIES_OVER_24K, getCitiesByState, searchCities } from '@/data/us-cities';
+export const metadata: Metadata = {
+  title: "Current Time in US Cities - All Time Zones",
+  description: "Find the current local time in any US city. Browse 300+ cities across all American time zones including Eastern, Central, Mountain, Pacific, Alaska, and Hawaii.",
+  keywords: [
+    "US cities time",
+    "American time zones",
+    "current time USA",
+    "time in US cities",
+    "Eastern time",
+    "Pacific time",
+    "Central time",
+    "Mountain time",
+    "Alaska time",
+    "Hawaii time",
+  ],
+  openGraph: {
+    title: "US City Times - Time.IO",
+    description: "Current local time in 300+ US cities across all American time zones.",
+    type: "website",
+    url: "https://time.io/us-cities",
+  },
+  alternates: {
+    canonical: "https://time.io/us-cities",
+  },
+};
 
-const US_STATES = [
-  'AL', 'AK', 'AZ', 'AR', 'CA', 'CO', 'CT', 'DE', 'FL', 'GA',
-  'HI', 'ID', 'IL', 'IN', 'IA', 'KS', 'KY', 'LA', 'ME', 'MD',
-  'MA', 'MI', 'MN', 'MS', 'MO', 'MT', 'NE', 'NV', 'NH', 'NJ',
-  'NM', 'NY', 'NC', 'ND', 'OH', 'OK', 'OR', 'PA', 'RI', 'SC',
-  'SD', 'TN', 'TX', 'UT', 'VT', 'VA', 'WA', 'WV', 'WI', 'WY'
-];
+// Group cities by state
+function groupCitiesByState(cities: USCity[]) {
+  const grouped: Record<string, USCity[]> = {};
+  cities.forEach(city => {
+    if (!grouped[city.state]) {
+      grouped[city.state] = [];
+    }
+    grouped[city.state].push(city);
+  });
+  // Sort each state's cities by population
+  Object.keys(grouped).forEach(state => {
+    grouped[state].sort((a, b) => b.population - a.population);
+  });
+  return grouped;
+}
+
+// Get top cities
+function getTopCities(cities: USCity[], count: number) {
+  return [...cities]
+    .filter(c => c.population >= 24000)
+    .sort((a, b) => b.population - a.population)
+    .slice(0, count);
+}
 
 export default function USCitiesPage() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedState, setSelectedState] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'population' | 'state'>('population');
+  const eligibleCities = US_CITIES.filter(c => c.population >= 24000);
+  const topCities = getTopCities(eligibleCities, 20);
+  const cityCount = eligibleCities.length;
 
-  const filteredCities = useMemo(() => {
-    let cities = CITIES_OVER_24K;
-
-    // Filter by search query
-    if (searchQuery) {
-      cities = searchCities(searchQuery);
-    }
-
-    // Filter by state
-    if (selectedState) {
-      cities = cities.filter(city => city.state_code === selectedState);
-    }
-
-    // Sort cities
-    switch (sortBy) {
-      case 'name':
-        cities = cities.sort((a, b) => a.city.localeCompare(b.city));
-        break;
-      case 'population':
-        cities = cities.sort((a, b) => b.population - a.population);
-        break;
-      case 'state':
-        cities = cities.sort((a, b) => a.state.localeCompare(b.state) || a.city.localeCompare(b.city));
-        break;
-    }
-
-    return cities;
-  }, [searchQuery, selectedState, sortBy]);
-
-  const formatPopulation = (population: number) => {
-    return population.toLocaleString();
-  };
+  // Get unique states
+  const states = Array.from(new Set(eligibleCities.map(c => c.state))).sort();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-7xl mx-auto">
+    <div className="page-container">
+      <div className="content-container max-w-6xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
+        <div className="text-center mb-10">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            US Cities & Towns
+            Current Time in US Cities
           </h1>
-          <p className="text-lg text-gray-600 mb-2">
-            All incorporated cities and towns with populations over 24,000 people
-          </p>
-          <p className="text-sm text-gray-500">
-            {CITIES_OVER_24K.length} cities • Current local time for each location
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Find the current local time in {cityCount}+ American cities across all time zones.
+            Select a city to see detailed time information.
           </p>
         </div>
 
-        {/* Search and Filter Controls */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Search */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search Cities
-              </label>
-              <input
-                type="text"
-                placeholder="Search by city or state..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            {/* State Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Filter by State
-              </label>
-              <select
-                value={selectedState}
-                onChange={(e) => setSelectedState(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="">All States</option>
-                {US_STATES.map(state => (
-                  <option key={state} value={state}>{state}</option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sort */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sort by
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as 'name' | 'population' | 'state')}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="population">Population (High to Low)</option>
-                <option value="name">City Name (A-Z)</option>
-                <option value="state">State (A-Z)</option>
-              </select>
-            </div>
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-4 mb-10">
+          <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+            <div className="text-2xl font-bold text-blue-600">{cityCount}+</div>
+            <div className="text-sm text-gray-500">Cities</div>
+          </div>
+          <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+            <div className="text-2xl font-bold text-green-600">{states.length}</div>
+            <div className="text-sm text-gray-500">States</div>
+          </div>
+          <div className="bg-white rounded-xl p-4 text-center shadow-sm border border-gray-100">
+            <div className="text-2xl font-bold text-purple-600">6</div>
+            <div className="text-sm text-gray-500">Time Zones</div>
           </div>
         </div>
 
-        {/* Results Summary */}
-        <div className="mb-6">
-          <p className="text-gray-600">
-            Showing {filteredCities.length} cities
-            {selectedState && ` in ${selectedState}`}
-            {searchQuery && ` matching "${searchQuery}"`}
-          </p>
-        </div>
-
-        {/* Cities Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredCities.map((city) => (
-            <Link
-              key={city.id}
-              href={`/us-cities/${city.id}`}
-              className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 p-6 block"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <h3 className="text-lg font-semibold text-gray-900 leading-tight">
-                  {city.city}
-                </h3>
-                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                  {city.state_code}
-                </span>
-              </div>
-              
-              <p className="text-sm text-gray-600 mb-2">{city.state}</p>
-              
-              <div className="space-y-1 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Population:</span>
-                  <span className="font-medium">{formatPopulation(city.population)}</span>
-                </div>
-                {city.county && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">County:</span>
-                    <span className="font-medium text-xs">{city.county}</span>
+        {/* Top Cities */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Major US Cities</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {topCities.map((city) => (
+              <Link
+                key={city.id}
+                href={`/us-cities/${city.id}`}
+                className="group bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                    <Clock className="w-5 h-5 text-blue-600" />
                   </div>
-                )}
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-gray-100">
-                <div className="text-xs text-blue-600 hover:text-blue-800">
-                  View Current Time →
+                  <div>
+                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                      {city.city}
+                    </h3>
+                    <p className="text-sm text-gray-500">{city.state_code}</p>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Pop: {city.population.toLocaleString()}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
+          </div>
         </div>
 
-        {/* No Results */}
-        {filteredCities.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No cities found matching your criteria.</p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedState('');
-              }}
-              className="mt-4 text-blue-600 hover:text-blue-800 underline"
-            >
-              Clear filters
-            </button>
+        {/* Browse by State */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Browse by State</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+            {states.map((state) => {
+              const count = eligibleCities.filter(c => c.state === state).length;
+              return (
+                <div
+                  key={state}
+                  className="bg-white rounded-lg p-3 text-center border border-gray-100 hover:border-blue-200 transition-colors"
+                >
+                  <div className="font-medium text-gray-900 text-sm truncate">{state}</div>
+                  <div className="text-xs text-gray-400">{count} cities</div>
+                </div>
+              );
+            })}
           </div>
-        )}
+        </div>
 
-        {/* Footer Info */}
-        <div className="mt-12 text-center text-sm text-gray-500">
-          <p>
-            Population data from US Census Bureau • Time zones from IANA database
-          </p>
-          <p className="mt-2">
-            <Link href="/us-counties" className="text-blue-600 hover:text-blue-800 underline">
-              View US Counties →
-            </Link>
-          </p>
+        {/* SEO Content */}
+        <div className="bg-gray-50 rounded-2xl p-8 mt-12">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">US Time Zones Explained</h2>
+          <div className="grid md:grid-cols-2 gap-6 text-gray-600">
+            <div>
+              <h3 className="font-semibold text-gray-800 mb-2">Continental US Time Zones</h3>
+              <ul className="space-y-2 text-sm">
+                <li><strong>Eastern Time (ET)</strong> - New York, Miami, Atlanta</li>
+                <li><strong>Central Time (CT)</strong> - Chicago, Houston, Dallas</li>
+                <li><strong>Mountain Time (MT)</strong> - Denver, Phoenix, Salt Lake City</li>
+                <li><strong>Pacific Time (PT)</strong> - Los Angeles, Seattle, San Francisco</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-800 mb-2">Non-Continental Zones</h3>
+              <ul className="space-y-2 text-sm">
+                <li><strong>Alaska Time (AKT)</strong> - Anchorage, Fairbanks, Juneau</li>
+                <li><strong>Hawaii Time (HST)</strong> - Honolulu, Maui, Hilo</li>
+              </ul>
+              <p className="mt-4 text-sm">
+                Note: Arizona does not observe Daylight Saving Time, except for the Navajo Nation.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
