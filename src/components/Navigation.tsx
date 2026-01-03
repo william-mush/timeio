@@ -97,6 +97,7 @@ export function Navigation() {
   const pathname = usePathname();
   const { data: session, status } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -127,8 +128,8 @@ export function Navigation() {
                 key={item.href}
                 href={item.href}
                 className={`text-sm transition-colors flex items-center gap-2 px-3 py-2 rounded-lg whitespace-nowrap ${pathname === item.href
-                    ? 'text-blue-500 font-medium bg-blue-50/50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
+                  ? 'text-blue-500 font-medium bg-blue-50/50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
                   }`}
               >
                 <item.icon className="w-4 h-4" />
@@ -140,17 +141,90 @@ export function Navigation() {
           <div className="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 border-l border-gray-200/50">
             <TimeDisplay />
 
-            {status === 'authenticated' && session?.user?.image && (
-              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-gray-100">
-                <Image
-                  src={session.user.image}
-                  alt={session.user.name || 'User profile'}
-                  width={32}
-                  height={32}
-                  className="object-cover"
-                  priority
-                />
+            {status === 'loading' ? (
+              <div className="w-8 h-8 rounded-full bg-gray-100 animate-pulse" />
+            ) : status === 'authenticated' && session?.user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                  className="flex items-center gap-2 focus:outline-none"
+                >
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
+                    {session.user.image ? (
+                      <Image
+                        src={session.user.image}
+                        alt={session.user.name || 'User profile'}
+                        width={32}
+                        height={32}
+                        className="object-cover w-full h-full"
+                        priority
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-semibold text-xs">
+                        {session.user.name?.[0]?.toUpperCase() || 'U'}
+                      </div>
+                    )}
+                  </div>
+                </button>
+
+                {isUserMenuOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-30"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-40 animate-in fade-in slide-in-from-top-1 duration-200">
+                      <div className="px-4 py-2 border-b border-gray-100">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {session.user.name}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">
+                          {session.user.email}
+                        </p>
+                      </div>
+                      <Link
+                        href="/settings"
+                        onClick={() => setIsUserMenuOpen(false)}
+                        className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Settings
+                      </Link>
+                      <button
+                        onClick={async () => {
+                          const { signOut } = await import('next-auth/react');
+                          await signOut({ callbackUrl: '/' });
+                          setIsUserMenuOpen(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-left"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="w-4 h-4"
+                        >
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                          <polyline points="16 17 21 12 16 7" />
+                          <line x1="21" x2="9" y1="12" y2="12" />
+                        </svg>
+                        Sign Out
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
+            ) : (
+              <Link
+                href="/auth/signin"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-sm hover:shadow"
+              >
+                Sign In
+              </Link>
             )}
           </div>
         </div>
@@ -164,8 +238,8 @@ export function Navigation() {
                   key={item.href}
                   href={item.href}
                   className={`text-sm transition-colors flex items-center gap-2 px-3 py-2.5 rounded-lg ${pathname === item.href
-                      ? 'text-blue-500 font-medium bg-blue-50/50'
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
+                    ? 'text-blue-500 font-medium bg-blue-50/50'
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
                     }`}
                 >
                   <item.icon className="w-4 h-4" />
