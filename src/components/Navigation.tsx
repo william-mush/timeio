@@ -51,14 +51,14 @@ const TimeDisplay = () => {
       const minutes = now.getMinutes().toString().padStart(2, '0');
       const seconds = now.getSeconds().toString().padStart(2, '0');
       const ms = now.getMilliseconds().toString().padStart(3, '0');
-      
+
       let period = '';
       if (!format24Hour) {
         period = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
         hours = hours ? hours : 12; // Convert 0 to 12
       }
-      
+
       setHours(hours.toString().padStart(2, '0'));
       setMinutes(minutes);
       setSeconds(seconds);
@@ -82,7 +82,7 @@ const TimeDisplay = () => {
 
 const navItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/search', label: 'US Cities', icon: Building2 },
+  { href: '/us-cities', label: 'US Cities', icon: Building2 },
   { href: '/alarms', label: 'Alarms', icon: Bell },
   { href: '/world-clock', label: 'World Clock', icon: Clock },
   { href: '/world-map', label: 'World Map', icon: MapPin },
@@ -126,18 +126,17 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm transition-colors flex items-center gap-2 px-3 py-2 rounded-lg whitespace-nowrap ${
-                  pathname === item.href
+                className={`text-sm transition-colors flex items-center gap-2 px-3 py-2 rounded-lg whitespace-nowrap ${pathname === item.href
                     ? 'text-blue-500 font-medium bg-blue-50/50'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
-                }`}
+                  }`}
               >
                 <item.icon className="w-4 h-4" />
                 {item.label}
               </Link>
             ))}
           </div>
-          
+
           <div className="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 border-l border-gray-200/50">
             <TimeDisplay />
 
@@ -164,11 +163,10 @@ export function Navigation() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm transition-colors flex items-center gap-2 px-3 py-2.5 rounded-lg ${
-                    pathname === item.href
+                  className={`text-sm transition-colors flex items-center gap-2 px-3 py-2.5 rounded-lg ${pathname === item.href
                       ? 'text-blue-500 font-medium bg-blue-50/50'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
-                  }`}
+                    }`}
                 >
                   <item.icon className="w-4 h-4" />
                   {item.label}
