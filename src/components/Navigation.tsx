@@ -105,6 +105,7 @@ const locationItems = [
   { href: '/world-clock', label: 'World Clock', icon: Clock },
   { href: '/time-converter', label: 'Time Converter', icon: Globe },
   { href: '/world-map', label: 'World Map', icon: MapPin },
+  { href: '/world-cities', label: 'World Cities', icon: Globe },
   { href: '/us-cities', label: 'US Cities', icon: Building2 },
 ];
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { US_CITIES } from '@/data/us-cities';
+import { WORLD_CITIES } from '@/data/world-cities';
 
 const BASE_URL = 'https://time.io';
 
@@ -13,6 +14,7 @@ function generateSitemap() {
     { url: '/time-converter', priority: '0.9', changefreq: 'daily' },
     { url: '/alarms', priority: '0.9', changefreq: 'daily' },
     { url: '/world-map', priority: '0.8', changefreq: 'weekly' },
+    { url: '/world-cities', priority: '0.8', changefreq: 'weekly' },
     { url: '/us-cities', priority: '0.8', changefreq: 'weekly' },
     { url: '/solar-clock', priority: '0.7', changefreq: 'weekly' },
     { url: '/solar-clock-3d', priority: '0.7', changefreq: 'weekly' },
@@ -23,13 +25,20 @@ function generateSitemap() {
   ];
 
   // Dynamic US city pages
-  const cityPages = US_CITIES.map((city) => ({
+  const usCityPages = US_CITIES.map((city) => ({
     url: `/us-cities/${city.id}`,
     priority: '0.6',
     changefreq: 'weekly' as const,
   }));
 
-  const allPages = [...staticPages, ...cityPages];
+  // Dynamic World city pages
+  const worldCityPages = WORLD_CITIES.map((city) => ({
+    url: `/world-cities/${city.id}`,
+    priority: '0.6',
+    changefreq: 'weekly' as const,
+  }));
+
+  const allPages = [...staticPages, ...usCityPages, ...worldCityPages];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
