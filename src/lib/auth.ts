@@ -85,23 +85,23 @@ export const authOptions: AuthOptions = {
         isNewUser,
       })
 
-      // Log to database for analytics
-      await logAuthEvent({
+      // Log to database for analytics (fire-and-forget, never blocks auth)
+      logAuthEvent({
         type: isNewUser ? 'signup' : 'signin_success',
         provider: account?.provider,
         userId: user?.id,
         email: user?.email || undefined,
-      })
+      }).catch(() => { }) // Silently ignore any errors
     },
     async signOut({ session }) {
       const userId = (session as { userId?: string })?.userId
       console.log('[NextAuth] EVENT signOut:', { userId })
 
-      // Log to database for analytics
-      await logAuthEvent({
+      // Log to database for analytics (fire-and-forget, never blocks auth)
+      logAuthEvent({
         type: 'signout',
         userId: userId || undefined,
-      })
+      }).catch(() => { }) // Silently ignore any errors
     },
     async createUser({ user }) {
       console.log('[NextAuth] EVENT createUser:', {
