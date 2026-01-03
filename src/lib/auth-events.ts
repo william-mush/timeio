@@ -179,21 +179,8 @@ export async function getUserStats() {
 
     try {
         totalUsers = await prisma.user.count()
-
-        // Get the most recently created user
-        const lastUser = await prisma.user.findFirst({
-            orderBy: { createdAt: 'desc' },
-            select: {
-                email: true,
-                name: true,
-                createdAt: true,
-            },
-        })
-
-        if (lastUser) {
-            lastUserCreatedAt = lastUser.createdAt.toISOString()
-            lastUserEmail = lastUser.email ? lastUser.email.substring(0, 3) + '***' : null
-        }
+        // Note: User.createdAt is not available in the database yet
+        // Last user tracking disabled until database migration is run
     } catch (error) {
         console.error('[AuthEvent] Failed to get user count:', error)
     }
