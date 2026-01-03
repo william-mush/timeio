@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { searchCities, USCity } from '@/data/usCities';
+import { searchCities, USCity, getCityById } from '@/data/us-cities';
 import { Search, MapPin, Users, Clock } from 'lucide-react';
 
 export default function CitySearch() {
@@ -12,19 +12,19 @@ export default function CitySearch() {
   const handleSearch = (searchQuery: string) => {
     setQuery(searchQuery);
     setIsSearching(true);
-    
+
     if (searchQuery.trim().length > 0) {
       const searchResults = searchCities(searchQuery);
       setResults(searchResults.slice(0, 10)); // Limit to top 10 results
     } else {
       setResults([]);
     }
-    
+
     setIsSearching(false);
   };
 
   const handleCityClick = (city: USCity) => {
-    window.location.href = `/${city.slug}`;
+    window.location.href = `/us-cities/${city.id}`;
   };
 
   return (
@@ -34,7 +34,7 @@ export default function CitySearch() {
           US City Time Finder
         </h1>
         <p className="text-xl text-gray-600 mb-8">
-          Find current time, timezone, and daylight saving information for any US city with over 100,000 people
+          Find current time, timezone, and daylight saving information for any US city.
         </p>
       </div>
 
@@ -70,14 +70,14 @@ export default function CitySearch() {
           <div className="divide-y divide-gray-200">
             {results.map((city) => (
               <div
-                key={city.slug}
+                key={city.id}
                 onClick={() => handleCityClick(city)}
                 className="p-6 hover:bg-gray-50 cursor-pointer transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {city.name}, {city.state}
+                      {city.city}, {city.state}
                     </h3>
                     <div className="flex items-center space-x-6 text-sm text-gray-600">
                       <div className="flex items-center">
@@ -122,20 +122,20 @@ export default function CitySearch() {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
-              { name: 'New York', state: 'NY', slug: 'NewYork' },
-              { name: 'Los Angeles', state: 'CA', slug: 'LosAngeles' },
-              { name: 'Chicago', state: 'IL', slug: 'Chicago' },
-              { name: 'Houston', state: 'TX', slug: 'Houston' },
-              { name: 'Phoenix', state: 'AZ', slug: 'Phoenix' },
-              { name: 'Philadelphia', state: 'PA', slug: 'Philadelphia' },
-            ].map((city) => (
+              'new-york-ny',
+              'los-angeles-ca',
+              'chicago-il',
+              'houston-tx',
+              'phoenix-az',
+              'philadelphia-pa',
+            ].map(id => getCityById(id)).filter((c): c is USCity => c !== undefined).map((city) => (
               <button
-                key={city.slug}
-                onClick={() => handleCityClick(city as USCity)}
+                key={city.id}
+                onClick={() => handleCityClick(city)}
                 className="p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-md transition-all text-left"
               >
                 <div className="font-semibold text-gray-900">
-                  {city.name}
+                  {city.city}
                 </div>
                 <div className="text-sm text-gray-600">
                   {city.state}
@@ -149,7 +149,7 @@ export default function CitySearch() {
       {/* Footer Info */}
       <div className="mt-16 text-center text-gray-600">
         <p className="mb-2">
-          Displaying time information for {searchCities('').length} US cities with populations over 100,000
+          Displaying time information for {searchCities('').length} US cities
         </p>
         <p className="text-sm">
           Data includes current time, timezone, and daylight saving time status

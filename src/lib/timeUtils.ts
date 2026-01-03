@@ -1,4 +1,4 @@
-import { USCity } from '@/data/usCities';
+import { USCity } from '@/data/us-cities';
 
 export interface TimeInfo {
   currentTime: string;
@@ -11,7 +11,7 @@ export interface TimeInfo {
 // Get current time information for a city
 export function getCityTimeInfo(city: USCity): TimeInfo {
   const now = new Date();
-  
+
   // Create Intl.DateTimeFormat for the city's timezone
   const timeFormatter = new Intl.DateTimeFormat('en-US', {
     timeZone: city.timezone,
@@ -55,19 +55,19 @@ export function getCityTimeInfo(city: USCity): TimeInfo {
 export function isDaylightSavingTime(date: Date, timezone: string): boolean {
   // Get the timezone offset in January (standard time)
   const januaryOffset = getTimezoneOffsetMinutes(new Date(date.getFullYear(), 0, 1), timezone);
-  
+
   // Get the timezone offset in July (likely DST if applicable)
   const julyOffset = getTimezoneOffsetMinutes(new Date(date.getFullYear(), 6, 1), timezone);
-  
+
   // Get current offset
   const currentOffset = getTimezoneOffsetMinutes(date, timezone);
-  
+
   // If January and July offsets are different, DST is observed
   if (januaryOffset !== julyOffset) {
     // DST is in effect if current offset matches the summer offset
     return currentOffset === Math.min(januaryOffset, julyOffset);
   }
-  
+
   // No DST observed in this timezone
   return false;
 }
@@ -83,13 +83,13 @@ function getTimezoneOffsetMinutes(date: Date, timezone: string): number {
 export function getTimezoneOffset(date: Date, timezone: string): string {
   const offsetMinutes = getTimezoneOffsetMinutes(date, timezone);
   const offsetHours = offsetMinutes / 60;
-  
+
   if (offsetHours === 0) return 'UTC+0';
-  
+
   const sign = offsetHours > 0 ? '+' : '';
   const hours = Math.floor(Math.abs(offsetHours));
   const minutes = Math.abs(offsetMinutes) % 60;
-  
+
   if (minutes === 0) {
     return `UTC${sign}${offsetHours}`;
   } else {
@@ -132,13 +132,13 @@ export function formatTimeDisplay(timeInfo: TimeInfo): {
   dstStatus: string;
 } {
   const [datePart, timePart] = timeInfo.currentTime.split(' at ');
-  
+
   return {
     time: timePart,
     date: datePart,
     timezone: `${timeInfo.timeZoneName} (${timeInfo.utcOffset})`,
-    dstStatus: timeInfo.isDST 
-      ? 'Currently observing Daylight Saving Time' 
+    dstStatus: timeInfo.isDST
+      ? 'Currently observing Daylight Saving Time'
       : 'Currently on Standard Time'
   };
 }
