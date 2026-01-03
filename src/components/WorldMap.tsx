@@ -8,9 +8,8 @@ import {
   Geography,
   Marker,
   ZoomableGroup,
-  GeographyProps
 } from 'react-simple-maps';
-import { Search } from 'lucide-react';
+import { Search, ZoomIn, ZoomOut, MapPin, Clock } from 'lucide-react';
 import { CityMarker } from '@/data/types';
 import { CITIES } from '@/data/cities';
 import { LANDMARKS } from '@/data/landmarks';
@@ -28,9 +27,10 @@ interface Position {
 
 export function WorldMap() {
   const [selectedCity, setSelectedCity] = useState<CityMarker | null>(null);
+  const [hoveredCity, setHoveredCity] = useState<CityMarker | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<FilterType>('all');
-  const [position, setPosition] = useState<Position>({ coordinates: [0, 0], zoom: 1 });
+  const [position, setPosition] = useState<Position>({ coordinates: [0, 20], zoom: 1 });
   const [timeSettings, setTimeSettings] = useState({
     format24Hour: false,
     showSeconds: true,
@@ -68,25 +68,25 @@ export function WorldMap() {
 
   const filteredMarkers = useMemo(() => {
     return CITY_MARKERS.filter(marker => {
-      const matchesSearch = searchQuery === '' || 
+      const matchesSearch = searchQuery === '' ||
         marker.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
         marker.country.toLowerCase().includes(searchQuery.toLowerCase());
-      
+
       const matchesType = filterType === 'all' || marker.type === filterType;
-      
+
       return matchesSearch && matchesType;
     });
   }, [searchQuery, filterType]);
 
-  const handleZoom = (zoom: number) => {
-    setPosition(pos => ({ ...pos, zoom }));
+  const handleZoom = (newZoom: number) => {
+    setPosition(pos => ({ ...pos, zoom: Math.max(0.8, Math.min(4, newZoom)) }));
   };
 
   const formatTime = (offset: number) => {
     const now = new Date();
     const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
     const cityTime = new Date(utc + (3600000 * offset));
-    
+
     const options: Intl.DateTimeFormatOptions = {
       hour: timeSettings.format24Hour ? '2-digit' : 'numeric',
       minute: '2-digit',
@@ -94,162 +94,188 @@ export function WorldMap() {
       hour12: !timeSettings.format24Hour
     };
 
-    let time = cityTime.toLocaleTimeString('en-US', options);
-    
-    if (timeSettings.showMilliseconds) {
-      const ms = cityTime.getMilliseconds().toString().padStart(3, '0');
-      time = time.replace(' ', ' : ' + ms + ' ');
-    }
-
-    return time;
+    return cityTime.toLocaleTimeString('en-US', options);
   };
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto bg-white/40 backdrop-blur-sm rounded-xl shadow-lg p-6 space-y-6">
-      <div className="flex flex-col space-y-4">
-        {/* Selected City Info - Moved to top */}
-        {selectedCity && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="w-full bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg border border-gray-200/50"
-          >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-semibold">{selectedCity.city}</h3>
-                <p className="text-gray-600">{selectedCity.country}</p>
-                <p className="text-sm text-gray-500 mt-1">
-                  {selectedCity.coordinates[0].toFixed(2)}°, {selectedCity.coordinates[1].toFixed(2)}°
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-lg font-mono">{formatTime(selectedCity.offset)}</p>
-                <p className="text-sm text-gray-500">GMT {selectedCity.offset >= 0 ? '+' : ''}{selectedCity.offset}</p>
-              </div>
-            </div>
-            {selectedCity.description && (
-              <p className="mt-2 text-sm text-gray-600">{selectedCity.description}</p>
-            )}
-          </motion.div>
-        )}
-
-        <div className="relative">
+    <div className="space-y-6">
+      {/* Search and Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
-            placeholder="Search by city, country, region, or coordinates (lat,long)"
-            className="w-full pl-10 pr-4 py-2 bg-white/60 backdrop-blur-sm rounded-lg border border-gray-200/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+            placeholder="Search cities or countries..."
+            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
 
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setFilterType('all')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              filterType === 'all'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100/50 text-gray-600 hover:bg-gray-200/50'
-            }`}
-          >
-            All
-          </button>
-          <button
-            onClick={() => setFilterType('city')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              filterType === 'city'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100/50 text-gray-600 hover:bg-gray-200/50'
-            }`}
-          >
-            Cities
-          </button>
-          <button
-            onClick={() => setFilterType('landmark')}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              filterType === 'landmark'
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-100/50 text-gray-600 hover:bg-gray-200/50'
-            }`}
-          >
-            Landmarks
-          </button>
+        <div className="flex gap-2">
+          {(['all', 'city', 'landmark'] as FilterType[]).map((type) => (
+            <button
+              key={type}
+              onClick={() => setFilterType(type)}
+              className={`px-4 py-2 rounded-xl font-medium transition-all ${filterType === type
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                }`}
+            >
+              {type === 'all' ? 'All' : type === 'city' ? 'Cities' : 'Landmarks'}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="relative w-full aspect-[2/1] bg-transparent rounded-lg overflow-hidden mb-20">
-        <ComposableMap
-          projection="geoEqualEarth"
-          projectionConfig={{
-            scale: 130,
-            center: [0, 0]
-          }}
-        >
-          <ZoomableGroup
-            zoom={position.zoom}
-            center={position.coordinates}
-            minZoom={0.8}
-            maxZoom={4}
-            onMoveEnd={({ coordinates, zoom }: Position) => setPosition({ coordinates, zoom })}
+      {/* Map Container */}
+      <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl overflow-hidden shadow-lg border border-gray-200">
+        {/* Selected/Hovered City Info Panel */}
+        {(selectedCity || hoveredCity) && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-gray-100 min-w-[240px]"
           >
-            <Geographies geography={geoUrl}>
-              {({ geographies }) =>
-                geographies.map((geo) => (
-                  <Geography
-                    key={geo.rsmKey}
-                    geography={geo}
-                    fill="#f1f5f9"
-                    stroke="#e2e8f0"
-                    strokeWidth={0.5}
-                    style={{
-                      default: { outline: 'none' },
-                      hover: { fill: '#e2e8f0', outline: 'none' },
-                      pressed: { outline: 'none' },
-                    }}
-                  />
-                ))
-              }
-            </Geographies>
+            <div className="flex items-start gap-3">
+              <div className={`p-2 rounded-lg ${(selectedCity || hoveredCity)?.type === 'city' ? 'bg-red-100' : 'bg-blue-100'}`}>
+                <MapPin className={`w-5 h-5 ${(selectedCity || hoveredCity)?.type === 'city' ? 'text-red-600' : 'text-blue-600'}`} />
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900">{(selectedCity || hoveredCity)?.city}</h3>
+                <p className="text-sm text-gray-500">{(selectedCity || hoveredCity)?.country}</p>
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-gray-400" />
+              <span className="font-mono text-lg text-gray-900">
+                {formatTime((selectedCity || hoveredCity)!.offset)}
+              </span>
+              <span className="text-sm text-gray-400">
+                GMT{(selectedCity || hoveredCity)!.offset >= 0 ? '+' : ''}{(selectedCity || hoveredCity)?.offset}
+              </span>
+            </div>
+            {(selectedCity || hoveredCity)?.description && (
+              <p className="mt-2 text-xs text-gray-500">{(selectedCity || hoveredCity)?.description}</p>
+            )}
+          </motion.div>
+        )}
 
-            {filteredMarkers.map((marker) => (
-              <Marker
-                key={marker.id}
-                coordinates={[marker.coordinates[0], marker.coordinates[1]]}
-                onClick={() => setSelectedCity(marker)}
-              >
-                <motion.circle
-                  r={4}
-                  fill={marker.type === 'city' ? '#ef4444' : '#3b82f6'}
-                  fillOpacity={0.8}
-                  stroke="#fff"
-                  strokeWidth={1}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  whileHover={{ scale: 1.5 }}
-                  className="cursor-pointer"
-                />
-              </Marker>
-            ))}
-          </ZoomableGroup>
-        </ComposableMap>
-
-        {/* Zoom controls */}
-        <div className="absolute top-4 right-4 flex flex-col space-y-2">
+        {/* Zoom Controls */}
+        <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
           <button
-            onClick={() => handleZoom(Math.min(position.zoom * 1.5, 4))}
-            className="p-2 bg-white/60 rounded-lg shadow-md hover:bg-white/80"
+            onClick={() => handleZoom(position.zoom * 1.5)}
+            className="p-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-colors border border-gray-200"
+            aria-label="Zoom in"
           >
-            +
+            <ZoomIn className="w-5 h-5 text-gray-600" />
           </button>
           <button
-            onClick={() => handleZoom(Math.max(position.zoom / 1.5, 1))}
-            className="p-2 bg-white/60 rounded-lg shadow-md hover:bg-white/80"
+            onClick={() => handleZoom(position.zoom / 1.5)}
+            className="p-2 bg-white rounded-lg shadow-md hover:bg-gray-50 transition-colors border border-gray-200"
+            aria-label="Zoom out"
           >
-            -
+            <ZoomOut className="w-5 h-5 text-gray-600" />
           </button>
         </div>
+
+        {/* Legend */}
+        <div className="absolute bottom-4 right-4 z-20 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md border border-gray-100">
+          <div className="flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500" />
+              <span className="text-gray-600">Cities</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <span className="text-gray-600">Landmarks</span>
+            </div>
+          </div>
+        </div>
+
+        {/* The Map */}
+        <div className="aspect-[2/1] min-h-[400px]">
+          <ComposableMap
+            projection="geoMercator"
+            projectionConfig={{
+              scale: 120,
+              center: [0, 30]
+            }}
+            style={{ width: '100%', height: '100%' }}
+          >
+            <ZoomableGroup
+              zoom={position.zoom}
+              center={position.coordinates}
+              minZoom={0.8}
+              maxZoom={4}
+              onMoveEnd={({ coordinates, zoom }: Position) => setPosition({ coordinates, zoom })}
+            >
+              {/* Ocean background */}
+              <rect x="-1000" y="-500" width="3000" height="1500" fill="#e0f2fe" />
+
+              <Geographies geography={geoUrl}>
+                {({ geographies }) =>
+                  geographies.map((geo) => (
+                    <Geography
+                      key={geo.rsmKey}
+                      geography={geo}
+                      fill="#f8fafc"
+                      stroke="#cbd5e1"
+                      strokeWidth={0.5}
+                      style={{
+                        default: { outline: 'none' },
+                        hover: { fill: '#e2e8f0', outline: 'none', cursor: 'grab' },
+                        pressed: { fill: '#cbd5e1', outline: 'none' },
+                      }}
+                    />
+                  ))
+                }
+              </Geographies>
+
+              {/* City markers */}
+              {filteredMarkers.map((marker) => (
+                <Marker
+                  key={marker.id}
+                  coordinates={[marker.coordinates[0], marker.coordinates[1]]}
+                  onClick={() => setSelectedCity(marker)}
+                  onMouseEnter={() => setHoveredCity(marker)}
+                  onMouseLeave={() => setHoveredCity(null)}
+                >
+                  <motion.g
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    whileHover={{ scale: 1.3 }}
+                    className="cursor-pointer"
+                  >
+                    {/* Outer glow */}
+                    <circle
+                      r={8}
+                      fill={marker.type === 'city' ? '#ef4444' : '#3b82f6'}
+                      fillOpacity={0.2}
+                    />
+                    {/* Inner circle */}
+                    <circle
+                      r={5}
+                      fill={marker.type === 'city' ? '#ef4444' : '#3b82f6'}
+                      stroke="#fff"
+                      strokeWidth={2}
+                    />
+                  </motion.g>
+                </Marker>
+              ))}
+            </ZoomableGroup>
+          </ComposableMap>
+        </div>
+      </div>
+
+      {/* Stats */}
+      <div className="flex justify-center gap-6 text-sm text-gray-500">
+        <span>{filteredMarkers.filter(m => m.type === 'city').length} cities</span>
+        <span>•</span>
+        <span>{filteredMarkers.filter(m => m.type === 'landmark').length} landmarks</span>
+        <span>•</span>
+        <span>Click any marker for details</span>
       </div>
     </div>
   );
-} 
+}
