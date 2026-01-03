@@ -10,6 +10,7 @@ function generateSitemap() {
   const staticPages = [
     { url: '', priority: '1.0', changefreq: 'daily' },
     { url: '/world-clock', priority: '0.9', changefreq: 'daily' },
+    { url: '/time-converter', priority: '0.9', changefreq: 'daily' },
     { url: '/alarms', priority: '0.9', changefreq: 'daily' },
     { url: '/world-map', priority: '0.8', changefreq: 'weekly' },
     { url: '/us-cities', priority: '0.8', changefreq: 'weekly' },
