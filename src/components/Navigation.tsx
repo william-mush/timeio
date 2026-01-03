@@ -6,6 +6,7 @@ import { Clock, MapPin, Bell, Settings, Sun, Menu, X, History, Building2, Chevro
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
+import { ThemeToggle } from './ThemeToggle';
 
 const TimeDisplay = () => {
   const [hours, setHours] = useState('00');
@@ -280,6 +281,9 @@ export function Navigation() {
                 <span className="hidden md:inline">Settings</span>
               </Link>
             )}
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* Divider */}
             <div className="hidden sm:block w-px h-6 bg-gray-200" />

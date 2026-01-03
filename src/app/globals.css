@@ -2,24 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CSS Variables for theming */
+:root {
+  /* Light mode (default) */
+  --bg-primary: 255, 255, 255;
+  --bg-secondary: 249, 250, 251;
+  --bg-tertiary: 243, 244, 246;
+  --bg-card: 255, 255, 255;
+
+  --text-primary: 17, 24, 39;
+  --text-secondary: 75, 85, 99;
+  --text-tertiary: 107, 114, 128;
+  --text-muted: 156, 163, 175;
+
+  --border-primary: 229, 231, 235;
+  --border-secondary: 209, 213, 219;
+
+  --accent-primary: 59, 130, 246;
+  --accent-secondary: 37, 99, 235;
+
+  --shadow-color: 0, 0, 0;
+}
+
+[data-theme="dark"] {
+  /* Dark mode */
+  --bg-primary: 17, 24, 39;
+  --bg-secondary: 31, 41, 55;
+  --bg-tertiary: 55, 65, 81;
+  --bg-card: 31, 41, 55;
+
+  --text-primary: 249, 250, 251;
+  --text-secondary: 209, 213, 219;
+  --text-tertiary: 156, 163, 175;
+  --text-muted: 107, 114, 128;
+
+  --border-primary: 55, 65, 81;
+  --border-secondary: 75, 85, 99;
+
+  --accent-primary: 96, 165, 250;
+  --accent-secondary: 59, 130, 246;
+
+  --shadow-color: 0, 0, 0;
+}
+
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
 
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
+/* Base styles with CSS variables */
 body {
-  @apply bg-white text-black;
+  background-color: rgb(var(--bg-primary));
+  color: rgb(var(--text-primary));
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Layout Components */
 .page-container {
-  @apply min-h-screen bg-white;
+  min-height: 100vh;
+  background-color: rgb(var(--bg-primary));
 }
 
 .content-container {
@@ -27,7 +74,10 @@ body {
 }
 
 .card {
-  @apply bg-white/60 rounded-xl shadow-sm border border-gray-200 p-6;
+  background-color: rgba(var(--bg-card), 0.9);
+  border-color: rgb(var(--border-primary));
+  @apply rounded-xl shadow-sm border p-6;
+  backdrop-filter: blur(8px);
 }
 
 .card-hover {
@@ -36,62 +86,94 @@ body {
 
 /* Typography */
 .heading-1 {
-  @apply text-4xl font-bold text-gray-900;
+  color: rgb(var(--text-primary));
+  @apply text-4xl font-bold;
 }
 
 .heading-2 {
-  @apply text-2xl font-semibold text-gray-800;
+  color: rgb(var(--text-primary));
+  @apply text-2xl font-semibold;
 }
 
 .heading-3 {
-  @apply text-xl font-medium text-gray-700;
+  color: rgb(var(--text-secondary));
+  @apply text-xl font-medium;
 }
 
 .text-body {
-  @apply text-base text-gray-600;
+  color: rgb(var(--text-secondary));
+  @apply text-base;
 }
 
 .text-muted {
-  @apply text-gray-500;
+  color: rgb(var(--text-tertiary));
 }
 
 /* Interactive Elements */
 .button-primary {
-  @apply px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors;
+  background-color: rgb(var(--accent-primary));
+  @apply px-4 py-2 text-white rounded-lg transition-colors;
+}
+
+.button-primary:hover {
+  background-color: rgb(var(--accent-secondary));
 }
 
 .button-secondary {
-  @apply px-4 py-2 bg-white text-gray-700 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors;
+  background-color: rgb(var(--bg-secondary));
+  color: rgb(var(--text-primary));
+  border-color: rgb(var(--border-primary));
+  @apply px-4 py-2 rounded-lg border transition-colors;
+}
+
+.button-secondary:hover {
+  background-color: rgb(var(--bg-tertiary));
 }
 
 .input-field {
-  @apply px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  background-color: rgb(var(--bg-primary));
+  border-color: rgb(var(--border-secondary));
+  color: rgb(var(--text-primary));
+  @apply px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
 }
 
 .select-field {
-  @apply px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  background-color: rgb(var(--bg-primary));
+  border-color: rgb(var(--border-secondary));
+  color: rgb(var(--text-primary));
+  @apply px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
 }
 
 /* Navigation */
 .nav-link {
-  @apply inline-flex items-center px-4 py-2 text-gray-600 hover:text-blue-500 border-b-2 border-transparent hover:border-blue-500 text-sm font-medium transition-colors duration-200;
+  color: rgb(var(--text-secondary));
+  @apply inline-flex items-center px-4 py-2 border-b-2 border-transparent text-sm font-medium transition-colors duration-200;
+}
+
+.nav-link:hover {
+  color: rgb(var(--accent-primary));
+  border-color: rgb(var(--accent-primary));
 }
 
 .nav-link-active {
-  @apply text-blue-500 border-blue-500;
+  color: rgb(var(--accent-primary));
+  border-color: rgb(var(--accent-primary));
 }
 
 /* Time Display */
 .time-display {
-  @apply text-[5rem] font-mono font-bold tracking-tighter text-gray-900 bg-white rounded-xl px-8 py-4 tabular-nums;
+  color: rgb(var(--text-primary));
+  background-color: rgba(var(--bg-card), 0.8);
+  @apply text-[5rem] font-mono font-bold tracking-tighter rounded-xl px-8 py-4 tabular-nums;
 }
 
 .time-display-secondary {
-  @apply text-gray-500;
+  color: rgb(var(--text-tertiary));
 }
 
 .date-display {
-  @apply text-2xl text-gray-900 font-medium;
+  color: rgb(var(--text-primary));
+  @apply text-2xl font-medium;
 }
 
 /* Animations */
@@ -104,8 +186,30 @@ body {
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Dark mode specific overrides for third-party components */
+[data-theme="dark"] .bg-white {
+  background-color: rgb(var(--bg-secondary)) !important;
+}
+
+[data-theme="dark"] .text-gray-900 {
+  color: rgb(var(--text-primary)) !important;
+}
+
+[data-theme="dark"] .border-gray-200 {
+  border-color: rgb(var(--border-primary)) !important;
+}
+
+[data-theme="dark"] .bg-gray-50 {
+  background-color: rgb(var(--bg-tertiary)) !important;
+}
+
+[data-theme="dark"] .shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3) !important;
 }
