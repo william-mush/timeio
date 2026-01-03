@@ -1,6 +1,5 @@
 'use client';
 
-import { AuthHeader } from '@/components/AuthHeader';
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { useEffect, useState } from "react";
@@ -84,13 +83,12 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
       <div className="flex-1 bg-gradient-to-br from-primary-100/30 via-secondary-100/30 to-accent-100/30 dark:from-gray-800/50 dark:via-gray-800/30 dark:to-gray-900/50">
-        <AuthHeader />
         <Navigation />
-        <main className="pt-32 min-h-[calc(100vh-200px)]">
+        <main className="pt-20 min-h-[calc(100vh-200px)]">
           {children}
         </main>
       </div>
       <Footer />
     </div>
   );
-} 
+}
