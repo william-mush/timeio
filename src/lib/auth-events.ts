@@ -45,104 +45,126 @@ export async function logAuthEvent(data: AuthEventData): Promise<void> {
 
 /**
  * Get auth statistics for the admin dashboard
+ * Handles the case where the AuthEvent table may not exist yet
  */
 export async function getAuthStats(days: number = 30) {
     const startDate = new Date()
     startDate.setDate(startDate.getDate() - days)
 
-    const [
-        totalEvents,
-        eventsByType,
-        eventsByDay,
-        recentEvents,
-        errorBreakdown,
-        uniqueUsers,
-    ] = await Promise.all([
-        // Total events count
-        prisma.authEvent.count({
-            where: { createdAt: { gte: startDate } },
-        }),
-
-        // Events grouped by type
-        prisma.authEvent.groupBy({
-            by: ['type'],
-            _count: { type: true },
-            where: { createdAt: { gte: startDate } },
-        }),
-
-        // Events per day (last N days)
-        prisma.$queryRaw<{ date: string; count: bigint }[]>`
-      SELECT DATE(created_at) as date, COUNT(*) as count
-      FROM "AuthEvent"
-      WHERE created_at >= ${startDate}
-      GROUP BY DATE(created_at)
-      ORDER BY date DESC
-    `,
-
-        // Recent events (last 50)
-        prisma.authEvent.findMany({
-            take: 50,
-            orderBy: { createdAt: 'desc' },
-            select: {
-                id: true,
-                type: true,
-                provider: true,
-                email: true,
-                errorCode: true,
-                createdAt: true,
-            },
-        }),
-
-        // Error breakdown
-        prisma.authEvent.groupBy({
-            by: ['errorCode'],
-            _count: { errorCode: true },
-            where: {
-                createdAt: { gte: startDate },
-                errorCode: { not: null },
-            },
-        }),
-
-        // Unique users who signed in
-        prisma.authEvent.groupBy({
-            by: ['userId'],
-            where: {
-                createdAt: { gte: startDate },
-                type: 'signin_success',
-                userId: { not: null },
-            },
-        }),
-    ])
-
-    // Calculate success rate
-    const successCount = eventsByType.find(e => e.type === 'signin_success')?._count.type || 0
-    const failureCount = eventsByType.find(e => e.type === 'signin_failure')?._count.type || 0
-    const totalAttempts = successCount + failureCount
-    const successRate = totalAttempts > 0 ? (successCount / totalAttempts) * 100 : 100
-
-    return {
-        summary: {
+    try {
+        const [
             totalEvents,
-            successRate: Math.round(successRate * 100) / 100,
-            uniqueUsers: uniqueUsers.length,
-            period: `Last ${days} days`,
-        },
-        eventsByType: eventsByType.map(e => ({
-            type: e.type,
-            count: e._count.type,
-        })),
-        eventsByDay: eventsByDay.map(e => ({
-            date: e.date,
-            count: Number(e.count),
-        })),
-        errorBreakdown: errorBreakdown.map(e => ({
-            errorCode: e.errorCode,
-            count: e._count.errorCode,
-        })),
-        recentEvents: recentEvents.map(e => ({
-            ...e,
-            email: e.email ? e.email.substring(0, 3) + '***@***' : null, // Mask email
-        })),
+            eventsByType,
+            recentEvents,
+            errorBreakdown,
+            uniqueUsers,
+        ] = await Promise.all([
+            // Total events count
+            prisma.authEvent.count({
+                where: { createdAt: { gte: startDate } },
+            }),
+
+            // Events grouped by type
+            prisma.authEvent.groupBy({
+                by: ['type'],
+                _count: { type: true },
+                where: { createdAt: { gte: startDate } },
+            }),
+
+            // Recent events (last 50)
+            prisma.authEvent.findMany({
+                take: 50,
+                orderBy: { createdAt: 'desc' },
+                select: {
+                    id: true,
+                    type: true,
+                    provider: true,
+                    email: true,
+                    errorCode: true,
+                    createdAt: true,
+                },
+            }),
+
+            // Error breakdown
+            prisma.authEvent.groupBy({
+                by: ['errorCode'],
+                _count: { errorCode: true },
+                where: {
+                    createdAt: { gte: startDate },
+                    errorCode: { not: null },
+                },
+            }),
+
+            // Unique users who signed in
+            prisma.authEvent.groupBy({
+                by: ['userId'],
+                where: {
+                    createdAt: { gte: startDate },
+                    type: 'signin_success',
+                    userId: { not: null },
+                },
+            }),
+        ])
+
+        // Calculate events by day using Prisma queries instead of raw SQL
+        // Group recent events by date manually
+        const eventsByDayMap = new Map<string, number>()
+        const allRecentEvents = await prisma.authEvent.findMany({
+            where: { createdAt: { gte: startDate } },
+            select: { createdAt: true },
+        })
+
+        for (const event of allRecentEvents) {
+            const dateKey = event.createdAt.toISOString().split('T')[0]
+            eventsByDayMap.set(dateKey, (eventsByDayMap.get(dateKey) || 0) + 1)
+        }
+
+        const eventsByDay = Array.from(eventsByDayMap.entries())
+            .map(([date, count]) => ({ date, count }))
+            .sort((a, b) => b.date.localeCompare(a.date))
+
+        // Calculate success rate
+        const successCount = eventsByType.find(e => e.type === 'signin_success')?._count.type || 0
+        const failureCount = eventsByType.find(e => e.type === 'signin_failure')?._count.type || 0
+        const totalAttempts = successCount + failureCount
+        const successRate = totalAttempts > 0 ? (successCount / totalAttempts) * 100 : 100
+
+        return {
+            summary: {
+                totalEvents,
+                successRate: Math.round(successRate * 100) / 100,
+                uniqueUsers: uniqueUsers.length,
+                period: `Last ${days} days`,
+            },
+            eventsByType: eventsByType.map(e => ({
+                type: e.type,
+                count: e._count.type,
+            })),
+            eventsByDay,
+            errorBreakdown: errorBreakdown.map(e => ({
+                errorCode: e.errorCode,
+                count: e._count.errorCode,
+            })),
+            recentEvents: recentEvents.map(e => ({
+                ...e,
+                email: e.email ? e.email.substring(0, 3) + '***@***' : null, // Mask email
+            })),
+        }
+    } catch (error) {
+        console.error('[AuthEvent] Failed to get stats:', error)
+        // Return empty stats if the table doesn't exist yet
+        return {
+            summary: {
+                totalEvents: 0,
+                successRate: 100,
+                uniqueUsers: 0,
+                period: `Last ${days} days`,
+            },
+            eventsByType: [],
+            eventsByDay: [],
+            errorBreakdown: [],
+            recentEvents: [],
+        }
     }
 }
 
@@ -150,29 +172,28 @@ export async function getAuthStats(days: number = 30) {
  * Get total user count for dashboard
  */
 export async function getUserStats() {
-    const [totalUsers, newUsersToday, newUsersThisWeek] = await Promise.all([
-        prisma.user.count(),
-        prisma.user.count({
-            where: {
-                accounts: {
-                    some: {
-                        // Users created today
+    try {
+        const [totalUsers, newUsersThisWeek] = await Promise.all([
+            prisma.user.count(),
+            prisma.authEvent.count({
+                where: {
+                    type: 'signup',
+                    createdAt: {
+                        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
                     },
                 },
-            },
-        }),
-        prisma.authEvent.count({
-            where: {
-                type: 'signup',
-                createdAt: {
-                    gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-                },
-            },
-        }),
-    ])
+            }),
+        ])
 
-    return {
-        totalUsers,
-        newUsersThisWeek,
+        return {
+            totalUsers,
+            newUsersThisWeek,
+        }
+    } catch (error) {
+        console.error('[AuthEvent] Failed to get user stats:', error)
+        return {
+            totalUsers: 0,
+            newUsersThisWeek: 0,
+        }
     }
 }
