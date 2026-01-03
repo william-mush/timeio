@@ -7,6 +7,8 @@ applications:
             - npm ci
         build:
           commands:
+            - npx prisma generate
+            - npx prisma db push --skip-generate
             - npm run build
       artifacts:
         baseDirectory: .next
@@ -15,4 +17,4 @@ applications:
       cache:
         paths:
           - node_modules/**/*
-    appRoot: . 
+    appRoot: .

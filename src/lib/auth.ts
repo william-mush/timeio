@@ -2,6 +2,7 @@ import { AuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import prisma from '@/lib/prisma'
+import { logAuthEvent } from '@/lib/auth-events'
 
 // Log environment variable status (without exposing secrets)
 const logAuthConfig = () => {
@@ -47,7 +48,7 @@ export const authOptions: AuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       console.log('[NextAuth] signIn callback triggered:', {
         userId: user?.id,
         userEmail: user?.email,
@@ -83,10 +84,23 @@ export const authOptions: AuthOptions = {
         provider: account?.provider,
         isNewUser,
       })
+
+      // Log to database for analytics
+      await logAuthEvent({
+        type: isNewUser ? 'signup' : 'signin_success',
+        provider: account?.provider,
+        userId: user?.id,
+        email: user?.email || undefined,
+      })
     },
     async signOut({ session }) {
-      console.log('[NextAuth] EVENT signOut:', {
-        userId: (session as { userId?: string })?.userId || 'unknown',
+      const userId = (session as { userId?: string })?.userId
+      console.log('[NextAuth] EVENT signOut:', { userId })
+
+      // Log to database for analytics
+      await logAuthEvent({
+        type: 'signout',
+        userId: userId || undefined,
       })
     },
     async createUser({ user }) {
@@ -94,6 +108,7 @@ export const authOptions: AuthOptions = {
         userId: user?.id,
         email: user?.email,
       })
+      // Note: signup is already logged in signIn event with isNewUser flag
     },
     async linkAccount({ user, account }) {
       console.log('[NextAuth] EVENT linkAccount:', {
@@ -110,6 +125,15 @@ export const authOptions: AuthOptions = {
   logger: {
     error(code, metadata) {
       console.error('[NextAuth] ERROR:', code, metadata)
+
+      // Log auth failures to database
+      // Extract error details from metadata if available
+      const errorDetails = metadata as { message?: string; error?: { message?: string } }
+      logAuthEvent({
+        type: 'signin_failure',
+        errorCode: typeof code === 'string' ? code : 'unknown',
+        errorMsg: errorDetails?.message || errorDetails?.error?.message,
+      }).catch(() => { }) // Fire and forget
     },
     warn(code) {
       console.warn('[NextAuth] WARNING:', code)

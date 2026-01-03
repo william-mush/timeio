@@ -127,3 +127,23 @@ model UserSettings {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
+
+// Auth Analytics - Track authentication events for monitoring
+model AuthEvent {
+  id        String   @id @default(cuid())
+  type      String   // 'signin_success', 'signin_failure', 'signout', 'signup'
+  provider  String?  // 'google', 'email', etc.
+  userId    String?  // null if failed/unknown
+  email     String?  // for tracking even on failure
+  errorCode String?  // 'OAuthSignin', 'OAuthCallback', etc.
+  errorMsg  String?  // Additional error details
+  userAgent String?  // Browser/device info
+  ipAddress String?  // Client IP (hashed or anonymized if needed)
+  country   String?  // Geo location from IP
+  createdAt DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([userId, createdAt])
+  @@index([createdAt])
+}
+
