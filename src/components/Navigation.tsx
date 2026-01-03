@@ -2,19 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings, Sun, Home, Menu, X, History, Star, Building2 } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, Sun, Home, Menu, X, History, Star, Building2, ChevronDown, Watch } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const TimeDisplay = () => {
   const [hours, setHours] = useState('00');
   const [minutes, setMinutes] = useState('00');
   const [seconds, setSeconds] = useState('00');
-  const [milliseconds, setMilliseconds] = useState('000');
   const [period, setPeriod] = useState('AM');
   const [format24Hour, setFormat24Hour] = useState(false);
-  const [showMilliseconds, setShowMilliseconds] = useState(false);
 
   useEffect(() => {
     const loadSettings = () => {
@@ -23,7 +21,6 @@ const TimeDisplay = () => {
         try {
           const settings = JSON.parse(savedSettings);
           if (settings.format24Hour !== undefined) setFormat24Hour(settings.format24Hour);
-          if (settings.showMilliseconds !== undefined) setShowMilliseconds(settings.showMilliseconds);
         } catch (e) {
           console.error('Failed to parse saved settings:', e);
         }
@@ -33,9 +30,8 @@ const TimeDisplay = () => {
     loadSettings();
 
     const handleSettingsChange = (event: CustomEvent<any>) => {
-      const { format24Hour, showMilliseconds } = event.detail;
+      const { format24Hour } = event.detail;
       if (format24Hour !== undefined) setFormat24Hour(format24Hour);
-      if (showMilliseconds !== undefined) setShowMilliseconds(showMilliseconds);
     };
 
     window.addEventListener('timeSettingsChanged', handleSettingsChange as EventListener);
@@ -50,48 +46,115 @@ const TimeDisplay = () => {
       let hours = now.getHours();
       const minutes = now.getMinutes().toString().padStart(2, '0');
       const seconds = now.getSeconds().toString().padStart(2, '0');
-      const ms = now.getMilliseconds().toString().padStart(3, '0');
 
       let period = '';
       if (!format24Hour) {
         period = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
-        hours = hours ? hours : 12; // Convert 0 to 12
+        hours = hours ? hours : 12;
       }
 
       setHours(hours.toString().padStart(2, '0'));
       setMinutes(minutes);
       setSeconds(seconds);
-      setMilliseconds(ms);
       setPeriod(period);
     };
 
     updateTime();
-    const interval = setInterval(updateTime, showMilliseconds ? 16 : 1000);
+    const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, [format24Hour, showMilliseconds]);
+  }, [format24Hour]);
 
   return (
     <div className="text-sm font-mono text-gray-500 tabular-nums whitespace-nowrap">
       {hours}:{minutes}:{seconds}
-      {showMilliseconds && `:${milliseconds}`}
       {!format24Hour && ` ${period}`}
     </div>
   );
 };
 
-const navItems = [
+// Primary nav items (always visible)
+const primaryNavItems = [
   { href: '/', label: 'Home', icon: Home },
-  { href: '/us-cities', label: 'US Cities', icon: Building2 },
-  { href: '/alarms', label: 'Alarms', icon: Bell },
   { href: '/world-clock', label: 'World Clock', icon: Clock },
-  { href: '/world-map', label: 'World Map', icon: MapPin },
-  { href: '/solar-clock', label: 'Solar Clock 2D', icon: Sun },
-  { href: '/solar-clock-3d', label: 'Solar Clock 3D', icon: Sun },
-  { href: '/history', label: 'History', icon: History },
-  { href: '/luxury', label: 'Modern Luxury Timepieces', icon: Star },
-  { href: '/settings', label: 'Settings', icon: Settings },
+  { href: '/alarms', label: 'Alarms', icon: Bell },
 ];
+
+// Explore dropdown items
+const exploreItems = [
+  { href: '/us-cities', label: 'US Cities', icon: Building2 },
+  { href: '/world-map', label: 'World Map', icon: MapPin },
+  { href: '/history', label: 'Time History', icon: History },
+  { href: '/luxury', label: 'Luxury Watches', icon: Watch },
+];
+
+// Solar dropdown items
+const solarItems = [
+  { href: '/solar-clock', label: '2D View', icon: Sun },
+  { href: '/solar-clock-3d', label: '3D View', icon: Sun },
+];
+
+// Dropdown component
+function NavDropdown({
+  label,
+  icon: Icon,
+  items,
+  pathname
+}: {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  items: { href: string; label: string; icon: React.ComponentType<{ className?: string }> }[];
+  pathname: string;
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const isActive = items.some(item => pathname === item.href);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div ref={dropdownRef} className="relative">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`text-sm transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg whitespace-nowrap ${isActive
+            ? 'text-blue-500 font-medium bg-blue-50/50'
+            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
+          }`}
+      >
+        <Icon className="w-4 h-4" />
+        {label}
+        <ChevronDown className={`w-3 h-3 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+
+      {isOpen && (
+        <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 min-w-[160px] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+          {items.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setIsOpen(false)}
+              className={`flex items-center gap-2 px-4 py-2.5 text-sm transition-colors ${pathname === item.href
+                  ? 'text-blue-500 bg-blue-50/50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                }`}
+            >
+              <item.icon className="w-4 h-4" />
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Navigation() {
   const pathname = usePathname();
@@ -99,10 +162,21 @@ export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // Close mobile menu when route changes
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  // All items for mobile menu
+  const allMobileItems = [
+    ...primaryNavItems,
+    { href: '/us-cities', label: 'US Cities', icon: Building2 },
+    { href: '/world-map', label: 'World Map', icon: MapPin },
+    { href: '/solar-clock', label: 'Solar Clock 2D', icon: Sun },
+    { href: '/solar-clock-3d', label: 'Solar Clock 3D', icon: Sun },
+    { href: '/history', label: 'Time History', icon: History },
+    { href: '/luxury', label: 'Luxury Watches', icon: Star },
+    { href: '/settings', label: 'Settings', icon: Settings },
+  ];
 
   return (
     <nav className="fixed left-0 top-16 w-full bg-white/60 backdrop-blur-xl border-b border-gray-200/50 z-40">
@@ -123,7 +197,8 @@ export function Navigation() {
 
           {/* Desktop navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {navItems.map((item) => (
+            {/* Primary items */}
+            {primaryNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -136,6 +211,39 @@ export function Navigation() {
                 {item.label}
               </Link>
             ))}
+
+            {/* Divider */}
+            <div className="w-px h-6 bg-gray-200 mx-1" />
+
+            {/* Explore dropdown */}
+            <NavDropdown
+              label="Explore"
+              icon={MapPin}
+              items={exploreItems}
+              pathname={pathname}
+            />
+
+            {/* Solar Clock dropdown */}
+            <NavDropdown
+              label="Solar Clock"
+              icon={Sun}
+              items={solarItems}
+              pathname={pathname}
+            />
+
+            {/* Settings (visible when not authenticated) */}
+            {status !== 'authenticated' && (
+              <Link
+                href="/settings"
+                className={`text-sm transition-colors flex items-center gap-2 px-3 py-2 rounded-lg whitespace-nowrap ${pathname === '/settings'
+                  ? 'text-blue-500 font-medium bg-blue-50/50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50/50'
+                  }`}
+              >
+                <Settings className="w-4 h-4" />
+                Settings
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4 pl-2 sm:pl-4 border-l border-gray-200/50">
@@ -231,9 +339,9 @@ export function Navigation() {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-2">
+          <div className="lg:hidden py-2 border-t border-gray-200/50">
             <div className="flex flex-col space-y-1">
-              {navItems.map((item) => (
+              {allMobileItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -252,4 +360,4 @@ export function Navigation() {
       </div>
     </nav>
   );
-} 
+}

@@ -105,12 +105,12 @@ export default function Home() {
 
           <Link href="/luxury" className="card card-hover p-4 md:p-6">
             <h2 className="heading-2 mb-2 md:mb-3 text-xl md:text-2xl">
-              Modern Luxury Timepieces{' '}
+              Luxury Watches{' '}
               <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
                 →
               </span>
             </h2>
-            <p className="text-muted text-sm md:text-base">Discover the world's most prestigious watch brands and their iconic models.</p>
+            <p className="text-muted text-sm md:text-base">Discover the world&apos;s most prestigious watch brands.</p>
           </Link>
         </div>
       </div>
