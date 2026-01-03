@@ -73,6 +73,33 @@ const TimeDisplay = () => {
   );
 };
 
+// User avatar with error handling fallback
+const UserAvatar = ({ image, name }: { image?: string | null; name?: string | null }) => {
+  const [imageError, setImageError] = useState(false);
+  const initial = name?.[0]?.toUpperCase() || 'U';
+
+  if (!image || imageError) {
+    return (
+      <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 font-semibold text-sm border-2 border-blue-200">
+        {initial}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
+      <Image
+        src={image}
+        alt={name || 'User profile'}
+        width={32}
+        height={32}
+        className="object-cover w-full h-full"
+        onError={() => setImageError(true)}
+        unoptimized
+      />
+    </div>
+  );
+};
 // Location dropdown items
 const locationItems = [
   { href: '/world-clock', label: 'World Clock', icon: Clock },
@@ -119,8 +146,8 @@ function NavDropdown({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`text-sm transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg whitespace-nowrap ${isActive
-            ? 'text-blue-600 font-medium bg-blue-50'
-            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          ? 'text-blue-600 font-medium bg-blue-50'
+          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
           }`}
       >
         <Icon className="w-4 h-4" />
@@ -136,8 +163,8 @@ function NavDropdown({
               href={item.href}
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${pathname === item.href
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ? 'text-blue-600 bg-blue-50'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
             >
               <item.icon className="w-4 h-4" />
@@ -228,8 +255,8 @@ export function Navigation() {
             <Link
               href="/alarms"
               className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${pathname === '/alarms'
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ? 'text-blue-600 bg-blue-50'
+                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                 }`}
               title="Alarms"
             >
@@ -242,8 +269,8 @@ export function Navigation() {
               <Link
                 href="/settings"
                 className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${pathname === '/settings'
-                    ? 'text-blue-600 bg-blue-50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'text-blue-600 bg-blue-50'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 title="Settings"
               >
@@ -260,29 +287,22 @@ export function Navigation() {
 
             {/* User Menu / Sign In */}
             {status === 'loading' ? (
-              <div className="w-9 h-9 rounded-full bg-gray-100 animate-pulse" />
+              <Link
+                href="/auth/signin"
+                className="px-4 py-2 text-sm font-medium text-gray-400 bg-gray-100 rounded-lg cursor-wait"
+              >
+                Sign In
+              </Link>
             ) : status === 'authenticated' && session?.user ? (
               <div className="relative">
                 <button
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                   className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-50 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-100 border-2 border-gray-200">
-                    {session.user.image ? (
-                      <Image
-                        src={session.user.image}
-                        alt={session.user.name || 'User profile'}
-                        width={32}
-                        height={32}
-                        className="object-cover w-full h-full"
-                        priority
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-semibold text-sm">
-                        {session.user.name?.[0]?.toUpperCase() || 'U'}
-                      </div>
-                    )}
-                  </div>
+                  <UserAvatar
+                    image={session.user.image}
+                    name={session.user.name}
+                  />
                 </button>
 
                 {isUserMenuOpen && (
