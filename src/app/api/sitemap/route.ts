@@ -1,46 +1,55 @@
 import { NextResponse } from 'next/server';
+import { US_CITIES } from '@/data/us-cities';
 
-function generateSitemap(baseUrl: string) {
-  const pages = [
-    '',                  // home page
-    '/auth/signin',      // sign in page
-    '/auth/signup',      // sign up page
-    '/settings',         // settings page
-    '/world-clock',      // world clock page
-    '/alarm',            // alarm page
-    '/solar',            // solar clock page
+const BASE_URL = 'https://time.io';
+
+function generateSitemap() {
+  const now = new Date().toISOString();
+
+  // Static pages with priorities
+  const staticPages = [
+    { url: '', priority: '1.0', changefreq: 'daily' },
+    { url: '/world-clock', priority: '0.9', changefreq: 'daily' },
+    { url: '/alarms', priority: '0.9', changefreq: 'daily' },
+    { url: '/world-map', priority: '0.8', changefreq: 'weekly' },
+    { url: '/us-cities', priority: '0.8', changefreq: 'weekly' },
+    { url: '/solar-clock', priority: '0.7', changefreq: 'weekly' },
+    { url: '/solar-clock-3d', priority: '0.7', changefreq: 'weekly' },
+    { url: '/history', priority: '0.6', changefreq: 'monthly' },
+    { url: '/luxury', priority: '0.6', changefreq: 'monthly' },
+    { url: '/settings', priority: '0.5', changefreq: 'monthly' },
+    { url: '/auth/signin', priority: '0.4', changefreq: 'monthly' },
   ];
 
+  // Dynamic US city pages
+  const cityPages = US_CITIES.map((city) => ({
+    url: `/us-cities/${city.id}`,
+    priority: '0.6',
+    changefreq: 'weekly' as const,
+  }));
+
+  const allPages = [...staticPages, ...cityPages];
+
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-      ${pages
-        .map((page) => {
-          return `
-            <url>
-              <loc>${baseUrl}${page}</loc>
-              <lastmod>${new Date().toISOString()}</lastmod>
-              <changefreq>daily</changefreq>
-              <priority>${page === '' ? '1.0' : '0.8'}</priority>
-            </url>
-          `;
-        })
-        .join('')}
-    </urlset>`;
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allPages.map(page => `  <url>
+    <loc>${BASE_URL}${page.url}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>${page.changefreq}</changefreq>
+    <priority>${page.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
 
   return sitemap;
 }
 
-export async function GET(request: Request) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://timeio.app';
-  
-  // Generate sitemap
-  const sitemap = generateSitemap(baseUrl);
+export async function GET() {
+  const sitemap = generateSitemap();
 
-  // Return the sitemap with appropriate headers
   return new NextResponse(sitemap, {
     headers: {
       'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+      'Cache-Control': 'public, max-age=3600, s-maxage=86400',
     },
   });
-} 
+}
