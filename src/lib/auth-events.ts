@@ -172,28 +172,31 @@ export async function getAuthStats(days: number = 30) {
  * Get total user count for dashboard
  */
 export async function getUserStats() {
+    // Query User table separately - this should always work
+    let totalUsers = 0
     try {
-        const [totalUsers, newUsersThisWeek] = await Promise.all([
-            prisma.user.count(),
-            prisma.authEvent.count({
-                where: {
-                    type: 'signup',
-                    createdAt: {
-                        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-                    },
-                },
-            }),
-        ])
-
-        return {
-            totalUsers,
-            newUsersThisWeek,
-        }
+        totalUsers = await prisma.user.count()
     } catch (error) {
-        console.error('[AuthEvent] Failed to get user stats:', error)
-        return {
-            totalUsers: 0,
-            newUsersThisWeek: 0,
-        }
+        console.error('[AuthEvent] Failed to get user count:', error)
+    }
+
+    // Query AuthEvent table separately - this might fail if table doesn't exist
+    let newUsersThisWeek = 0
+    try {
+        newUsersThisWeek = await prisma.authEvent.count({
+            where: {
+                type: 'signup',
+                createdAt: {
+                    gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+                },
+            },
+        })
+    } catch (error) {
+        console.error('[AuthEvent] Failed to get new users count (table may not exist):', error)
+    }
+
+    return {
+        totalUsers,
+        newUsersThisWeek,
     }
 }
