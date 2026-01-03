@@ -13,7 +13,8 @@ import {
     XCircle,
     LogOut,
     RefreshCcw,
-    Clock
+    Clock,
+    UserPlus
 } from 'lucide-react'
 
 interface AuthStats {
@@ -37,6 +38,8 @@ interface AuthStats {
     users: {
         totalUsers: number
         newUsersThisWeek: number
+        lastUserCreatedAt: string | null
+        lastUserEmail: string | null
     }
 }
 
@@ -185,6 +188,26 @@ export default function AdminDashboard() {
                             />
                         </div>
 
+                        {/* Last User Info */}
+                        {stats.users.lastUserCreatedAt && (
+                            <div className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 mb-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="bg-green-500/20 p-3 rounded-lg">
+                                        <UserPlus className="w-6 h-6 text-green-400" />
+                                    </div>
+                                    <div>
+                                        <p className="text-slate-400 text-sm">Last New User</p>
+                                        <p className="text-white font-medium">
+                                            {stats.users.lastUserEmail || 'Unknown'} • {' '}
+                                            <span className="text-slate-400">
+                                                {new Date(stats.users.lastUserCreatedAt).toLocaleString()}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         {/* Charts Row */}
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                             {/* Events by Type */}
@@ -293,9 +316,9 @@ export default function AdminDashboard() {
                                                 <tr key={event.id} className="text-sm">
                                                     <td className="py-3">
                                                         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${event.type === 'signin_success' ? 'bg-green-500/20 text-green-400' :
-                                                                event.type === 'signin_failure' ? 'bg-red-500/20 text-red-400' :
-                                                                    event.type === 'signup' ? 'bg-blue-500/20 text-blue-400' :
-                                                                        'bg-slate-500/20 text-slate-400'
+                                                            event.type === 'signin_failure' ? 'bg-red-500/20 text-red-400' :
+                                                                event.type === 'signup' ? 'bg-blue-500/20 text-blue-400' :
+                                                                    'bg-slate-500/20 text-slate-400'
                                                             }`}>
                                                             {config.icon}
                                                             {config.label}

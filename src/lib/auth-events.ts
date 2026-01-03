@@ -172,10 +172,28 @@ export async function getAuthStats(days: number = 30) {
  * Get total user count for dashboard
  */
 export async function getUserStats() {
-    // Query User table separately - this should always work
+    // Query User table
     let totalUsers = 0
+    let lastUserCreatedAt: string | null = null
+    let lastUserEmail: string | null = null
+
     try {
         totalUsers = await prisma.user.count()
+
+        // Get the most recently created user
+        const lastUser = await prisma.user.findFirst({
+            orderBy: { createdAt: 'desc' },
+            select: {
+                email: true,
+                name: true,
+                createdAt: true,
+            },
+        })
+
+        if (lastUser) {
+            lastUserCreatedAt = lastUser.createdAt.toISOString()
+            lastUserEmail = lastUser.email ? lastUser.email.substring(0, 3) + '***' : null
+        }
     } catch (error) {
         console.error('[AuthEvent] Failed to get user count:', error)
     }
@@ -198,5 +216,8 @@ export async function getUserStats() {
     return {
         totalUsers,
         newUsersThisWeek,
+        lastUserCreatedAt,
+        lastUserEmail,
     }
 }
+

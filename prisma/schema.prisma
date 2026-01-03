@@ -53,6 +53,7 @@ model User {
   timezone      String    @default("UTC")
   timeZones     UserTimeZone[]
   settings      UserSettings?
+  createdAt     DateTime  @default(now())
 }
 
 model VerificationToken {
