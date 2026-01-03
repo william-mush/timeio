@@ -4,7 +4,9 @@ import { authOptions } from '@/lib/auth'
 import { getAuthStats, getUserStats } from '@/lib/auth-events'
 
 // Admin emails that can access the dashboard
-const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') || []
+// Falls back to default admins if env var not set
+const DEFAULT_ADMIN_EMAILS = ['williammushkin@gmail.com', 'w@the.com']
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') || DEFAULT_ADMIN_EMAILS
 
 /**
  * GET /api/admin/auth-stats
@@ -19,8 +21,8 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check if user is an admin (or allow all signed-in users if no admin list is set)
-    const isAdmin = ADMIN_EMAILS.length === 0 || ADMIN_EMAILS.includes(session.user.email)
+    // Check if user is an admin
+    const isAdmin = ADMIN_EMAILS.includes(session.user.email)
 
     if (!isAdmin) {
         return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
