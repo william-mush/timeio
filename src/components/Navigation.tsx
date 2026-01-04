@@ -67,9 +67,9 @@ const TimeDisplay = () => {
   }, [format24Hour]);
 
   return (
-    <div className="text-sm font-mono text-gray-600 tabular-nums whitespace-nowrap bg-gray-50 px-3 py-1.5 rounded-lg">
+    <div className="text-sm font-mono tabular-nums whitespace-nowrap bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow-sm">
       {hours}:{minutes}:{seconds}
-      {!format24Hour && <span className="text-gray-400 ml-1">{period}</span>}
+      {!format24Hour && <span className="opacity-80 ml-1">{period}</span>}
     </div>
   );
 };
