@@ -222,7 +222,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 2296224,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.3698, 29.7604],
     timezone: 'America/Chicago'
   },
   {
@@ -231,7 +231,7 @@ export const US_CITIES: USCity[] = [
     state: "Pennsylvania",
     state_code: 'PA',
     population: 1567442,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-75.1652, 39.9526],
     timezone: 'America/New_York'
   },
   {
@@ -240,7 +240,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 1563025,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-112.074, 33.4484],
     timezone: 'America/Phoenix'
   },
   {
@@ -249,7 +249,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 1469845,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-98.4936, 29.4241],
     timezone: 'America/Chicago'
   },
   {
@@ -258,7 +258,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 1394928,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.1611, 32.7157],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -267,7 +267,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 1300092,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.797, 32.7767],
     timezone: 'America/Chicago'
   },
   {
@@ -276,7 +276,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 1026908,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.8863, 37.3382],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -285,7 +285,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 931830,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.7431, 30.2672],
     timezone: 'America/Chicago'
   },
   {
@@ -294,7 +294,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 868031,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.6557, 30.3322],
     timezone: 'America/New_York'
   },
   {
@@ -303,7 +303,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 864816,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.4194, 37.7749],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -312,7 +312,7 @@ export const US_CITIES: USCity[] = [
     state: "Ohio",
     state_code: 'OH',
     population: 850106,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-82.9988, 39.9612],
     timezone: 'America/New_York'
   },
   {
@@ -321,7 +321,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 833319,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.3308, 32.7555],
     timezone: 'America/Chicago'
   },
   {
@@ -330,7 +330,7 @@ export const US_CITIES: USCity[] = [
     state: "Indiana",
     state_code: 'IN',
     population: 829718,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-86.1581, 39.7684],
     timezone: 'America/Indiana/Indianapolis'
   },
   {
@@ -339,7 +339,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 827097,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.8431, 35.2271],
     timezone: 'America/New_York'
   },
   {
@@ -348,7 +348,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 684451,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.3321, 47.6062],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -357,7 +357,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 682545,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-104.9903, 39.7392],
     timezone: 'America/Denver'
   },
   {
@@ -366,7 +366,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 681124,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-106.485, 31.7619],
     timezone: 'America/Denver'
   },
   {
@@ -375,7 +375,7 @@ export const US_CITIES: USCity[] = [
     state: "Michigan",
     state_code: 'MI',
     population: 677116,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-83.0458, 42.3314],
     timezone: 'America/Detroit'
   },
   {
@@ -384,7 +384,7 @@ export const US_CITIES: USCity[] = [
     state: "Massachusetts",
     state_code: 'MA',
     population: 667137,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-71.0589, 42.3601],
     timezone: 'America/New_York'
   },
   {
@@ -393,7 +393,7 @@ export const US_CITIES: USCity[] = [
     state: "Tennessee",
     state_code: 'TN',
     population: 655770,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-90.049, 35.1495],
     timezone: 'America/Chicago'
   },
   {
@@ -402,7 +402,7 @@ export const US_CITIES: USCity[] = [
     state: "Oregon",
     state_code: 'OR',
     population: 632309,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.675, 45.5051],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -411,7 +411,7 @@ export const US_CITIES: USCity[] = [
     state: "Oklahoma",
     state_code: 'OK',
     population: 631346,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.5164, 35.4676],
     timezone: 'America/Chicago'
   },
   {
@@ -420,7 +420,7 @@ export const US_CITIES: USCity[] = [
     state: "Nevada",
     state_code: 'NV',
     population: 623747,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-115.1398, 36.1699],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -429,7 +429,7 @@ export const US_CITIES: USCity[] = [
     state: "Maryland",
     state_code: 'MD',
     population: 621849,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-76.6122, 39.2904],
     timezone: 'America/New_York'
   },
   {
@@ -438,7 +438,7 @@ export const US_CITIES: USCity[] = [
     state: "District of Columbia",
     state_code: 'DC',
     population: 601723,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-77.0369, 38.9072],
     timezone: 'America/New_York'
   },
   {
@@ -447,7 +447,7 @@ export const US_CITIES: USCity[] = [
     state: "Wisconsin",
     state_code: 'WI',
     population: 600155,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-87.9065, 43.0389],
     timezone: 'America/Chicago'
   },
   {
@@ -456,7 +456,7 @@ export const US_CITIES: USCity[] = [
     state: "New Mexico",
     state_code: 'NM',
     population: 559121,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-106.6504, 35.0844],
     timezone: 'America/Denver'
   },
   {
@@ -465,7 +465,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 531641,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-110.9747, 32.2226],
     timezone: 'America/Phoenix'
   },
   {
@@ -474,7 +474,7 @@ export const US_CITIES: USCity[] = [
     state: "Tennessee",
     state_code: 'TN',
     population: 530852,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-86.7816, 36.1627],
     timezone: 'America/Chicago'
   },
   {
@@ -483,7 +483,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 520052,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-119.7871, 36.7378],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -492,7 +492,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 490712,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.4944, 38.5816],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -501,7 +501,7 @@ export const US_CITIES: USCity[] = [
     state: "Missouri",
     state_code: 'MO',
     population: 475378,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-94.5786, 39.0997],
     timezone: 'America/Chicago'
   },
   {
@@ -510,7 +510,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 474140,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.1937, 33.7701],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -519,7 +519,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 471825,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.8315, 33.4152],
     timezone: 'America/Phoenix'
   },
   {
@@ -528,7 +528,7 @@ export const US_CITIES: USCity[] = [
     state: "Georgia",
     state_code: 'GA',
     population: 463878,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.388, 33.749],
     timezone: 'America/New_York'
   },
   {
@@ -537,7 +537,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 456568,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-104.8214, 38.8339],
     timezone: 'America/Denver'
   },
   {
@@ -546,7 +546,7 @@ export const US_CITIES: USCity[] = [
     state: "Virginia",
     state_code: 'VA',
     population: 452745,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-75.978, 36.8529],
     timezone: 'America/New_York'
   },
   {
@@ -555,7 +555,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 451066,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-78.6382, 35.7796],
     timezone: 'America/New_York'
   },
   {
@@ -564,7 +564,7 @@ export const US_CITIES: USCity[] = [
     state: "Nebraska",
     state_code: 'NE',
     population: 443885,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.9345, 41.2565],
     timezone: 'America/Chicago'
   },
   {
@@ -573,7 +573,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 441003,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.1918, 25.7617],
     timezone: 'America/New_York'
   },
   {
@@ -582,7 +582,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 419267,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.2711, 37.8044],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -591,7 +591,7 @@ export const US_CITIES: USCity[] = [
     state: "Minnesota",
     state_code: 'MN',
     population: 410939,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-93.265, 44.9778],
     timezone: 'America/Chicago'
   },
   {
@@ -600,7 +600,7 @@ export const US_CITIES: USCity[] = [
     state: "Oklahoma",
     state_code: 'OK',
     population: 403505,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.9928, 36.154],
     timezone: 'America/Chicago'
   },
   {
@@ -609,7 +609,7 @@ export const US_CITIES: USCity[] = [
     state: "Kansas",
     state_code: 'KS',
     population: 389965,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.3375, 37.6872],
     timezone: 'America/Chicago'
   },
   {
@@ -618,7 +618,7 @@ export const US_CITIES: USCity[] = [
     state: "Louisiana",
     state_code: 'LA',
     population: 389617,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-90.0715, 29.9511],
     timezone: 'America/Chicago'
   },
   {
@@ -627,7 +627,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 388125,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.1081, 32.7357],
     timezone: 'America/Chicago'
   },
   {
@@ -636,7 +636,7 @@ export const US_CITIES: USCity[] = [
     state: "Ohio",
     state_code: 'OH',
     population: 388072,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.6944, 41.4993],
     timezone: 'America/New_York'
   },
   {
@@ -645,7 +645,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 373640,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-119.0187, 35.3733],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -654,7 +654,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 369075,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-82.4572, 27.9506],
     timezone: 'America/New_York'
   },
   {
@@ -663,7 +663,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 359407,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-104.8319, 39.7294],
     timezone: 'America/Denver'
   },
   {
@@ -672,7 +672,7 @@ export const US_CITIES: USCity[] = [
     state: "Hawaii",
     state_code: 'HI',
     population: 371657,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-157.8583, 21.3069],
     timezone: 'Pacific/Honolulu'
   },
   {
@@ -681,7 +681,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 350742,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.9145, 33.8366],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -690,7 +690,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 335400,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.8678, 33.7455],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -699,7 +699,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 324074,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.3964, 27.8006],
     timezone: 'America/Chicago'
   },
   {
@@ -708,7 +708,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 322424,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.3961, 33.9533],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -717,7 +717,7 @@ export const US_CITIES: USCity[] = [
     state: "Missouri",
     state_code: 'MO',
     population: 315685,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-90.1994, 38.627],
     timezone: 'America/Chicago'
   },
   {
@@ -726,7 +726,7 @@ export const US_CITIES: USCity[] = [
     state: "Kentucky",
     state_code: 'KY',
     population: 314488,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.5037, 38.0406],
     timezone: 'America/New_York'
   },
   {
@@ -735,7 +735,7 @@ export const US_CITIES: USCity[] = [
     state: "Pennsylvania",
     state_code: 'PA',
     population: 304391,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-79.9959, 40.4406],
     timezone: 'America/New_York'
   },
   {
@@ -744,7 +744,7 @@ export const US_CITIES: USCity[] = [
     state: "Alaska",
     state_code: 'AK',
     population: 298695,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-149.9003, 61.2181],
     timezone: 'America/Anchorage'
   },
   {
@@ -753,7 +753,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 305658,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.2908, 37.9577],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -762,7 +762,7 @@ export const US_CITIES: USCity[] = [
     state: "Ohio",
     state_code: 'OH',
     population: 296943,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.512, 39.1031],
     timezone: 'America/New_York'
   },
   {
@@ -771,7 +771,7 @@ export const US_CITIES: USCity[] = [
     state: "Minnesota",
     state_code: 'MN',
     population: 285068,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-93.09, 44.9537],
     timezone: 'America/Chicago'
   },
   {
@@ -780,7 +780,7 @@ export const US_CITIES: USCity[] = [
     state: "Ohio",
     state_code: 'OH',
     population: 279789,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-83.5379, 41.6528],
     timezone: 'America/New_York'
   },
   {
@@ -789,7 +789,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 285342,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-79.792, 36.0726],
     timezone: 'America/New_York'
   },
   {
@@ -798,7 +798,7 @@ export const US_CITIES: USCity[] = [
     state: "New Jersey",
     state_code: 'NJ',
     population: 281944,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-74.1724, 40.7357],
     timezone: 'America/New_York'
   },
   {
@@ -807,7 +807,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 283558,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.6989, 33.0198],
     timezone: 'America/Chicago'
   },
   {
@@ -816,7 +816,7 @@ export const US_CITIES: USCity[] = [
     state: "Nevada",
     state_code: 'NV',
     population: 285667,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-115.074, 36.0395],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -825,7 +825,7 @@ export const US_CITIES: USCity[] = [
     state: "Nebraska",
     state_code: 'NE',
     population: 277348,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.7026, 40.8258],
     timezone: 'America/Chicago'
   },
   {
@@ -834,7 +834,7 @@ export const US_CITIES: USCity[] = [
     state: "New York",
     state_code: 'NY',
     population: 258071,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-78.8784, 42.8864],
     timezone: 'America/New_York'
   },
   {
@@ -843,7 +843,7 @@ export const US_CITIES: USCity[] = [
     state: "New Jersey",
     state_code: 'NJ',
     population: 264290,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-74.0431, 40.7178],
     timezone: 'America/New_York'
   },
   {
@@ -852,7 +852,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 265757,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.0542, 32.6401],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -861,7 +861,7 @@ export const US_CITIES: USCity[] = [
     state: "Indiana",
     state_code: 'IN',
     population: 260326,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-85.1394, 41.0793],
     timezone: 'America/Indiana/Indianapolis'
   },
   {
@@ -870,7 +870,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 270934,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.3792, 28.5383],
     timezone: 'America/New_York'
   },
   {
@@ -879,7 +879,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 257083,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-82.6403, 27.7676],
     timezone: 'America/New_York'
   },
   {
@@ -888,7 +888,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 260828,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.8413, 33.3062],
     timezone: 'America/Phoenix'
   },
   {
@@ -897,7 +897,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 255473,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-99.5075, 27.5306],
     timezone: 'America/Chicago'
   },
   {
@@ -906,7 +906,7 @@ export const US_CITIES: USCity[] = [
     state: "Virginia",
     state_code: 'VA',
     population: 246393,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-76.2859, 36.8508],
     timezone: 'America/New_York'
   },
   {
@@ -915,7 +915,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 257636,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-78.8986, 35.994],
     timezone: 'America/New_York'
   },
   {
@@ -924,7 +924,7 @@ export const US_CITIES: USCity[] = [
     state: "Wisconsin",
     state_code: 'WI',
     population: 248951,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-89.4012, 43.0731],
     timezone: 'America/Chicago'
   },
   {
@@ -933,7 +933,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 249042,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-101.8552, 33.5779],
     timezone: 'America/Chicago'
   },
   {
@@ -942,7 +942,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 256927,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.7947, 33.6846],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -951,7 +951,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 241218,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.2442, 36.0999],
     timezone: 'America/New_York'
   },
   {
@@ -960,7 +960,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 240126,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-112.1859, 33.5387],
     timezone: 'America/Phoenix'
   },
   {
@@ -969,7 +969,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 236897,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.6389, 32.9126],
     timezone: 'America/Chicago'
   },
   {
@@ -978,7 +978,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 237069,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.2781, 25.8576],
     timezone: 'America/New_York'
   },
   {
@@ -987,7 +987,7 @@ export const US_CITIES: USCity[] = [
     state: "Nevada",
     state_code: 'NV',
     population: 241445,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-119.8138, 39.5296],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -996,7 +996,7 @@ export const US_CITIES: USCity[] = [
     state: "Virginia",
     state_code: 'VA',
     population: 235429,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-76.2875, 36.7682],
     timezone: 'America/New_York'
   },
   {
@@ -1005,7 +1005,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 247542,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.789, 33.3528],
     timezone: 'America/Phoenix'
   },
   {
@@ -1014,7 +1014,7 @@ export const US_CITIES: USCity[] = [
     state: "Louisiana",
     state_code: 'LA',
     population: 228590,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-91.1403, 30.4515],
     timezone: 'America/Chicago'
   },
   {
@@ -1023,7 +1023,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 236607,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.9489, 32.814],
     timezone: 'America/Chicago'
   },
   {
@@ -1032,7 +1032,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 236839,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.9261, 33.4942],
     timezone: 'America/Phoenix'
   },
   {
@@ -1041,7 +1041,7 @@ export const US_CITIES: USCity[] = [
     state: "Nevada",
     state_code: 'NV',
     population: 234807,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-115.1175, 36.1989],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1050,7 +1050,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 232206,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.9886, 37.5485],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1059,7 +1059,7 @@ export const US_CITIES: USCity[] = [
     state: "Idaho",
     state_code: 'ID',
     population: 226570,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-116.2146, 43.615],
     timezone: 'America/Boise'
   },
   {
@@ -1068,7 +1068,7 @@ export const US_CITIES: USCity[] = [
     state: "Virginia",
     state_code: 'VA',
     population: 220289,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-77.436, 37.5407],
     timezone: 'America/New_York'
   },
   {
@@ -1077,7 +1077,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 216108,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.2898, 34.1083],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1086,7 +1086,7 @@ export const US_CITIES: USCity[] = [
     state: "Alabama",
     state_code: 'AL',
     population: 212461,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-86.8025, 33.5186],
     timezone: 'America/Chicago'
   },
   {
@@ -1095,7 +1095,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 213272,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.426, 47.6587],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1104,7 +1104,7 @@ export const US_CITIES: USCity[] = [
     state: "New York",
     state_code: 'NY',
     population: 209802,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-77.6109, 43.1566],
     timezone: 'America/New_York'
   },
   {
@@ -1113,7 +1113,7 @@ export const US_CITIES: USCity[] = [
     state: "Iowa",
     state_code: 'IA',
     population: 210330,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-93.6091, 41.6005],
     timezone: 'America/Chicago'
   },
   {
@@ -1122,7 +1122,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 211266,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-120.9969, 37.6391],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1131,7 +1131,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 201963,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-78.8784, 35.0527],
     timezone: 'America/New_York'
   },
   {
@@ -1140,7 +1140,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 207948,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.44, 47.2529],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1149,7 +1149,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 207254,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-119.1773, 34.1975],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1158,7 +1158,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 207460,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.435, 34.0922],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1167,7 +1167,7 @@ export const US_CITIES: USCity[] = [
     state: "Georgia",
     state_code: 'GA',
     population: 200579,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.9877, 32.461],
     timezone: 'America/New_York'
   },
   {
@@ -1176,7 +1176,7 @@ export const US_CITIES: USCity[] = [
     state: "Alabama",
     state_code: 'AL',
     population: 200602,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-86.2999, 32.3668],
     timezone: 'America/Chicago'
   },
   {
@@ -1185,7 +1185,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 204198,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.2309, 33.9425],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1194,7 +1194,7 @@ export const US_CITIES: USCity[] = [
     state: "Louisiana",
     state_code: 'LA',
     population: 197204,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-93.7502, 32.5252],
     timezone: 'America/Chicago'
   },
   {
@@ -1203,7 +1203,7 @@ export const US_CITIES: USCity[] = [
     state: "Illinois",
     state_code: 'IL',
     population: 200661,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-88.3201, 41.7606],
     timezone: 'America/Chicago'
   },
   {
@@ -1212,7 +1212,7 @@ export const US_CITIES: USCity[] = [
     state: "New York",
     state_code: 'NY',
     population: 201116,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-73.8987, 40.9312],
     timezone: 'America/New_York'
   },
   {
@@ -1221,7 +1221,7 @@ export const US_CITIES: USCity[] = [
     state: "Ohio",
     state_code: 'OH',
     population: 197542,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.519, 41.0814],
     timezone: 'America/New_York'
   },
   {
@@ -1230,7 +1230,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 201899,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.9989, 33.6595],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1239,7 +1239,7 @@ export const US_CITIES: USCity[] = [
     state: "Arkansas",
     state_code: 'AR',
     population: 197992,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-92.2896, 34.7465],
     timezone: 'America/Chicago'
   },
   {
@@ -1248,7 +1248,7 @@ export const US_CITIES: USCity[] = [
     state: "Georgia",
     state_code: 'GA',
     population: 196939,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.9675, 33.4735],
     timezone: 'America/New_York'
   },
   {
@@ -1257,7 +1257,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 198645,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-101.8313, 35.222],
     timezone: 'America/Chicago'
   },
   {
@@ -1266,7 +1266,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 201020,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.2551, 34.1425],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1275,7 +1275,7 @@ export const US_CITIES: USCity[] = [
     state: "Alabama",
     state_code: 'AL',
     population: 194288,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-88.0399, 30.6954],
     timezone: 'America/Chicago'
   },
   {
@@ -1284,7 +1284,7 @@ export const US_CITIES: USCity[] = [
     state: "Michigan",
     state_code: 'MI',
     population: 195097,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-85.6681, 42.9634],
     timezone: 'America/Detroit'
   },
   {
@@ -1293,7 +1293,7 @@ export const US_CITIES: USCity[] = [
     state: "Utah",
     state_code: 'UT',
     population: 192672,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.891, 40.7608],
     timezone: 'America/Denver'
   },
   {
@@ -1302,7 +1302,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 189907,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.2807, 30.4383],
     timezone: 'America/New_York'
   },
   {
@@ -1311,7 +1311,7 @@ export const US_CITIES: USCity[] = [
     state: "Alabama",
     state_code: 'AL',
     population: 190582,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-86.5861, 34.7304],
     timezone: 'America/Chicago'
   },
   {
@@ -1320,7 +1320,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 187809,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.9978, 32.746],
     timezone: 'America/Chicago'
   },
   {
@@ -1329,7 +1329,7 @@ export const US_CITIES: USCity[] = [
     state: "Tennessee",
     state_code: 'TN',
     population: 185291,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-83.9207, 35.9606],
     timezone: 'America/New_York'
   },
   {
@@ -1338,7 +1338,7 @@ export const US_CITIES: USCity[] = [
     state: "Massachusetts",
     state_code: 'MA',
     population: 184815,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-71.8023, 42.2626],
     timezone: 'America/New_York'
   },
   {
@@ -1347,7 +1347,7 @@ export const US_CITIES: USCity[] = [
     state: "Virginia",
     state_code: 'VA',
     population: 182385,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-76.473, 37.0871],
     timezone: 'America/New_York'
   },
   {
@@ -1356,7 +1356,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 183887,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.4975, 25.9017],
     timezone: 'America/Chicago'
   },
   {
@@ -1365,7 +1365,7 @@ export const US_CITIES: USCity[] = [
     state: "Kansas",
     state_code: 'KS',
     population: 186515,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-94.6708, 38.9822],
     timezone: 'America/Chicago'
   },
   {
@@ -1374,7 +1374,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 182371,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.5426, 34.3917],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1383,7 +1383,7 @@ export const US_CITIES: USCity[] = [
     state: "Rhode Island",
     state_code: 'RI',
     population: 179207,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-71.4128, 41.824],
     timezone: 'America/New_York'
   },
   {
@@ -1392,7 +1392,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 175393,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.9414, 33.7739],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1401,7 +1401,7 @@ export const US_CITIES: USCity[] = [
     state: "Tennessee",
     state_code: 'TN',
     population: 176588,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-85.3097, 35.0456],
     timezone: 'America/New_York'
   },
   {
@@ -1410,7 +1410,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 175691,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.3795, 33.1959],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1419,7 +1419,7 @@ export const US_CITIES: USCity[] = [
     state: "Mississippi",
     state_code: 'MS',
     population: 170674,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-90.1848, 32.2988],
     timezone: 'America/Chicago'
   },
   {
@@ -1428,7 +1428,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 178590,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.1373, 26.1224],
     timezone: 'America/New_York'
   },
   {
@@ -1437,7 +1437,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 174972,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.7141, 38.4405],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1446,7 +1446,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 175236,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.5931, 34.1064],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1455,7 +1455,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 164603,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.3582, 27.273],
     timezone: 'America/New_York'
   },
   {
@@ -1464,7 +1464,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 175826,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.94, 33.4255],
     timezone: 'America/Phoenix'
   },
   {
@@ -1473,7 +1473,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 171214,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.6509, 34.0633],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1482,7 +1482,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 172860,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.6615, 45.6387],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1491,7 +1491,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 175229,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.9495, 26.5629],
     timezone: 'America/New_York'
   },
   {
@@ -1500,7 +1500,7 @@ export const US_CITIES: USCity[] = [
     state: "South Dakota",
     state_code: 'SD',
     population: 171544,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.7311, 43.546],
     timezone: 'America/Chicago'
   },
   {
@@ -1509,7 +1509,7 @@ export const US_CITIES: USCity[] = [
     state: "Missouri",
     state_code: 'MO',
     population: 166810,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-93.2923, 37.209],
     timezone: 'America/Chicago'
   },
   {
@@ -1518,7 +1518,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 171237,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-112.2374, 33.5806],
     timezone: 'America/Phoenix'
   },
   {
@@ -1527,7 +1527,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 166611,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.334, 26.0181],
     timezone: 'America/New_York'
   },
   {
@@ -1536,7 +1536,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 166913,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.3716, 38.4088],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1545,7 +1545,7 @@ export const US_CITIES: USCity[] = [
     state: "Oregon",
     state_code: 'OR',
     population: 164549,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-123.0351, 44.9429],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1554,7 +1554,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 161103,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.137, 34.6868],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1563,7 +1563,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 164226,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.5664, 33.8753],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1572,7 +1572,7 @@ export const US_CITIES: USCity[] = [
     state: "Oregon",
     state_code: 'OR',
     population: 163460,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-123.0868, 44.0521],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1581,7 +1581,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 158351,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.1165, 34.5794],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1590,7 +1590,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 157380,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.6555, 36.6777],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1599,7 +1599,7 @@ export const US_CITIES: USCity[] = [
     state: "Illinois",
     state_code: 'IL',
     population: 154341,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-89.6501, 39.7817],
     timezone: 'America/Chicago'
   },
   {
@@ -1608,7 +1608,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 153784,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.2091, 29.6911],
     timezone: 'America/Chicago'
   },
   {
@@ -1617,7 +1617,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 161175,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-105.0844, 40.5853],
     timezone: 'America/Denver'
   },
   {
@@ -1626,7 +1626,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 158289,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.0808, 37.6688],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1635,7 +1635,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 153266,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.75, 34.0551],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1644,7 +1644,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 159769,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-78.7811, 35.7915],
     timezone: 'America/New_York'
   },
   {
@@ -1653,7 +1653,7 @@ export const US_CITIES: USCity[] = [
     state: "Illinois",
     state_code: 'IL',
     population: 148278,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-89.094, 42.2711],
     timezone: 'America/Chicago'
   },
   {
@@ -1662,7 +1662,7 @@ export const US_CITIES: USCity[] = [
     state: "Virginia",
     state_code: 'VA',
     population: 153511,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-77.0469, 38.8048],
     timezone: 'America/New_York'
   },
   {
@@ -1671,7 +1671,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 151451,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.0864, 33.1192],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1680,7 +1680,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 162898,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.6398, 33.1972],
     timezone: 'America/Chicago'
   },
   {
@@ -1689,7 +1689,7 @@ export const US_CITIES: USCity[] = [
     state: "Kansas",
     state_code: 'KS',
     population: 151306,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-94.6275, 39.1142],
     timezone: 'America/Chicago'
   },
   {
@@ -1698,7 +1698,7 @@ export const US_CITIES: USCity[] = [
     state: "Illinois",
     state_code: 'IL',
     population: 147861,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-88.0817, 41.525],
     timezone: 'America/Chicago'
   },
   {
@@ -1707,7 +1707,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 151754,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.0363, 37.3688],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1716,7 +1716,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 148475,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.3406, 33.8358],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1725,7 +1725,7 @@ export const US_CITIES: USCity[] = [
     state: "Connecticut",
     state_code: 'CT',
     population: 147629,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-73.2048, 41.1792],
     timezone: 'America/New_York'
   },
   {
@@ -1734,7 +1734,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 152597,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-105.0813, 39.7047],
     timezone: 'America/Denver'
   },
   {
@@ -1743,7 +1743,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 149728,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.1495, 26.0112],
     timezone: 'America/New_York'
   },
   {
@@ -1752,7 +1752,7 @@ export const US_CITIES: USCity[] = [
     state: "New Jersey",
     state_code: 'NJ',
     population: 147754,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-74.1718, 40.9168],
     timezone: 'America/New_York'
   },
   {
@@ -1761,7 +1761,7 @@ export const US_CITIES: USCity[] = [
     state: "Illinois",
     state_code: 'IL',
     population: 147100,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-88.1535, 41.7508],
     timezone: 'America/Chicago'
   },
   {
@@ -1770,7 +1770,7 @@ export const US_CITIES: USCity[] = [
     state: "New York",
     state_code: 'NY',
     population: 144142,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-76.1474, 43.0481],
     timezone: 'America/New_York'
   },
   {
@@ -1779,7 +1779,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 144788,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.5992, 32.7668],
     timezone: 'America/Chicago'
   },
   {
@@ -1788,7 +1788,7 @@ export const US_CITIES: USCity[] = [
     state: "Ohio",
     state_code: 'OH',
     population: 140599,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.1916, 39.7589],
     timezone: 'America/New_York'
   },
   {
@@ -1797,7 +1797,7 @@ export const US_CITIES: USCity[] = [
     state: "Georgia",
     state_code: 'GA',
     population: 145674,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.0998, 32.0809],
     timezone: 'America/New_York'
   },
   {
@@ -1806,7 +1806,7 @@ export const US_CITIES: USCity[] = [
     state: "Tennessee",
     state_code: 'TN',
     population: 149176,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-87.3595, 36.5298],
     timezone: 'America/Chicago'
   },
   {
@@ -1815,7 +1815,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 140992,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.8531, 33.7879],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1824,7 +1824,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 142250,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.1445, 34.1478],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1833,7 +1833,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 140847,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.9243, 33.8704],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1842,7 +1842,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 140806,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.7278, 31.1171],
     timezone: 'America/Chicago'
   },
   {
@@ -1851,7 +1851,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 154407,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.8236, 33.1507],
     timezone: 'America/Chicago'
   },
   {
@@ -1860,7 +1860,7 @@ export const US_CITIES: USCity[] = [
     state: "Virginia",
     state_code: 'VA',
     population: 136454,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-76.3452, 37.0299],
     timezone: 'America/New_York'
   },
   {
@@ -1869,7 +1869,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 140269,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-98.23, 26.2034],
     timezone: 'America/Chicago'
   },
   {
@@ -1878,7 +1878,7 @@ export const US_CITIES: USCity[] = [
     state: "Michigan",
     state_code: 'MI',
     population: 134056,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-83.0147, 42.4775],
     timezone: 'America/Detroit'
   },
   {
@@ -1887,7 +1887,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 139820,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.2006, 47.6101],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1896,7 +1896,7 @@ export const US_CITIES: USCity[] = [
     state: "Utah",
     state_code: 'UT',
     population: 136208,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-112.0011, 40.6916],
     timezone: 'America/Denver'
   },
   {
@@ -1905,7 +1905,7 @@ export const US_CITIES: USCity[] = [
     state: "South Carolina",
     state_code: 'SC',
     population: 133803,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.0348, 34.0007],
     timezone: 'America/New_York'
   },
   {
@@ -1914,7 +1914,7 @@ export const US_CITIES: USCity[] = [
     state: "Kansas",
     state_code: 'KS',
     population: 134305,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-94.8191, 38.8814],
     timezone: 'America/Chicago'
   },
   {
@@ -1923,7 +1923,7 @@ export const US_CITIES: USCity[] = [
     state: "Michigan",
     state_code: 'MI',
     population: 132052,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-83.0302, 42.5803],
     timezone: 'America/Detroit'
   },
   {
@@ -1932,7 +1932,7 @@ export const US_CITIES: USCity[] = [
     state: "Connecticut",
     state_code: 'CT',
     population: 130322,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-72.9282, 41.3083],
     timezone: 'America/New_York'
   },
   {
@@ -1941,7 +1941,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 137132,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.2323, 25.986],
     timezone: 'America/New_York'
   },
   {
@@ -1950,7 +1950,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 132356,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.1467, 31.5493],
     timezone: 'America/Chicago'
   },
   {
@@ -1959,7 +1959,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 129339,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.837, 34.1705],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1968,7 +1968,7 @@ export const US_CITIES: USCity[] = [
     state: "Iowa",
     state_code: 'IA',
     population: 130405,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-91.6656, 42.0083],
     timezone: 'America/Chicago'
   },
   {
@@ -1977,7 +1977,7 @@ export const US_CITIES: USCity[] = [
     state: "South Carolina",
     state_code: 'SC',
     population: 132609,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-79.9311, 32.7765],
     timezone: 'America/New_York'
   },
   {
@@ -1986,7 +1986,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 130104,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-119.2921, 36.3302],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -1995,7 +1995,7 @@ export const US_CITIES: USCity[] = [
     state: "Kansas",
     state_code: 'KS',
     population: 127265,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.689, 39.0473],
     timezone: 'America/Chicago'
   },
   {
@@ -2004,7 +2004,7 @@ export const US_CITIES: USCity[] = [
     state: "New Jersey",
     state_code: 'NJ',
     population: 129007,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-74.2107, 40.664],
     timezone: 'America/New_York'
   },
   {
@@ -2013,7 +2013,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 130128,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-82.3248, 29.6516],
     timezone: 'America/New_York'
   },
   {
@@ -2022,7 +2022,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 133451,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-104.9719, 39.8681],
     timezone: 'America/Denver'
   },
   {
@@ -2031,7 +2031,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 130269,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.288, 38.7521],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2040,7 +2040,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 133168,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.8897, 32.9756],
     timezone: 'America/Chicago'
   },
   {
@@ -2049,7 +2049,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 129485,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.2707, 26.2712],
     timezone: 'America/New_York'
   },
   {
@@ -2058,7 +2058,7 @@ export const US_CITIES: USCity[] = [
     state: "Connecticut",
     state_code: 'CT',
     population: 128874,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-73.5387, 41.0534],
     timezone: 'America/New_York'
   },
   {
@@ -2067,7 +2067,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 126788,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.7815, 34.2694],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2076,7 +2076,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 128667,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.0311, 37.9779],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2085,7 +2085,7 @@ export const US_CITIES: USCity[] = [
     state: "Connecticut",
     state_code: 'CT',
     population: 124006,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-72.6851, 41.7658],
     timezone: 'America/New_York'
   },
   {
@@ -2094,7 +2094,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 126952,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.2348, 47.3809],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2103,7 +2103,7 @@ export const US_CITIES: USCity[] = [
     state: "Louisiana",
     state_code: 'LA',
     population: 127657,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-92.0198, 30.2241],
     timezone: 'America/Chicago'
   },
   {
@@ -2112,7 +2112,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 132950,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-102.0779, 31.9973],
     timezone: 'America/Chicago'
   },
   {
@@ -2121,7 +2121,7 @@ export const US_CITIES: USCity[] = [
     state: "Arizona",
     state_code: 'AZ',
     population: 128422,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-112.452, 33.6292],
     timezone: 'America/Phoenix'
   },
   {
@@ -2130,7 +2130,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 131044,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.1331, 33.2148],
     timezone: 'America/Chicago'
   },
   {
@@ -2139,7 +2139,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 122225,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.2912, 34.5362],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2148,7 +2148,7 @@ export const US_CITIES: USCity[] = [
     state: "Indiana",
     state_code: 'IN',
     population: 119943,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-87.5711, 37.9716],
     timezone: 'America/Chicago'
   },
   {
@@ -2157,7 +2157,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 126215,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.9552, 37.3541],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2166,7 +2166,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 121721,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-99.7331, 32.4487],
     timezone: 'America/Chicago'
   },
   {
@@ -2175,7 +2175,7 @@ export const US_CITIES: USCity[] = [
     state: "Georgia",
     state_code: 'GA',
     population: 116714,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-83.3833, 33.9608],
     timezone: 'America/New_York'
   },
   {
@@ -2184,7 +2184,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 121253,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.2566, 38.1041],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2193,7 +2193,7 @@ export const US_CITIES: USCity[] = [
     state: "Tennessee",
     state_code: 'TN',
     population: 126118,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-86.39, 35.8456],
     timezone: 'America/Chicago'
   },
   {
@@ -2202,7 +2202,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 105319,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.309, 34.1808],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2211,7 +2211,7 @@ export const US_CITIES: USCity[] = [
     state: "Michigan",
     state_code: 'MI',
     population: 117070,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-83.743, 42.2808],
     timezone: 'America/Detroit'
   },
   {
@@ -2220,7 +2220,7 @@ export const US_CITIES: USCity[] = [
     state: "Pennsylvania",
     state_code: 'PA',
     population: 120207,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-75.4902, 40.6023],
     timezone: 'America/New_York'
   },
   {
@@ -2229,7 +2229,7 @@ export const US_CITIES: USCity[] = [
     state: "Missouri",
     state_code: 'MO',
     population: 119108,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-92.3341, 38.9517],
     timezone: 'America/Chicago'
   },
   {
@@ -2238,7 +2238,7 @@ export const US_CITIES: USCity[] = [
     state: "North Dakota",
     state_code: 'ND',
     population: 118523,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.7898, 46.8772],
     timezone: 'America/Chicago'
   },
   {
@@ -2247,7 +2247,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 118968,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-102.3676, 31.8457],
     timezone: 'America/Chicago'
   },
   {
@@ -2256,7 +2256,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 120972,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.2727, 37.8716],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2265,7 +2265,7 @@ export const US_CITIES: USCity[] = [
     state: "Oklahoma",
     state_code: 'OK',
     population: 120284,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.4395, 35.2226],
     timezone: 'America/Chicago'
   },
   {
@@ -2274,7 +2274,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 118129,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-94.1018, 30.0802],
     timezone: 'America/Chicago'
   },
   {
@@ -2283,7 +2283,7 @@ export const US_CITIES: USCity[] = [
     state: "Missouri",
     state_code: 'MO',
     population: 117255,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-94.4155, 39.0911],
     timezone: 'America/Chicago'
   },
   {
@@ -2292,7 +2292,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 109830,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.2139, 33.5539],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2301,7 +2301,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 115997,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-97.6789, 30.5083],
     timezone: 'America/Chicago'
   },
   {
@@ -2310,7 +2310,7 @@ export const US_CITIES: USCity[] = [
     state: "Massachusetts",
     state_code: 'MA',
     population: 154341,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-72.5898, 42.1015],
     timezone: 'America/New_York'
   },
   {
@@ -2319,7 +2319,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 115933,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-77.9447, 34.2257],
     timezone: 'America/New_York'
   },
   {
@@ -2328,7 +2328,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 115368,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-105.0875, 39.8028],
     timezone: 'America/Denver'
   },
   {
@@ -2337,7 +2337,7 @@ export const US_CITIES: USCity[] = [
     state: "Utah",
     state_code: 'UT',
     population: 115264,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.6585, 40.2338],
     timezone: 'America/Denver'
   },
   {
@@ -2346,7 +2346,7 @@ export const US_CITIES: USCity[] = [
     state: "Illinois",
     state_code: 'IL',
     population: 115070,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-89.589, 40.6936],
     timezone: 'America/Chicago'
   },
   {
@@ -2355,7 +2355,7 @@ export const US_CITIES: USCity[] = [
     state: "Michigan",
     state_code: 'MI',
     population: 115056,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.5555, 42.7325],
     timezone: 'America/Detroit'
   },
   {
@@ -2364,7 +2364,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 114219,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.1328, 33.9401],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2373,7 +2373,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 113453,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.3506, 33.1581],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2382,7 +2382,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 113130,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-105.0372, 39.8367],
     timezone: 'America/Denver'
   },
   {
@@ -2391,7 +2391,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 113003,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-82.8001, 27.9659],
     timezone: 'America/New_York'
   },
   {
@@ -2400,7 +2400,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 113204,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.9187, 33.6411],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2409,7 +2409,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 113187,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.2456, 25.942],
     timezone: 'America/New_York'
   },
   {
@@ -2418,7 +2418,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 112970,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.0399, 38.2494],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2427,7 +2427,7 @@ export const US_CITIES: USCity[] = [
     state: "Minnesota",
     state_code: 'MN',
     population: 112225,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-92.4802, 44.0121],
     timezone: 'America/Chicago'
   },
   {
@@ -2436,7 +2436,7 @@ export const US_CITIES: USCity[] = [
     state: "Illinois",
     state_code: 'IL',
     population: 112111,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-88.2825, 42.0354],
     timezone: 'America/Chicago'
   },
   {
@@ -2445,7 +2445,7 @@ export const US_CITIES: USCity[] = [
     state: "Utah",
     state_code: 'UT',
     population: 111946,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-111.9391, 40.6097],
     timezone: 'America/Denver'
   },
   {
@@ -2454,7 +2454,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 112011,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.1484, 33.4936],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2463,7 +2463,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 111666,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.3531, 33.9617],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2472,7 +2472,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 110815,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.7297, 32.9483],
     timezone: 'America/Chicago'
   },
   {
@@ -2481,7 +2481,7 @@ export const US_CITIES: USCity[] = [
     state: "Massachusetts",
     state_code: 'MA',
     population: 110699,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-71.3162, 42.6334],
     timezone: 'America/New_York'
   },
   {
@@ -2490,7 +2490,7 @@ export const US_CITIES: USCity[] = [
     state: "Oregon",
     state_code: 'OR',
     population: 110553,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.4302, 45.4988],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2499,7 +2499,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 110542,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-121.8058, 38.0049],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2508,7 +2508,7 @@ export const US_CITIES: USCity[] = [
     state: "Massachusetts",
     state_code: 'MA',
     population: 110402,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-71.1097, 42.3736],
     timezone: 'America/New_York'
   },
   {
@@ -2517,7 +2517,7 @@ export const US_CITIES: USCity[] = [
     state: "North Carolina",
     state_code: 'NC',
     population: 110268,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-79.9987, 35.9557],
     timezone: 'America/New_York'
   },
   {
@@ -2526,7 +2526,7 @@ export const US_CITIES: USCity[] = [
     state: "Montana",
     state_code: 'MT',
     population: 110263,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-108.5007, 45.7833],
     timezone: 'America/Denver'
   },
   {
@@ -2535,7 +2535,7 @@ export const US_CITIES: USCity[] = [
     state: "New Hampshire",
     state_code: 'NH',
     population: 110229,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-71.4548, 42.9956],
     timezone: 'America/New_York'
   },
   {
@@ -2544,7 +2544,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 109708,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.3477, 37.9358],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2553,7 +2553,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 109741,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-104.8772, 39.5807],
     timezone: 'America/Denver'
   },
   {
@@ -2562,7 +2562,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 109412,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-104.6091, 38.2545],
     timezone: 'America/Denver'
   },
   {
@@ -2571,7 +2571,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 108821,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.2861, 29.5636],
     timezone: 'America/Chicago'
   },
   {
@@ -2580,7 +2580,7 @@ export const US_CITIES: USCity[] = [
     state: "Connecticut",
     state_code: 'CT',
     population: 108802,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-73.0515, 41.5582],
     timezone: 'America/New_York'
   },
   {
@@ -2589,7 +2589,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 108484,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.939, 34.0686],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2598,7 +2598,7 @@ export const US_CITIES: USCity[] = [
     state: "South Carolina",
     state_code: 'SC',
     population: 108304,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-79.9748, 32.8854],
     timezone: 'America/New_York'
   },
   {
@@ -2607,7 +2607,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 108010,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.2021, 47.979],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2616,7 +2616,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 107888,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.5887, 28.0345],
     timezone: 'America/New_York'
   },
   {
@@ -2625,7 +2625,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 107889,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.3344, 30.628],
     timezone: 'America/Chicago'
   },
   {
@@ -2634,7 +2634,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 107762,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.1248, 26.2379],
     timezone: 'America/New_York'
   },
   {
@@ -2643,7 +2643,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 107349,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-105.2705, 40.015],
     timezone: 'America/Denver'
   },
   {
@@ -2652,7 +2652,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 106779,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.0534, 26.7153],
     timezone: 'America/New_York'
   },
   {
@@ -2661,7 +2661,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 107140,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-118.0815, 33.9022],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2670,7 +2670,7 @@ export const US_CITIES: USCity[] = [
     state: "Oklahoma",
     state_code: 'OK',
     population: 106563,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.7975, 36.0609],
     timezone: 'America/Chicago'
   },
   {
@@ -2679,7 +2679,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 106562,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.4702, 37.6879],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2688,7 +2688,7 @@ export const US_CITIES: USCity[] = [
     state: "Georgia",
     state_code: 'GA',
     population: 105330,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-84.3733, 33.9242],
     timezone: 'America/New_York'
   },
   {
@@ -2697,7 +2697,7 @@ export const US_CITIES: USCity[] = [
     state: "Wisconsin",
     state_code: 'WI',
     population: 105207,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-88.0199, 44.5192],
     timezone: 'America/Chicago'
   },
   {
@@ -2706,7 +2706,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 105093,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-120.4357, 34.953],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2715,7 +2715,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 104401,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-81.9498, 28.0395],
     timezone: 'America/New_York'
   },
   {
@@ -2724,7 +2724,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 104039,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-96.9942, 33.0462],
     timezone: 'America/Chicago'
   },
   {
@@ -2733,7 +2733,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 104710,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-98.4934, 33.9137],
     timezone: 'America/Chicago'
   },
   {
@@ -2742,7 +2742,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 104180,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-119.7029, 36.8252],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2751,7 +2751,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 103700,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-95.301, 32.3513],
     timezone: 'America/Chicago'
   },
   {
@@ -2760,7 +2760,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 103679,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-116.9625, 32.7948],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2769,7 +2769,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 103536,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.3255, 37.563],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2778,7 +2778,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 103483,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-82.2859, 27.9378],
     timezone: 'America/New_York'
   },
   {
@@ -2787,7 +2787,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 103132,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.3703, 34.1064],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2796,7 +2796,7 @@ export const US_CITIES: USCity[] = [
     state: "Iowa",
     state_code: 'IA',
     population: 102582,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-90.5776, 41.5236],
     timezone: 'America/Chicago'
   },
   {
@@ -2805,7 +2805,7 @@ export const US_CITIES: USCity[] = [
     state: "Indiana",
     state_code: 'IN',
     population: 101516,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-86.252, 41.6764],
     timezone: 'America/Indiana/Indianapolis'
   },
   {
@@ -2814,7 +2814,7 @@ export const US_CITIES: USCity[] = [
     state: "New Jersey",
     state_code: 'NJ',
     population: 102548,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-74.4121, 40.5187],
     timezone: 'America/New_York'
   },
   {
@@ -2823,7 +2823,7 @@ export const US_CITIES: USCity[] = [
     state: "Oregon",
     state_code: 'OR',
     population: 102347,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.9898, 45.5229],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2832,7 +2832,7 @@ export const US_CITIES: USCity[] = [
     state: "New Mexico",
     state_code: 'NM',
     population: 101643,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-106.751, 32.3199],
     timezone: 'America/Denver'
   },
   {
@@ -2841,7 +2841,7 @@ export const US_CITIES: USCity[] = [
     state: "California",
     state_code: 'CA',
     population: 100890,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-117.2425, 33.2],
     timezone: 'America/Los_Angeles'
   },
   {
@@ -2850,7 +2850,7 @@ export const US_CITIES: USCity[] = [
     state: "Colorado",
     state_code: 'CO',
     population: 100883,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-104.7091, 40.4233],
     timezone: 'America/Denver'
   },
   {
@@ -2859,7 +2859,7 @@ export const US_CITIES: USCity[] = [
     state: "Florida",
     state_code: 'FL',
     population: 100882,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-80.2331, 26.0765],
     timezone: 'America/New_York'
   },
   {
@@ -2868,7 +2868,7 @@ export const US_CITIES: USCity[] = [
     state: "Texas",
     state_code: 'TX',
     population: 100450,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-100.437, 31.4638],
     timezone: 'America/Chicago'
   },
   {
@@ -2877,7 +2877,7 @@ export const US_CITIES: USCity[] = [
     state: "Washington",
     state_code: 'WA',
     population: 100242,
-    coordinates: [0, 0], // Placeholder
+    coordinates: [-122.2171, 47.4829],
     timezone: 'America/Los_Angeles'
   }
 ];
