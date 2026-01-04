@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { AlarmSound, ALARM_SOUNDS, alarmSoundService } from '@/services/AlarmSound';
 import { useSession, signIn } from 'next-auth/react';
-import { Bell, Plus, Trash2, Clock, Volume2 } from 'lucide-react';
+import { Bell, Plus, Trash2, Clock, Volume2, Lock } from 'lucide-react';
 
 interface AlarmTime {
   id: string;
@@ -18,13 +18,8 @@ interface AlarmTime {
   timezone?: string;
 }
 
-const STORAGE_KEY = 'timeio_alarms';
-
-// Generate unique ID for local alarms
-const generateId = () => `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
 export const AlarmManager = () => {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [mounted, setMounted] = useState(false);
   const [alarms, setAlarms] = useState<AlarmTime[]>([]);
   const [showNewAlarm, setShowNewAlarm] = useState(false);
@@ -42,26 +37,20 @@ export const AlarmManager = () => {
     setMounted(true);
   }, []);
 
-  // Load alarms - from API if authenticated, from localStorage if guest
+  // Load alarms from API when session changes
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || !session?.user?.id) {
+      setLoading(false);
+      return;
+    }
 
     const loadAlarms = async () => {
       setLoading(true);
       try {
-        if (session?.user?.id) {
-          // Load from API for authenticated users
-          const response = await fetch('/api/alarms');
-          if (response.ok) {
-            const data = await response.json();
-            setAlarms(data);
-          }
-        } else {
-          // Load from localStorage for guests
-          const stored = localStorage.getItem(STORAGE_KEY);
-          if (stored) {
-            setAlarms(JSON.parse(stored));
-          }
+        const response = await fetch('/api/alarms');
+        if (response.ok) {
+          const data = await response.json();
+          setAlarms(data);
         }
       } catch (e) {
         console.error('Failed to load alarms:', e);
@@ -73,16 +62,9 @@ export const AlarmManager = () => {
     loadAlarms();
   }, [session?.user?.id, mounted]);
 
-  // Save to localStorage for guests
-  const saveToLocalStorage = useCallback((newAlarms: AlarmTime[]) => {
-    if (!session?.user?.id) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newAlarms));
-    }
-  }, [session?.user?.id]);
-
   // Check alarms every second
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || !session) return;
 
     const checkAlarms = () => {
       const now = new Date();
@@ -102,7 +84,7 @@ export const AlarmManager = () => {
 
     const interval = setInterval(checkAlarms, 1000);
     return () => clearInterval(interval);
-  }, [alarms, mounted]);
+  }, [alarms, mounted, session]);
 
   const triggerAlarm = async (alarm: AlarmTime) => {
     try {
@@ -118,7 +100,7 @@ export const AlarmManager = () => {
       }
 
       // Update lastTriggered
-      if (session?.user?.id && alarm.id) {
+      if (alarm.id) {
         await fetch(`/api/alarms`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
@@ -144,29 +126,16 @@ export const AlarmManager = () => {
 
   const addAlarm = async (alarm: Omit<AlarmTime, 'id'>) => {
     try {
-      if (session?.user?.id) {
-        // Save to API for authenticated users
-        const response = await fetch('/api/alarms', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(alarm),
-        });
+      const response = await fetch('/api/alarms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...alarm, timezone: userTimezone }),
+      });
 
-        if (!response.ok) throw new Error('Failed to create alarm');
+      if (!response.ok) throw new Error('Failed to create alarm');
 
-        const newAlarm = await response.json();
-        setAlarms(prev => [...prev, newAlarm]);
-      } else {
-        // Save to localStorage for guests
-        const newAlarm: AlarmTime = {
-          ...alarm,
-          id: generateId(),
-          timezone: userTimezone,
-        };
-        const newAlarms = [...alarms, newAlarm];
-        setAlarms(newAlarms);
-        saveToLocalStorage(newAlarms);
-      }
+      const newAlarm = await response.json();
+      setAlarms(prev => [...prev, newAlarm]);
       setShowNewAlarm(false);
     } catch (e) {
       console.error('Failed to add alarm:', e);
@@ -175,27 +144,19 @@ export const AlarmManager = () => {
 
   const toggleAlarm = async (alarm: AlarmTime) => {
     try {
-      const updatedAlarm = { ...alarm, isEnabled: !alarm.isEnabled };
+      const response = await fetch(`/api/alarms`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: alarm.id,
+          isEnabled: !alarm.isEnabled,
+        }),
+      });
 
-      if (session?.user?.id) {
-        const response = await fetch(`/api/alarms`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: alarm.id,
-            isEnabled: !alarm.isEnabled,
-          }),
-        });
+      if (!response.ok) throw new Error('Failed to update alarm');
 
-        if (!response.ok) throw new Error('Failed to update alarm');
-
-        const result = await response.json();
-        setAlarms(prev => prev.map(a => a.id === alarm.id ? result : a));
-      } else {
-        const newAlarms = alarms.map(a => a.id === alarm.id ? updatedAlarm : a);
-        setAlarms(newAlarms);
-        saveToLocalStorage(newAlarms);
-      }
+      const result = await response.json();
+      setAlarms(prev => prev.map(a => a.id === alarm.id ? result : a));
     } catch (e) {
       console.error('Failed to toggle alarm:', e);
     }
@@ -203,17 +164,13 @@ export const AlarmManager = () => {
 
   const deleteAlarm = async (alarm: AlarmTime) => {
     try {
-      if (session?.user?.id) {
-        const response = await fetch(`/api/alarms?id=${alarm.id}`, {
-          method: 'DELETE',
-        });
+      const response = await fetch(`/api/alarms?id=${alarm.id}`, {
+        method: 'DELETE',
+      });
 
-        if (!response.ok) throw new Error('Failed to delete alarm');
-      }
+      if (!response.ok) throw new Error('Failed to delete alarm');
 
-      const newAlarms = alarms.filter(a => a.id !== alarm.id);
-      setAlarms(newAlarms);
-      saveToLocalStorage(newAlarms);
+      setAlarms(prev => prev.filter(a => a.id !== alarm.id));
     } catch (e) {
       console.error('Failed to delete alarm:', e);
     }
@@ -229,6 +186,69 @@ export const AlarmManager = () => {
   // Don't render anything on the server or before mounting
   if (!mounted) return null;
 
+  // Show loading while checking auth status
+  if (status === 'loading') {
+    return (
+      <div className="flex justify-center items-center min-h-[300px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Show sign-in prompt if not authenticated
+  if (!session) {
+    return (
+      <div className="max-w-lg mx-auto p-6">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-8 text-center border border-blue-200">
+          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Lock className="w-8 h-8 text-blue-600" />
+          </div>
+
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">
+            Sign In Required
+          </h2>
+
+          <p className="text-gray-600 mb-6 leading-relaxed">
+            Sign in to create and manage your alarms. Your alarms will sync across all your devices.
+          </p>
+
+          <div className="space-y-4">
+            <button
+              onClick={() => signIn('google')}
+              className="w-full flex items-center justify-center gap-3 bg-white hover:bg-gray-50 border border-gray-300 text-gray-700 font-medium py-3 px-6 rounded-xl transition-colors shadow-sm"
+            >
+              <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
+              Continue with Google
+            </button>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-blue-200">
+            <h3 className="font-semibold text-gray-800 mb-3">Why sign in?</h3>
+            <ul className="text-sm text-gray-600 space-y-2 text-left">
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 mt-0.5">✓</span>
+                Set unlimited alarms with custom labels
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 mt-0.5">✓</span>
+                Sync alarms across all your devices
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 mt-0.5">✓</span>
+                Choose from multiple alarm sounds
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-blue-600 mt-0.5">✓</span>
+                Get browser notifications
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show loading while fetching alarms
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
@@ -237,6 +257,7 @@ export const AlarmManager = () => {
     );
   }
 
+  // Authenticated user view
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6">
       {/* Header with timezone info */}
@@ -248,15 +269,6 @@ export const AlarmManager = () => {
         <p className="text-gray-600">
           Your timezone: <span className="font-medium text-gray-900">{userTimezone}</span>
         </p>
-        {!session && (
-          <p className="text-sm text-gray-500 mt-2">
-            Alarms are saved locally in this browser.{' '}
-            <button onClick={() => signIn('google')} className="text-blue-600 hover:underline">
-              Sign in
-            </button>{' '}
-            to sync across devices.
-          </p>
-        )}
       </div>
 
       {/* Main content */}
