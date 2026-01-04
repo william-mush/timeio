@@ -10,9 +10,11 @@ interface CityTimeClientProps {
 }
 
 export function CityTimeClient({ city }: CityTimeClientProps) {
+    const [mounted, setMounted] = useState(false);
     const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
     useEffect(() => {
+        setMounted(true);
         const timer = setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
@@ -91,22 +93,22 @@ export function CityTimeClient({ city }: CityTimeClientProps) {
                 </div>
 
                 {/* Main Time Display */}
-                <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 mb-8 text-center border border-gray-100">
-                    <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl p-8 md:p-10 mb-8 text-center border border-slate-700">
+                    <div className="inline-flex items-center gap-2 bg-blue-500/20 text-blue-300 px-4 py-2 rounded-full text-sm font-medium mb-6">
                         <Clock className="w-4 h-4" />
                         Live Time
                     </div>
 
-                    <div className="text-6xl md:text-7xl font-mono font-light text-gray-800 mb-4 tracking-tight">
-                        {formatTime(currentTime, city.timezone)}
+                    <div className="text-6xl md:text-7xl font-mono font-light text-white mb-4 tracking-tight">
+                        {mounted ? formatTime(currentTime, city.timezone) : '--:--:-- --'}
                     </div>
 
-                    <div className="flex items-center justify-center gap-2 text-lg text-gray-600 mb-2">
+                    <div className="flex items-center justify-center gap-2 text-lg text-gray-300 mb-2">
                         <Calendar className="w-5 h-5" />
-                        {formatDate(currentTime, city.timezone)}
+                        {mounted ? formatDate(currentTime, city.timezone) : 'Loading...'}
                     </div>
 
-                    <div className="inline-flex items-center gap-2 text-sm text-gray-500 bg-gray-50 px-4 py-2 rounded-full">
+                    <div className="inline-flex items-center gap-2 text-sm text-gray-400 bg-slate-700/50 px-4 py-2 rounded-full">
                         <Globe className="w-4 h-4" />
                         {city.timezone}
                     </div>
@@ -153,12 +155,14 @@ export function CityTimeClient({ city }: CityTimeClientProps) {
                                 <span className="text-gray-600">State:</span>
                                 <span className="font-semibold">{city.state}</span>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-gray-600">Coordinates:</span>
-                                <span className="font-semibold text-sm">
-                                    {city.coordinates[1].toFixed(4)}°N, {Math.abs(city.coordinates[0]).toFixed(4)}°W
-                                </span>
-                            </div>
+                            {city.coordinates && city.coordinates[0] !== 0 && city.coordinates[1] !== 0 && (
+                                <div className="flex justify-between">
+                                    <span className="text-gray-600">Coordinates:</span>
+                                    <span className="font-semibold text-sm">
+                                        {Math.abs(city.coordinates[1]).toFixed(4)}°{city.coordinates[1] >= 0 ? 'N' : 'S'}, {Math.abs(city.coordinates[0]).toFixed(4)}°{city.coordinates[0] >= 0 ? 'E' : 'W'}
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <span className="text-gray-600">Time Zone:</span>
                                 <span className="font-semibold text-sm">{timezoneDisplay}</span>
@@ -173,25 +177,25 @@ export function CityTimeClient({ city }: CityTimeClientProps) {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                         <div className="p-4 bg-blue-50 rounded-xl">
                             <div className="text-2xl font-bold text-blue-600">
-                                {formatTime(currentTime, city.timezone)}
+                                {mounted ? formatTime(currentTime, city.timezone) : '--:--:--'}
                             </div>
                             <div className="text-sm text-gray-600 mt-1">{city.city}</div>
                         </div>
                         <div className="p-4 bg-gray-50 rounded-xl">
                             <div className="text-2xl font-bold text-gray-700">
-                                {currentTime.toLocaleTimeString('en-US', {
+                                {mounted ? currentTime.toLocaleTimeString('en-US', {
                                     timeZone: 'UTC',
                                     hour: '2-digit',
                                     minute: '2-digit',
                                     second: '2-digit',
                                     hour12: true
-                                })}
+                                }) : '--:--:--'}
                             </div>
                             <div className="text-sm text-gray-600 mt-1">UTC / GMT</div>
                         </div>
                         <div className="p-4 bg-green-50 rounded-xl">
                             <div className="text-2xl font-bold text-green-600">
-                                {formatTime(new Date(Date.now() + 12 * 60 * 60 * 1000), city.timezone)}
+                                {mounted ? formatTime(new Date(currentTime.getTime() + 12 * 60 * 60 * 1000), city.timezone) : '--:--:--'}
                             </div>
                             <div className="text-sm text-gray-600 mt-1">+12 Hours</div>
                         </div>
