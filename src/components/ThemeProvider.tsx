@@ -10,7 +10,11 @@ interface ThemeContextType {
     resolvedTheme: 'light' | 'dark';
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType>({
+    theme: 'system',
+    setTheme: () => { },
+    resolvedTheme: 'light',
+});
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const [theme, setThemeState] = useState<Theme>('system');
@@ -34,7 +38,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Set theme and persist
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
-        localStorage.setItem('theme', newTheme);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('theme', newTheme);
+        }
 
         if (newTheme === 'system') {
             applyTheme(getSystemTheme());
@@ -59,7 +65,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         // Listen for system theme changes
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const handleChange = (e: MediaQueryListEvent) => {
-            if (theme === 'system') {
+            const currentTheme = localStorage.getItem('theme') as Theme | null || 'system';
+            if (currentTheme === 'system') {
                 applyTheme(e.matches ? 'dark' : 'light');
             }
         };
@@ -79,10 +86,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         }
     }, [theme, mounted]);
 
-    if (!mounted) {
-        return <>{children}</>;
-    }
-
     return (
         <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>
             {children}
@@ -91,9 +94,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 }
 
 export function useTheme() {
-    const context = useContext(ThemeContext);
-    if (context === undefined) {
-        throw new Error('useTheme must be used within a ThemeProvider');
-    }
-    return context;
+    return useContext(ThemeContext);
 }
+
