@@ -32,16 +32,11 @@ export function ThemeToggle() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                style={{
-                    backgroundColor: isOpen ? 'rgb(var(--bg-tertiary))' : 'transparent',
-                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
                 aria-label="Toggle theme"
             >
-                <CurrentIcon
-                    className="w-5 h-5 transition-colors"
-                    style={{ color: 'rgb(var(--text-secondary))' }}
-                />
+                <CurrentIcon className="w-4 h-4 text-gray-600" />
+                <span className="hidden md:inline text-sm text-gray-600">Theme</span>
             </button>
 
             {isOpen && (
