@@ -1,7 +1,6 @@
 import { Metadata } from "next";
-import Link from "next/link";
-import { US_CITIES, type USCity } from "@/data/us-cities";
-import { Clock, MapPin, Users, Search } from "lucide-react";
+import { US_CITIES } from "@/data/us-cities";
+import { USCitiesClient } from "./USCitiesClient";
 
 export const metadata: Metadata = {
   title: "Current Time in US Cities - All Time Zones",
@@ -29,36 +28,9 @@ export const metadata: Metadata = {
   },
 };
 
-// Group cities by state
-function groupCitiesByState(cities: USCity[]) {
-  const grouped: Record<string, USCity[]> = {};
-  cities.forEach(city => {
-    if (!grouped[city.state]) {
-      grouped[city.state] = [];
-    }
-    grouped[city.state].push(city);
-  });
-  // Sort each state's cities by population
-  Object.keys(grouped).forEach(state => {
-    grouped[state].sort((a, b) => b.population - a.population);
-  });
-  return grouped;
-}
-
-// Get top cities
-function getTopCities(cities: USCity[], count: number) {
-  return [...cities]
-    .filter(c => c.population >= 24000)
-    .sort((a, b) => b.population - a.population)
-    .slice(0, count);
-}
-
 export default function USCitiesPage() {
   const eligibleCities = US_CITIES.filter(c => c.population >= 24000);
-  const topCities = getTopCities(eligibleCities, 20);
   const cityCount = eligibleCities.length;
-
-  // Get unique states
   const states = Array.from(new Set(eligibleCities.map(c => c.state))).sort();
 
   return (
@@ -71,7 +43,7 @@ export default function USCitiesPage() {
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Find the current local time in {cityCount}+ American cities across all time zones.
-            Select a city to see detailed time information.
+            Search, browse by state, or explore by time zone.
           </p>
         </div>
 
@@ -91,53 +63,8 @@ export default function USCitiesPage() {
           </div>
         </div>
 
-        {/* Top Cities */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Major US Cities</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {topCities.map((city) => (
-              <Link
-                key={city.id}
-                href={`/us-cities/${city.id}`}
-                className="group bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-blue-200 transition-all"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-                    <Clock className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                      {city.city}
-                    </h3>
-                    <p className="text-sm text-gray-500">{city.state_code}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      Pop: {city.population.toLocaleString()}
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Browse by State */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Browse by State</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-2">
-            {states.map((state) => {
-              const count = eligibleCities.filter(c => c.state === state).length;
-              return (
-                <div
-                  key={state}
-                  className="bg-white rounded-lg p-3 text-center border border-gray-100 hover:border-blue-200 transition-colors"
-                >
-                  <div className="font-medium text-gray-900 text-sm truncate">{state}</div>
-                  <div className="text-xs text-gray-400">{count} cities</div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
+        {/* Client Component with Search and Browse */}
+        <USCitiesClient initialCities={US_CITIES} />
 
         {/* SEO Content */}
         <div className="bg-gray-50 rounded-2xl p-8 mt-12">
