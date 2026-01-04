@@ -172,32 +172,38 @@ export function CityTimeClient({ city }: CityTimeClientProps) {
                 </div>
 
                 {/* Time Comparisons */}
-                <div className="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Time Comparisons</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-                        <div className="p-4 bg-blue-50 rounded-xl">
+                <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl shadow-md p-6 mb-8 border border-slate-700">
+                    <h2 className="text-lg font-semibold text-white mb-4">Time Comparisons</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                        <div className="p-4 bg-white rounded-xl">
                             <div className="text-2xl font-bold text-blue-600">
                                 {mounted ? formatTime(currentTime, city.timezone) : '--:--:--'}
                             </div>
                             <div className="text-sm text-gray-600 mt-1">{city.city}</div>
                         </div>
-                        <div className="p-4 bg-gray-50 rounded-xl">
-                            <div className="text-2xl font-bold text-gray-700">
+                        <div className="p-4 bg-white rounded-xl">
+                            <div className="text-2xl font-bold text-gray-800">
                                 {mounted ? currentTime.toLocaleTimeString('en-US', {
-                                    timeZone: 'UTC',
+                                    timeZone: 'America/New_York',
                                     hour: '2-digit',
                                     minute: '2-digit',
                                     second: '2-digit',
                                     hour12: true
                                 }) : '--:--:--'}
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">UTC / GMT</div>
+                            <div className="text-sm text-gray-600 mt-1">New York</div>
                         </div>
-                        <div className="p-4 bg-green-50 rounded-xl">
+                        <div className="p-4 bg-white rounded-xl">
                             <div className="text-2xl font-bold text-green-600">
-                                {mounted ? formatTime(new Date(currentTime.getTime() + 12 * 60 * 60 * 1000), city.timezone) : '--:--:--'}
+                                {mounted ? currentTime.toLocaleTimeString('en-US', {
+                                    timeZone: 'Europe/London',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: true
+                                }) : '--:--:--'}
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">+12 Hours</div>
+                            <div className="text-sm text-gray-600 mt-1">London</div>
                         </div>
                     </div>
                 </div>
