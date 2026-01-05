@@ -147,28 +147,33 @@ export function WorldMap() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-4 left-4 z-20 bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-xl border border-gray-100 min-w-[240px]"
+            className="absolute top-4 left-4 z-20 bg-white rounded-xl p-4 shadow-xl border border-gray-200 min-w-[280px]"
           >
             <div className="flex items-start gap-3">
               <div className={`p-2 rounded-lg ${(selectedCity || hoveredCity)?.type === 'city' ? 'bg-red-100' : 'bg-blue-100'}`}>
                 <MapPin className={`w-5 h-5 ${(selectedCity || hoveredCity)?.type === 'city' ? 'text-red-600' : 'text-blue-600'}`} />
               </div>
               <div className="flex-1">
-                <h3 className="font-semibold text-gray-900">{(selectedCity || hoveredCity)?.city}</h3>
-                <p className="text-sm text-gray-500">{(selectedCity || hoveredCity)?.country}</p>
+                <h3 className="text-lg font-bold text-gray-900">{(selectedCity || hoveredCity)?.city}</h3>
+                <p className="text-sm text-gray-600">{(selectedCity || hoveredCity)?.country}</p>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-100 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-gray-400" />
-              <span className="font-mono text-lg text-gray-900">
-                {formatTime((selectedCity || hoveredCity)!.offset)}
-              </span>
-              <span className="text-sm text-gray-400">
-                GMT{(selectedCity || hoveredCity)!.offset >= 0 ? '+' : ''}{(selectedCity || hoveredCity)?.offset}
-              </span>
+            <div className="mt-4 pt-3 border-t border-gray-200">
+              <div className="flex items-center gap-2 mb-1">
+                <Clock className="w-4 h-4 text-blue-500" />
+                <span className="text-xs text-gray-500 uppercase tracking-wide">Current Time</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-2xl font-semibold text-gray-900">
+                  {formatTime((selectedCity || hoveredCity)!.offset)}
+                </span>
+                <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                  GMT{(selectedCity || hoveredCity)!.offset >= 0 ? '+' : ''}{(selectedCity || hoveredCity)?.offset}
+                </span>
+              </div>
             </div>
             {(selectedCity || hoveredCity)?.description && (
-              <p className="mt-2 text-xs text-gray-500">{(selectedCity || hoveredCity)?.description}</p>
+              <p className="mt-3 text-sm text-gray-600 border-t border-gray-100 pt-3">{(selectedCity || hoveredCity)?.description}</p>
             )}
           </motion.div>
         )}
