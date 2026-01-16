@@ -140,10 +140,30 @@ export const TimeDisplay = ({
 
   if (!mounted) {
     return (
-      <div className="flex flex-col items-center space-y-4">
-        <div className="text-8xl font-mono tracking-tighter text-gray-300 bg-white/60 rounded-2xl px-8 py-6 tabular-nums">
-          --:--:--
+      <div className="flex flex-col items-center space-y-6">
+        {/* Skeleton loading state */}
+        <div className="relative">
+          {/* Glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-blue-400/20 blur-3xl rounded-full animate-pulse" />
+
+          <div className="relative text-8xl md:text-9xl font-mono font-light tracking-tight backdrop-blur-xl bg-white/70 rounded-2xl px-8 md:px-12 py-6 md:py-8 shadow-xl shadow-gray-200/50 border border-white/50 flex items-baseline">
+            {/* Animated skeleton blocks */}
+            <div className="flex items-baseline gap-1">
+              <div className="w-16 md:w-20 h-20 md:h-24 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg animate-pulse" style={{ animationDuration: '1.5s' }} />
+              <div className="w-16 md:w-20 h-20 md:h-24 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg animate-pulse" style={{ animationDuration: '1.5s', animationDelay: '0.1s' }} />
+              <span className="mx-2 text-gray-300 animate-pulse">:</span>
+              <div className="w-16 md:w-20 h-20 md:h-24 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg animate-pulse" style={{ animationDuration: '1.5s', animationDelay: '0.2s' }} />
+              <div className="w-16 md:w-20 h-20 md:h-24 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg animate-pulse" style={{ animationDuration: '1.5s', animationDelay: '0.3s' }} />
+              <span className="mx-2 text-gray-300 animate-pulse">:</span>
+              <div className="w-16 md:w-20 h-20 md:h-24 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg animate-pulse" style={{ animationDuration: '1.5s', animationDelay: '0.4s' }} />
+              <div className="w-16 md:w-20 h-20 md:h-24 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg animate-pulse" style={{ animationDuration: '1.5s', animationDelay: '0.5s' }} />
+              <div className="ml-4 w-12 md:w-16 h-8 md:h-10 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-pulse" style={{ animationDuration: '1.5s', animationDelay: '0.6s' }} />
+            </div>
+          </div>
         </div>
+
+        {/* Skeleton button */}
+        <div className="w-40 h-9 bg-gray-200/60 rounded-full animate-pulse" />
       </div>
     );
   }

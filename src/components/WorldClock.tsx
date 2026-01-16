@@ -49,7 +49,7 @@ const getTimezoneFromOffset = (offset: number, country: string): string => {
     'Canada|-7': 'America/Vancouver',
     'Russia|3': 'Europe/Moscow',
   };
-  
+
   const key = `${country}|${offset}`;
   return timezoneMap[key] || 'UTC';
 };
@@ -117,14 +117,14 @@ export const WorldClock = () => {
     const minutes = date.getMinutes().toString().padStart(2, '0');
     const seconds = showSeconds ? date.getSeconds().toString().padStart(2, '0') : '';
     const milliseconds = showMilliseconds ? (date.getMilliseconds() / 1000).toFixed(3).slice(2) : '';
-    
+
     let period = '';
     if (!format24Hour) {
       period = hours >= 12 ? ' PM' : ' AM';
       hours = hours % 12;
       hours = hours ? hours : 12; // Convert 0 to 12
     }
-    
+
     const timeStr = [
       hours.toString().padStart(2, '0'),
       minutes
@@ -165,9 +165,9 @@ export const WorldClock = () => {
       setError(null);
 
       if (!session) {
-        // Default to US cities for non-authenticated users
-        const defaultZones = WORLD_TIMEZONES.filter(zone => 
-          ['nyc', 'la', 'chicago', 'miami', 'seattle', 'denver'].includes(zone.id)
+        // Default to major world cities for non-authenticated users
+        const defaultZones = WORLD_TIMEZONES.filter(zone =>
+          ['nyc', 'london', 'tokyo', 'sydney', 'dubai', 'la'].includes(zone.id)
         );
         setSelectedZones(defaultZones);
         setIsLoading(false);
@@ -201,14 +201,14 @@ export const WorldClock = () => {
             }));
             setSelectedZones(zones);
           } else {
-            // If no time zones found, set default US cities
-            const defaultZones = WORLD_TIMEZONES.filter(zone => 
-              ['nyc', 'la', 'chicago', 'miami', 'seattle', 'denver'].includes(zone.id)
+            // If no time zones found, set default world cities
+            const defaultZones = WORLD_TIMEZONES.filter(zone =>
+              ['nyc', 'london', 'tokyo', 'sydney', 'dubai', 'la'].includes(zone.id)
             );
             setSelectedZones(defaultZones);
-            
+
             // Save default zones to database
-            await Promise.all(defaultZones.map((zone, index) => 
+            await Promise.all(defaultZones.map((zone, index) =>
               fetch('/api/time-zones', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -227,8 +227,8 @@ export const WorldClock = () => {
       } catch (error) {
         console.error('Failed to load data:', error);
         setError('Failed to load world clock data. Please try again.');
-        const defaultZones = WORLD_TIMEZONES.filter(zone => 
-          ['nyc', 'la', 'chicago', 'miami', 'seattle', 'denver'].includes(zone.id)
+        const defaultZones = WORLD_TIMEZONES.filter(zone =>
+          ['nyc', 'london', 'tokyo', 'sydney', 'dubai', 'la'].includes(zone.id)
         );
         setSelectedZones(defaultZones);
       } finally {
@@ -267,10 +267,10 @@ export const WorldClock = () => {
       signIn('google');
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/time-zones', {
         method: 'POST',
@@ -291,10 +291,10 @@ export const WorldClock = () => {
         setError(`Failed to add ${zone.city}: ${errorData.error || response.statusText}`);
         return;
       }
-      
+
       const newTimeZone = await response.json();
       console.log('Successfully added time zone:', newTimeZone);
-      
+
       const newZone = {
         id: newTimeZone.cityId,
         name: newTimeZone.cityName,
@@ -304,7 +304,7 @@ export const WorldClock = () => {
         region: newTimeZone.region,
         timezone: getTimezoneFromOffset(newTimeZone.offset, newTimeZone.country)
       };
-      
+
       setSelectedZones(prev => [...prev, newZone]);
       setShowAddZone(false);
     } catch (error) {
@@ -317,10 +317,10 @@ export const WorldClock = () => {
 
   const removeTimeZone = async (zoneId: string) => {
     if (!session) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch(`/api/time-zones/${zoneId}`, {
         method: 'DELETE'
@@ -343,7 +343,7 @@ export const WorldClock = () => {
 
   const filteredZones = WORLD_TIMEZONES
     .filter(zone => !selectedZones.find(z => z.id === zone.id))
-    .filter(zone => 
+    .filter(zone =>
       selectedRegion === 'all' || zone.region === selectedRegion)
     .filter(zone =>
       zone.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -421,11 +421,10 @@ export const WorldClock = () => {
                 key={zone.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className={`card p-4 md:p-6 ${
-                  zone.country === 'United States' 
-                    ? 'ring-2 ring-blue-200 dark:ring-blue-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20' 
-                    : ''
-                }`}
+                className={`card p-4 md:p-6 ${zone.country === 'United States'
+                  ? 'ring-2 ring-blue-200 dark:ring-blue-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20'
+                  : ''
+                  }`}
               >
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-2 mb-3 md:mb-4">
                   <div className="flex-1">
