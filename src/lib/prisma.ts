@@ -1,6 +1,3 @@
-import { PrismaClient } from '@prisma/client';
-
-// Prisma 6 handles env vars automatically via schema
-const prisma = new PrismaClient();
+import { prisma } from './db';
 
 export default prisma;
