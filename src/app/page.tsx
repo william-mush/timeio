@@ -1,6 +1,7 @@
 'use client';
 
 import { TimeDisplay } from '@/components/Time';
+import { HomepageSearch } from '@/components/HomepageSearch';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Clock, Bell, MapPin, Sun, Building2, History } from 'lucide-react';
@@ -35,6 +36,11 @@ export default function Home() {
             <p className="mt-6 text-gray-500 dark:text-gray-400 text-lg max-w-md">
               Your elegant time companion for tracking time around the world
             </p>
+
+            {/* City Search Bar */}
+            <div className="mt-8 w-full px-4">
+              <HomepageSearch />
+            </div>
           </div>
         </div>
       </div>

@@ -18,6 +18,8 @@ A modern web application for managing time across different time zones, featurin
 - Tailwind CSS
 - Framer Motion
 - Lucide Icons
+- **Prisma 7.x** with PostgreSQL (Neon) and `@prisma/adapter-pg`
+- NextAuth.js 5 (Auth.js) - OAuth (Google) + Credentials auth
 
 ## Getting Started
 
