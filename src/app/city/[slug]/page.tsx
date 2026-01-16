@@ -43,69 +43,74 @@ function toCityClient(city: CityData) {
 
 // Helper to find city from database by geonameid
 async function findCity(slug: string): Promise<ReturnType<typeof toCityClient> | null> {
-    // New format: name-geonameid (e.g., "tokyo-1850147")
-    // Extract geonameid from the end of the slug
-    const parts = slug.split('-');
-    const lastPart = parts[parts.length - 1];
-    const geonameid = parseInt(lastPart, 10);
+    try {
+        // New format: name-geonameid (e.g., "tokyo-1850147")
+        // Extract geonameid from the end of the slug
+        const parts = slug.split('-');
+        const lastPart = parts[parts.length - 1];
+        const geonameid = parseInt(lastPart, 10);
 
-    // If the last part is a valid number, search by geonameid
-    if (!isNaN(geonameid) && geonameid > 0) {
-        const city = await prisma.geoCity.findUnique({
-            where: { geonameid },
-            select: {
-                geonameid: true,
-                name: true,
-                asciiName: true,
-                country: true,
-                countryCode: true,
-                timezone: true,
-                latitude: true,
-                longitude: true,
-                population: true,
-                continent: true,
-                admin1: true,
-            },
-        });
+        // If the last part is a valid number, search by geonameid
+        if (!isNaN(geonameid) && geonameid > 0) {
+            const city = await prisma.geoCity.findUnique({
+                where: { geonameid },
+                select: {
+                    geonameid: true,
+                    name: true,
+                    asciiName: true,
+                    country: true,
+                    countryCode: true,
+                    timezone: true,
+                    latitude: true,
+                    longitude: true,
+                    population: true,
+                    continent: true,
+                    admin1: true,
+                },
+            });
 
-        if (city) {
-            return toCityClient(city);
+            if (city) {
+                return toCityClient(city);
+            }
         }
-    }
 
-    // Fallback: try to match by name and country code (old format like "tokyo-jp")
-    // This supports legacy URLs
-    if (parts.length >= 2) {
-        const countryCode = parts[parts.length - 1].toUpperCase();
-        const cityName = parts.slice(0, -1).join('-');
+        // Fallback: try to match by name and country code (old format like "tokyo-jp")
+        // This supports legacy URLs
+        if (parts.length >= 2) {
+            const countryCode = parts[parts.length - 1].toUpperCase();
+            const cityName = parts.slice(0, -1).join('-');
 
-        const city = await prisma.geoCity.findFirst({
-            where: {
-                asciiName: { equals: cityName.replace(/-/g, ' '), mode: 'insensitive' },
-                countryCode: countryCode,
-            },
-            orderBy: { population: 'desc' },
-            select: {
-                geonameid: true,
-                name: true,
-                asciiName: true,
-                country: true,
-                countryCode: true,
-                timezone: true,
-                latitude: true,
-                longitude: true,
-                population: true,
-                continent: true,
-                admin1: true,
-            },
-        });
+            const city = await prisma.geoCity.findFirst({
+                where: {
+                    asciiName: { equals: cityName.replace(/-/g, ' '), mode: 'insensitive' },
+                    countryCode: countryCode,
+                },
+                orderBy: { population: 'desc' },
+                select: {
+                    geonameid: true,
+                    name: true,
+                    asciiName: true,
+                    country: true,
+                    countryCode: true,
+                    timezone: true,
+                    latitude: true,
+                    longitude: true,
+                    population: true,
+                    continent: true,
+                    admin1: true,
+                },
+            });
 
-        if (city) {
-            return toCityClient(city);
+            if (city) {
+                return toCityClient(city);
+            }
         }
-    }
 
-    return null;
+        return null;
+    } catch (error) {
+        console.error('Error finding city:', error);
+        return null;
+    }
 }
 
 // Generate metadata for SEO

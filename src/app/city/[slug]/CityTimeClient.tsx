@@ -26,9 +26,16 @@ export function CityTimeClient({ city }: Props) {
     const [timeStr, setTimeStr] = useState('--:--:--');
     const [dateStr, setDateStr] = useState('---');
     const [mounted, setMounted] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         setMounted(true);
+
+        // Guard against missing city data
+        if (!city || !city.timezone) {
+            setError('City data is missing');
+            return;
+        }
 
         const updateTime = () => {
             const now = new Date();
@@ -48,6 +55,7 @@ export function CityTimeClient({ city }: Props) {
                     day: 'numeric',
                 }));
             } catch (e) {
+                console.error('Timezone error:', e);
                 setTimeStr('Invalid timezone');
                 setDateStr('---');
             }
@@ -56,7 +64,17 @@ export function CityTimeClient({ city }: Props) {
         updateTime();
         const interval = setInterval(updateTime, 1000);
         return () => clearInterval(interval);
-    }, [city.timezone]);
+    }, [city?.timezone]);
+
+    if (error) {
+        return (
+            <div className="max-w-4xl mx-auto">
+                <div className="card p-8 text-center">
+                    <p className="text-red-500">{error}</p>
+                </div>
+            </div>
+        );
+    }
 
     if (!mounted) {
         return (
@@ -75,15 +93,15 @@ export function CityTimeClient({ city }: Props) {
             {/* Header */}
             <div className="mb-8">
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
-                    <span>{city.continent}</span>
+                    <span>{city.continent || 'Unknown'}</span>
                     <span>•</span>
-                    <span>{city.country}</span>
+                    <span>{city.country || 'Unknown'}</span>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
-                    {city.city}
+                    {city.city || 'Unknown City'}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                    Population: {city.population.toLocaleString()}
+                    Population: {(city.population || 0).toLocaleString()}
                 </p>
             </div>
 
@@ -112,7 +130,9 @@ export function CityTimeClient({ city }: Props) {
 
                     {/* Weather */}
                     <div className="lg:text-right">
-                        <CityWeather lat={city.coordinates[1]} lng={city.coordinates[0]} />
+                        {city.coordinates && city.coordinates.length >= 2 && (
+                            <CityWeather lat={city.coordinates[1]} lng={city.coordinates[0]} />
+                        )}
                     </div>
                 </div>
             </div>
@@ -122,19 +142,21 @@ export function CityTimeClient({ city }: Props) {
                 <div className="card p-4">
                     <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Timezone</div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                        {city.timezone.split('/').pop()?.replace(/_/g, ' ')}
+                        {city.timezone?.split('/').pop()?.replace(/_/g, ' ') || city.timezone || 'Unknown'}
                     </div>
                 </div>
                 <div className="card p-4">
                     <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Coordinates</div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                        {city.coordinates[1].toFixed(4)}°, {city.coordinates[0].toFixed(4)}°
+                        {city.coordinates && city.coordinates.length >= 2
+                            ? `${city.coordinates[1]?.toFixed(4) || 0}°, ${city.coordinates[0]?.toFixed(4) || 0}°`
+                            : 'Unknown'}
                     </div>
                 </div>
                 <div className="card p-4">
                     <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Region</div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                        {city.continent}
+                        {city.continent || 'Unknown'}
                     </div>
                 </div>
             </div>
