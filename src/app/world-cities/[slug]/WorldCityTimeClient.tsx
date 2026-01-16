@@ -179,6 +179,60 @@ export function WorldCityTimeClient({ city }: WorldCityTimeClientProps) {
                     </div>
                 </div>
 
+                {/* Travel & Booking Section - Affiliate Integration */}
+                <div className="mb-8">
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-2xl font-bold text-gray-900">Travel to {city.city}</h2>
+                        <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">Ad</span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {/* Hotels */}
+                        <a
+                            href={`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(city.city + ',' + city.country)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-blue-200 transition-all text-left"
+                        >
+                            <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-blue-100 transition-colors">
+                                <Building className="w-5 h-5 text-blue-600" />
+                            </div>
+                            <h3 className="font-semibold text-gray-900 mb-1">Stay in {city.city}</h3>
+                            <p className="text-sm text-gray-500 mb-3">Find the best hotels and accommodations.</p>
+                            <span className="text-sm font-medium text-blue-600 group-hover:underline">Check Rates →</span>
+                        </a>
+
+                        {/* Flights */}
+                        <a
+                            href={`https://www.skyscanner.com/transport/flights-to/${city.city.toLowerCase().replace(/\s+/g, '-')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-indigo-200 transition-all text-left"
+                        >
+                            <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-indigo-100 transition-colors">
+                                <Globe className="w-5 h-5 text-indigo-600" />
+                            </div>
+                            <h3 className="font-semibold text-gray-900 mb-1">Flights to {city.city}</h3>
+                            <p className="text-sm text-gray-500 mb-3">Compare airlines and find cheap flights.</p>
+                            <span className="text-sm font-medium text-indigo-600 group-hover:underline">Search Flights →</span>
+                        </a>
+
+                        {/* Tours */}
+                        <a
+                            href={`https://www.viator.com/searchResults/all?text=${encodeURIComponent(city.city + ' ' + city.country)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="group bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md hover:border-green-200 transition-all text-left"
+                        >
+                            <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center mb-3 group-hover:bg-green-100 transition-colors">
+                                <MapPin className="w-5 h-5 text-green-600" />
+                            </div>
+                            <h3 className="font-semibold text-gray-900 mb-1">Things to Do</h3>
+                            <p className="text-sm text-gray-500 mb-3">Book tours, attractions, and experiences.</p>
+                            <span className="text-sm font-medium text-green-600 group-hover:underline">Explore Activities →</span>
+                        </a>
+                    </div>
+                </div>
+
                 {/* Time Comparisons */}
                 <div className="bg-white rounded-xl shadow-md p-6 mb-8 border border-gray-100">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Compare Times</h2>

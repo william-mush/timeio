@@ -4,6 +4,7 @@ export interface NotableModel {
   usedPrice: string;
   description: string;
   imageUrl?: string;
+  affiliateLink?: string; // URL for "Check Price" / "Buy Now"
 }
 
 export interface LuxuryTimepiece {
@@ -17,4 +18,5 @@ export interface LuxuryTimepiece {
   standout?: string[];
   love?: string[];
   hate?: string[];
+  shopLink?: string; // General brand affiliate link
 } 
