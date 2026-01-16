@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic';
 // GET /api/user - Get current user info
 export async function GET() {
   // Example of reading headers - this makes the route dynamic
-  const headerList = headers(); 
+  const headerList = await headers();
   const referer = headerList.get('referer');
   console.log('Referer:', referer);
 

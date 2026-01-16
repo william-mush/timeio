@@ -6,16 +6,17 @@ import { getCountyById } from '@/data/us-counties';
 import { notFound } from 'next/navigation';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-export default function CountyPage({ params }: PageProps) {
+export default async function CountyPage({ params }: PageProps) {
+  const { slug } = await params;
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
-  
-  const county = getCountyById(params.slug);
-  
+
+  const county = getCountyById(slug);
+
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
@@ -182,21 +183,21 @@ export default function CountyPage({ params }: PageProps) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <div className="text-2xl font-bold text-blue-600">
-                {county.population >= 1000000 ? 'Top 0.1%' : 
-                 county.population >= 500000 ? 'Top 1%' :
-                 county.population >= 100000 ? 'Top 10%' :
-                 county.population >= 25000 ? 'Top 50%' : 'Bottom 50%'}
+                {county.population >= 1000000 ? 'Top 0.1%' :
+                  county.population >= 500000 ? 'Top 1%' :
+                    county.population >= 100000 ? 'Top 10%' :
+                      county.population >= 25000 ? 'Top 50%' : 'Bottom 50%'}
               </div>
               <div className="text-sm text-gray-600">US County Ranking</div>
             </div>
-            
+
             <div className="text-center p-4 bg-green-50 rounded-lg">
               <div className="text-2xl font-bold text-green-600">
                 {formatPopulation(county.population)}
               </div>
               <div className="text-sm text-gray-600">Total Population</div>
             </div>
-            
+
             {county.population_density && (
               <div className="text-center p-4 bg-purple-50 rounded-lg">
                 <div className="text-2xl font-bold text-purple-600">
@@ -226,9 +227,9 @@ export default function CountyPage({ params }: PageProps) {
             </div>
             <div>
               <div className="text-2xl font-bold text-purple-600">
-                {currentTime.toLocaleTimeString('en-US', { 
+                {currentTime.toLocaleTimeString('en-US', {
                   timeZone: 'UTC',
-                  hour: '2-digit', 
+                  hour: '2-digit',
                   minute: '2-digit'
                 })}
               </div>

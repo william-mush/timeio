@@ -4,9 +4,9 @@ import { notFound } from 'next/navigation';
 import { CityTimeClient } from './CityTimeClient';
 
 interface PageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Generate static params for all cities
@@ -20,7 +20,8 @@ export async function generateStaticParams() {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const city = getCityById(params.slug);
+  const { slug } = await params;
+  const city = getCityById(slug);
 
   if (!city || city.population < 24000) {
     return {
@@ -60,8 +61,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-export default function CityPage({ params }: PageProps) {
-  const city = getCityById(params.slug);
+export default async function CityPage({ params }: PageProps) {
+  const { slug } = await params;
+  const city = getCityById(slug);
 
   if (!city || city.population < 24000) {
     notFound();

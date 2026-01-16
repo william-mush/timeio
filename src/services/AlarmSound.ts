@@ -9,22 +9,22 @@ export const ALARM_SOUNDS: AlarmSound[] = [
     id: 'gentle',
     name: 'Gentle Wake',
     // Base64 encoded sine wave beep
-    data: 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' + 
-          'tvT19' + Array(100).fill('AAAA').join('')
+    data: 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' +
+      'tvT19' + Array(100).fill('AAAA').join('')
   },
   {
     id: 'classic',
     name: 'Classic Alarm',
     // Base64 encoded square wave beep
-    data: 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' + 
-          'tvT19' + Array(100).fill('////').join('')
+    data: 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' +
+      'tvT19' + Array(100).fill('////').join('')
   },
   {
     id: 'digital',
     name: 'Digital Beep',
     // Base64 encoded sawtooth wave beep
-    data: 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' + 
-          'tvT19' + Array(100).fill('AQID').join('')
+    data: 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU' +
+      'tvT19' + Array(100).fill('AQID').join('')
   }
 ];
 
@@ -36,9 +36,10 @@ class AlarmSoundService {
 
   private initializeAudioContext() {
     if (typeof window === 'undefined') return;
-    
+
     try {
       if (!this.audioContext) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
         this.gainNode = this.audioContext.createGain();
         this.gainNode.connect(this.audioContext.destination);
@@ -52,10 +53,10 @@ class AlarmSoundService {
   async playSound(soundId: string) {
     this.initializeAudioContext();
     if (!this.audioContext || !this.gainNode) return;
-    
+
     try {
       this.currentSound = soundId;
-      
+
       // Stop any existing sound
       if (this.oscillator) {
         this.oscillator.stop();
@@ -70,9 +71,9 @@ class AlarmSoundService {
       // Create and configure oscillator
       this.oscillator = this.audioContext.createOscillator();
       this.oscillator.type = soundId === 'gentle' ? 'sine' :
-                            soundId === 'classic' ? 'square' : 'sawtooth';
+        soundId === 'classic' ? 'square' : 'sawtooth';
       this.oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime); // A4 note
-      
+
       // Add some variation for more interesting sound
       if (soundId === 'digital') {
         this.oscillator.frequency.setValueAtTime(880, this.audioContext.currentTime + 0.2);

@@ -130,6 +130,7 @@ export const authOptions: AuthOptions = {
     async signOut({ session }) {
       // In JWT strategy, session might be a token payload or just the session object
       // We'll try to extract userId safely
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userId = (session as any)?.token?.sub || (session as any)?.user?.id // Fallback attempt
 
       console.log('[NextAuth] EVENT signOut:', { userId })

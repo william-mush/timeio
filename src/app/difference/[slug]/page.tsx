@@ -4,9 +4,9 @@ import { notFound } from 'next/navigation';
 import CityComparisonClient from './CityComparisonClient';
 
 interface PageProps {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 // Helper to parse slug "london-uk-vs-new-york-usa" -> [city1, city2]
@@ -47,7 +47,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const data = parseCitiesFromSlug(params.slug);
+    const { slug } = await params;
+    const data = parseCitiesFromSlug(slug);
     if (!data) return { title: 'Time Difference Calculator' };
 
     const { city1, city2 } = data;
@@ -64,8 +65,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export default function ComparisonPage({ params }: PageProps) {
-    const data = parseCitiesFromSlug(params.slug);
+export default async function ComparisonPage({ params }: PageProps) {
+    const { slug } = await params;
+    const data = parseCitiesFromSlug(slug);
 
     if (!data) {
         notFound();

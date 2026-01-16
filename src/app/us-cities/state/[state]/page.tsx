@@ -4,9 +4,9 @@ import { notFound } from 'next/navigation';
 import { StatePageClient } from './StatePageClient';
 
 interface PageProps {
-    params: {
+    params: Promise<{
         state: string;
-    };
+    }>;
 }
 
 // Map of state slugs to full names
@@ -38,14 +38,15 @@ export async function generateStaticParams() {
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const stateName = stateNames[params.state];
+    const { state } = await params;
+    const stateName = stateNames[state];
 
     if (!stateName) {
         return { title: 'State Not Found' };
     }
 
     const cities = US_CITIES.filter(c =>
-        c.state.toLowerCase().replace(/\s+/g, '-') === params.state
+        c.state.toLowerCase().replace(/\s+/g, '-') === state
     );
 
     return {
@@ -62,23 +63,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title: `${stateName} City Times - Time.IO`,
             description: `Current local time in ${cities.length} ${stateName} cities`,
             type: 'website',
-            url: `https://time.io/us-cities/state/${params.state}`,
+            url: `https://time.io/us-cities/state/${state}`,
         },
         alternates: {
-            canonical: `https://time.io/us-cities/state/${params.state}`,
+            canonical: `https://time.io/us-cities/state/${state}`,
         },
     };
 }
 
-export default function StatePage({ params }: PageProps) {
-    const stateName = stateNames[params.state];
+export default async function StatePage({ params }: PageProps) {
+    const { state } = await params;
+    const stateName = stateNames[state];
 
     if (!stateName) {
         notFound();
     }
 
     const cities = US_CITIES.filter(c =>
-        c.state.toLowerCase().replace(/\s+/g, '-') === params.state &&
+        c.state.toLowerCase().replace(/\s+/g, '-') === state &&
         c.population >= 24000
     );
 

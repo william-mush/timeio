@@ -6,9 +6,9 @@ import { CityWeather } from '@/components/CityWeather';
 
 
 interface PageProps {
-    params: {
+    params: Promise<{
         slug: string;
-    };
+    }>;
 }
 
 // Generate static params for all world cities
@@ -20,7 +20,8 @@ export async function generateStaticParams() {
 
 // Generate metadata for SEO
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const city = getAllCityById(params.slug);
+    const { slug } = await params;
+    const city = getAllCityById(slug);
 
     if (!city) {
         return {
@@ -61,8 +62,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-export default function WorldCityPage({ params }: PageProps) {
-    const city = getAllCityById(params.slug);
+export default async function WorldCityPage({ params }: PageProps) {
+    const { slug } = await params;
+    const city = getAllCityById(slug);
 
     if (!city) {
         notFound();

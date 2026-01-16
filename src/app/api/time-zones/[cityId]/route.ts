@@ -7,15 +7,15 @@ const prisma = new PrismaClient();
 
 // DELETE /api/time-zones/[cityId] - Delete a time zone
 export async function DELETE(
-  request: Request, 
-  { params }: { params: { cityId: string } }
+  request: Request,
+  { params }: { params: Promise<{ cityId: string }> }
 ) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) { // Check for user ID, more robust than email
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const cityId = params.cityId;
+  const { cityId } = await params;
 
   if (!cityId) {
     // This check might be redundant as Next.js ensures params.cityId exists here

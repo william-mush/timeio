@@ -1,6 +1,6 @@
-'use client';
-
 import { SolarClock3D } from '@/components/SolarClock3D';
+
+export const dynamic = 'force-dynamic';
 
 export default function SolarClock3DPage() {
   return (

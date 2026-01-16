@@ -4,9 +4,9 @@ import { notFound } from 'next/navigation';
 import { TimezonePageClient } from './TimezonePageClient';
 
 interface PageProps {
-    params: {
+    params: Promise<{
         zone: string;
-    };
+    }>;
 }
 
 // Map of zone slugs to full timezone and labels
@@ -34,19 +34,20 @@ export async function generateStaticParams() {
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const tzInfo = timezoneMap[params.zone];
+    const { zone } = await params;
+    const tzInfo = timezoneMap[zone];
 
     if (!tzInfo) {
         // Try to find by partial match
         const matchingTz = Object.entries(timezoneMap).find(([key]) =>
-            params.zone.includes(key) || key.includes(params.zone)
+            zone.includes(key) || key.includes(zone)
         );
         if (!matchingTz) {
             return { title: 'Time Zone Not Found' };
         }
     }
 
-    const label = tzInfo?.label || params.zone.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const label = tzInfo?.label || zone.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
     return {
         title: `${label} Time Zone - Current Time in US Cities`,
@@ -62,31 +63,32 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
             title: `${label} Time Zone - Time.IO`,
             description: `Current time and cities in the ${label} time zone`,
             type: 'website',
-            url: `https://time.io/us-cities/timezone/${params.zone}`,
+            url: `https://time.io/us-cities/timezone/${zone}`,
         },
         alternates: {
-            canonical: `https://time.io/us-cities/timezone/${params.zone}`,
+            canonical: `https://time.io/us-cities/timezone/${zone}`,
         },
     };
 }
 
-export default function TimezonePage({ params }: PageProps) {
+export default async function TimezonePage({ params }: PageProps) {
+    const { zone } = await params;
     // Find matching timezone
     let timezone: string | null = null;
     let label: string = '';
 
     // Check direct match first
-    if (timezoneMap[params.zone]) {
-        timezone = timezoneMap[params.zone].timezone;
-        label = timezoneMap[params.zone].label;
+    if (timezoneMap[zone]) {
+        timezone = timezoneMap[zone].timezone;
+        label = timezoneMap[zone].label;
     } else {
         // Try to find by converting the slug back to timezone format
-        const possibleTz1 = `America/${params.zone.replace(/-/g, '_').replace(/\b\w/g, c => c.toUpperCase())}`;
-        const possibleTz2 = `Pacific/${params.zone.replace(/-/g, '_').replace(/\b\w/g, c => c.toUpperCase())}`;
+        const possibleTz1 = `America/${zone.replace(/-/g, '_').replace(/\b\w/g, c => c.toUpperCase())}`;
+        const possibleTz2 = `Pacific/${zone.replace(/-/g, '_').replace(/\b\w/g, c => c.toUpperCase())}`;
 
         const matchingCities = US_CITIES.filter(c =>
             c.timezone === possibleTz1 || c.timezone === possibleTz2 ||
-            c.timezone.toLowerCase().includes(params.zone.replace(/-/g, '/'))
+            c.timezone.toLowerCase().includes(zone.replace(/-/g, '/'))
         );
 
         if (matchingCities.length > 0) {

@@ -3,7 +3,7 @@ import ImagePreview from '@/components/ImagePreview';
 import { sections } from '@/data/sections';
 
 interface Params {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 function renderSection(title: string, content: string | string[]) {
@@ -28,12 +28,13 @@ function renderSection(title: string, content: string | string[]) {
   );
 }
 
-export default function HistoryDetailPage({ params }: Params) {
+export default async function HistoryDetailPage({ params }: Params) {
+  const { slug } = await params;
   // Find the item in any section except luxury
   const item = sections
     .filter((section: any) => section.id !== 'luxury')
     .flatMap((section: any) => section.content)
-    .find((item: any) => item.slug === params.slug);
+    .find((item: any) => item.slug === slug);
 
   if (!item) return notFound();
 
@@ -58,7 +59,7 @@ export default function HistoryDetailPage({ params }: Params) {
   const allItems = sections
     .filter((section: any) => section.id !== 'luxury')
     .flatMap((section: any) => section.content);
-  const currentIndex = allItems.findIndex((i: any) => i.slug === params.slug);
+  const currentIndex = allItems.findIndex((i: any) => i.slug === slug);
   const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
   const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
 

@@ -5,14 +5,15 @@ import { luxuryTimepieces } from '../../../data/luxuryTimepieces';
 import PriceComparison from '../../../components/PriceComparison';
 
 interface Params {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export default function LuxuryDetailPage({ params }: Params) {
-  const timepiece = luxuryTimepieces.find(tp => tp.id === params.slug);
+export default async function LuxuryDetailPage({ params }: Params) {
+  const { slug } = await params;
+  const timepiece = luxuryTimepieces.find(tp => tp.id === slug);
   if (!timepiece) return notFound();
 
-  const idx = luxuryTimepieces.findIndex(tp => tp.id === params.slug);
+  const idx = luxuryTimepieces.findIndex(tp => tp.id === slug);
   const prev = idx > 0 ? luxuryTimepieces[idx - 1] : null;
   const next = idx < luxuryTimepieces.length - 1 ? luxuryTimepieces[idx + 1] : null;
 
