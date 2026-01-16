@@ -253,7 +253,7 @@ export function Navigation() {
           </nav>
 
           {/* Right side: Quick actions + Time + User */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1 xs:gap-2 sm:gap-3 flex-shrink-0">
             {/* Alarms - Quick access */}
             <Link
               href="/alarms"
@@ -282,8 +282,10 @@ export function Navigation() {
               </Link>
             )}
 
-            {/* Theme Toggle */}
-            <ThemeToggle />
+            {/* Theme Toggle - hidden on very small screens */}
+            <div className="hidden xs:block">
+              <ThemeToggle />
+            </div>
 
             {/* Divider */}
             <div className="hidden sm:block w-px h-6 bg-gray-200" />

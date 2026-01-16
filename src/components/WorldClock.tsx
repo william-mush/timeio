@@ -48,10 +48,36 @@ const getTimezoneFromOffset = (offset: number, country: string): string => {
     'Canada|-6': 'America/Edmonton',
     'Canada|-7': 'America/Vancouver',
     'Russia|3': 'Europe/Moscow',
+    // Middle East
+    'UAE|4': 'Asia/Dubai',
+    'Saudi Arabia|3': 'Asia/Riyadh',
+    'Israel|3': 'Asia/Jerusalem',
+    'Israel|2': 'Asia/Jerusalem',
+    'Turkey|3': 'Europe/Istanbul',
+    'Qatar|3': 'Asia/Qatar',
+    // Asia Pacific
+    'Singapore|8': 'Asia/Singapore',
+    'South Korea|9': 'Asia/Seoul',
+    'Thailand|7': 'Asia/Bangkok',
+    'Indonesia|7': 'Asia/Jakarta',
+    'Malaysia|8': 'Asia/Kuala_Lumpur',
+    'Philippines|8': 'Asia/Manila',
+    'Vietnam|7': 'Asia/Ho_Chi_Minh',
+    'Taiwan|8': 'Asia/Taipei',
+    // Oceania
+    'New Zealand|12': 'Pacific/Auckland',
+    'New Zealand|13': 'Pacific/Auckland',
+    // Africa
+    'Egypt|2': 'Africa/Cairo',
+    'South Africa|2': 'Africa/Johannesburg',
+    'Nigeria|1': 'Africa/Lagos',
+    'Kenya|3': 'Africa/Nairobi',
+    'Morocco|1': 'Africa/Casablanca',
   };
 
   const key = `${country}|${offset}`;
-  return timezoneMap[key] || 'UTC';
+  // Fallback to a GMT offset string if not in the map
+  return timezoneMap[key] || `GMT${offset >= 0 ? '+' : ''}${offset}`;
 };
 
 const WORLD_TIMEZONES: TimeZone[] = CITIES.map(city => ({

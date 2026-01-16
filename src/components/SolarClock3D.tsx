@@ -336,7 +336,7 @@ function ClockHands({ radius, simulatedDate }: { radius: number, simulatedDate: 
     minute: useRef<THREE.Group>(null),
     hour: useRef<THREE.Group>(null)
   };
-  
+
   useFrame(() => {
     const date = simulatedDate;
     const seconds = date.getSeconds() + date.getMilliseconds() / 1000;
@@ -371,7 +371,7 @@ function ClockHands({ radius, simulatedDate }: { radius: number, simulatedDate: 
           />
         </mesh>
       </group>
-      
+
       {/* Minute hand - Silver */}
       <group ref={handRefs.minute}>
         <mesh position={[radius * 0.4, 0, 0]}>
@@ -422,10 +422,10 @@ function ClockHands({ radius, simulatedDate }: { radius: number, simulatedDate: 
 
 function DigitalClock({ simulatedDate }: { simulatedDate: Date }) {
   const [timeStr, setTimeStr] = useState('');
-  
+
   useFrame(() => {
     const date = simulatedDate;
-    setTimeStr(date.toLocaleTimeString('en-US', { 
+    setTimeStr(date.toLocaleTimeString('en-US', {
       hour12: false,
       hour: '2-digit',
       minute: '2-digit',
@@ -513,7 +513,7 @@ function Scene({ timeScale }: { timeScale: number }) {
   const handleFocus = (name: string, targetPosition: THREE.Vector3) => {
     console.log(`Focus requested on ${name}`);
   };
-  
+
   const goToPreset = (presetName: string) => {
     console.log(`Preset requested: ${presetName}`);
   };
@@ -553,7 +553,7 @@ function Scene({ timeScale }: { timeScale: number }) {
       </group>
       <Stars radius={200} depth={50} count={3000} factor={4} saturation={0} fade speed={1} />
       <DigitalClock simulatedDate={currentSimulatedDate} />
-      
+
       {(hoveredObject || hoveredMoon) && (
         <Html position={[0, 20, 0]}>
           <div className="px-4 py-2 bg-black/80 text-white rounded-lg backdrop-blur-sm min-w-[200px]">
@@ -592,8 +592,8 @@ function getTexturePath(object: CelestialObject): string {
   return `/textures/${object.name.toLowerCase().replace(/['']/g, '')}.jpg`;
 }
 
-function Moon({ moon, parentPosition, time, timeScale, initialAngle, onHover, onClick }: { 
-  moon: Moon; 
+function Moon({ moon, parentPosition, time, timeScale, initialAngle, onHover, onClick }: {
+  moon: Moon;
   parentPosition: THREE.Vector3;
   time: number;
   timeScale: number;
@@ -612,9 +612,9 @@ function Moon({ moon, parentPosition, time, timeScale, initialAngle, onHover, on
     const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
     const angle = initialAngleRef.current + time * orbitalSpeed * ORBITAL_VISUAL_BOOST;
 
-    const r = moon.orbitRadius * (1 - moon.eccentricity * moon.eccentricity) / 
-              (1 + moon.eccentricity * Math.cos(angle));
-    
+    const r = moon.orbitRadius * (1 - moon.eccentricity * moon.eccentricity) /
+      (1 + moon.eccentricity * Math.cos(angle));
+
     const x = r * Math.cos(angle);
     const y = r * Math.sin(angle) * Math.sin(moon.inclination * Math.PI / 180);
     const z = r * Math.sin(angle) * Math.cos(moon.inclination * Math.PI / 180);
@@ -630,15 +630,15 @@ function Moon({ moon, parentPosition, time, timeScale, initialAngle, onHover, on
   });
 
   return (
-    <mesh 
+    <mesh
       ref={meshRef}
       onPointerOver={(e) => { e.stopPropagation(); onHover(moon); }}
       onPointerOut={(e) => { e.stopPropagation(); onHover(null); }}
       onClick={(e) => {
-         e.stopPropagation();
-         if (meshRef.current) {
-           onClick(meshRef.current.position); 
-         }
+        e.stopPropagation();
+        if (meshRef.current) {
+          onClick(meshRef.current.position);
+        }
       }}
     >
       <sphereGeometry args={[moon.size * 2, 32, 32]} />
@@ -699,8 +699,8 @@ function SaturnRings({ size, position }: { size: number; position: THREE.Vector3
   );
 }
 
-function CelestialObject({ 
-  object, 
+function CelestialObject({
+  object,
   time,
   timeScale,
   initialAngle,
@@ -708,7 +708,7 @@ function CelestialObject({
   onMoonHover,
   texture,
   onClick
-}: { 
+}: {
   object: CelestialObject;
   time: number;
   timeScale: number;
@@ -732,9 +732,9 @@ function CelestialObject({
     const orbitalSpeed = (2 * Math.PI) / orbitalPeriod;
     const angle = initialAngleRef.current + time * orbitalSpeed * ORBITAL_VISUAL_BOOST;
 
-    const r = object.orbitRadius * (1 - object.eccentricity * object.eccentricity) / 
-              (1 + object.eccentricity * Math.cos(angle));
-    
+    const r = object.orbitRadius * (1 - object.eccentricity * object.eccentricity) /
+      (1 + object.eccentricity * Math.cos(angle));
+
     const x = r * Math.cos(angle);
     const y = r * Math.sin(angle) * Math.sin(object.inclination * Math.PI / 180);
     const z = r * Math.sin(angle) * Math.cos(object.inclination * Math.PI / 180);
@@ -750,15 +750,15 @@ function CelestialObject({
   return (
     <>
       <group>
-        <mesh 
+        <mesh
           ref={meshRef}
           onPointerOver={(e) => { e.stopPropagation(); onHover(object); }}
           onPointerOut={(e) => { e.stopPropagation(); onHover(null); }}
           onClick={(e) => {
-             e.stopPropagation();
-             if (meshRef.current) {
-               onClick(meshRef.current.position);
-             }
+            e.stopPropagation();
+            if (meshRef.current) {
+              onClick(meshRef.current.position);
+            }
           }}
         >
           <sphereGeometry args={[object.size, segments, segments]} />
@@ -820,9 +820,24 @@ function Sun() {
 export function SolarClock3D() {
   const [timeScale, setTimeScale] = useState(1);
   const [isClient, setIsClient] = useState(false);
+  const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     setIsClient(true);
+    // Check for WebGL support
+    try {
+      const canvas = document.createElement('canvas');
+      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+      if (!gl) {
+        setHasError(true);
+      }
+    } catch (e) {
+      setHasError(true);
+    }
+    // Give Canvas time to initialize
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
   }, []);
 
   const timeScales = {
@@ -836,12 +851,46 @@ export function SolarClock3D() {
   };
 
   if (!isClient) {
-    return null;
+    return (
+      <div className="w-full h-[600px] md:h-[800px] bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-lg animate-pulse">Initializing 3D Solar System...</div>
+      </div>
+    );
+  }
+
+  if (hasError) {
+    return (
+      <div className="w-full h-[600px] md:h-[800px] bg-gray-900 flex flex-col items-center justify-center p-8">
+        <div className="text-white text-xl mb-4">⚠️ WebGL Not Supported</div>
+        <p className="text-gray-400 text-center max-w-md mb-4">
+          Your browser or device doesn't support WebGL, which is required for the 3D Solar Clock.
+        </p>
+        <a
+          href="/solar-clock"
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Try the 2D Solar Clock instead →
+        </a>
+      </div>
+    );
   }
 
   return (
     <div className="relative w-full h-[600px] md:h-[800px] bg-black">
-      <Canvas shadows camera={{ position: [0, 50, 150], fov: 50 }}>
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black z-20">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+            <div className="text-white text-lg">Loading 3D Solar System...</div>
+            <div className="text-gray-400 text-sm mt-2">This may take a moment on slower devices</div>
+          </div>
+        </div>
+      )}
+      <Canvas
+        shadows
+        camera={{ position: [0, 50, 150], fov: 50 }}
+        onCreated={() => setIsLoading(false)}
+      >
         <Scene timeScale={timeScale} />
       </Canvas>
       <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-2 p-2 bg-gray-800/70 rounded-lg backdrop-blur-sm">
@@ -855,6 +904,13 @@ export function SolarClock3D() {
             {name.replace(/([A-Z])/g, ' $1').trim()} {scale !== 1 && scale !== 0 ? `(${scale}x)` : ''}
           </button>
         ))}
+      </div>
+      {/* Instructions overlay */}
+      <div className="absolute top-4 right-4 z-10 p-3 bg-gray-800/70 rounded-lg backdrop-blur-sm text-xs text-gray-300 max-w-[200px]">
+        <div className="font-semibold mb-1">Controls</div>
+        <div>🖱️ Drag to rotate</div>
+        <div>📍 Click planet to focus</div>
+        <div>🔍 Scroll to zoom</div>
       </div>
     </div>
   );

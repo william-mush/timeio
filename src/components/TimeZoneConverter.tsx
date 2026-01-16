@@ -9,7 +9,7 @@ const WORLD_CITIES = [
     { id: 'new-york', city: 'New York', country: 'USA', timezone: 'America/New_York', offset: -5 },
     { id: 'los-angeles', city: 'Los Angeles', country: 'USA', timezone: 'America/Los_Angeles', offset: -8 },
     { id: 'chicago', city: 'Chicago', country: 'USA', timezone: 'America/Chicago', offset: -6 },
-    { id: 'houston', city: 'Houston', country: 'USA', timezone: 'America/Chicago', offset: -6 },
+    { id: 'houston', city: 'Houston', country: 'USA', timezone: 'America/Chicago', offset: -6, displayTimezone: 'Central Time' },
     { id: 'phoenix', city: 'Phoenix', country: 'USA', timezone: 'America/Phoenix', offset: -7 },
     { id: 'miami', city: 'Miami', country: 'USA', timezone: 'America/New_York', offset: -5 },
     { id: 'denver', city: 'Denver', country: 'USA', timezone: 'America/Denver', offset: -7 },
@@ -207,7 +207,7 @@ function CitySearchModal({
                                         </div>
                                     </div>
                                     <div className="text-sm text-gray-400">
-                                        {city.timezone.split('/').pop()?.replace(/_/g, ' ')}
+                                        {(city as any).displayTimezone || city.timezone.split('/').pop()?.replace(/_/g, ' ')}
                                     </div>
                                 </button>
                             ))}

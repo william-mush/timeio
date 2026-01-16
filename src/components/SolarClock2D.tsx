@@ -14,101 +14,101 @@ interface Planet {
 }
 
 const PLANETS: Planet[] = [
-  { 
-    name: 'Mercury', 
-    color: '#A0522D', 
-    orbitRadius: 50, 
-    periodDays: 88, 
+  {
+    name: 'Mercury',
+    color: '#A0522D',
+    orbitRadius: 50,
+    periodDays: 88,
     size: 28,
     description: 'Smallest planet, closest to Sun\nOrbit: 88 Earth days\nTemp: 430°C to -180°C',
     type: 'planet'
   },
-  { 
-    name: 'Venus', 
-    color: '#DEB887', 
-    orbitRadius: 75, 
-    periodDays: 225, 
+  {
+    name: 'Venus',
+    color: '#DEB887',
+    orbitRadius: 75,
+    periodDays: 225,
     size: 42,
     description: 'Earth\'s "sister planet"\nOrbit: 225 Earth days\nTemp: 460°C',
     type: 'planet'
   },
-  { 
-    name: 'Earth', 
-    color: '#4169E1', 
-    orbitRadius: 100, 
-    periodDays: 365, 
+  {
+    name: 'Earth',
+    color: '#4169E1',
+    orbitRadius: 100,
+    periodDays: 365,
     size: 42,
     description: 'Our home planet\nOrbit: 365.25 days\nTemp: 15°C average',
     type: 'planet'
   },
-  { 
-    name: 'Mars', 
-    color: '#CD5C5C', 
-    orbitRadius: 125, 
-    periodDays: 687, 
+  {
+    name: 'Mars',
+    color: '#CD5C5C',
+    orbitRadius: 125,
+    periodDays: 687,
     size: 35,
     description: 'The Red Planet\nOrbit: 687 Earth days\nTemp: -63°C average',
     type: 'planet'
   },
-  { 
-    name: 'Ceres', 
-    color: '#8B8989', 
-    orbitRadius: 150, 
-    periodDays: 1682, 
+  {
+    name: 'Ceres',
+    color: '#8B8989',
+    orbitRadius: 150,
+    periodDays: 1682,
     size: 14,
     description: 'Largest asteroid in the belt\nOrbit: 4.6 Earth years\nDiameter: 940 km',
     type: 'dwarf'
   },
-  { 
-    name: 'Jupiter', 
-    color: '#DAA520', 
-    orbitRadius: 170, 
-    periodDays: 4333, 
+  {
+    name: 'Jupiter',
+    color: '#DAA520',
+    orbitRadius: 170,
+    periodDays: 4333,
     size: 84,
     description: 'Largest planet\nOrbit: 11.9 Earth years\nTemp: -110°C average',
     type: 'planet'
   },
-  { 
-    name: 'Saturn', 
-    color: '#F4A460', 
-    orbitRadius: 210, 
-    periodDays: 10759, 
+  {
+    name: 'Saturn',
+    color: '#F4A460',
+    orbitRadius: 210,
+    periodDays: 10759,
     size: 70,
     description: 'Ring system planet\nOrbit: 29.5 Earth years\nTemp: -140°C average',
     type: 'planet'
   },
-  { 
-    name: 'Uranus', 
-    color: '#87CEEB', 
-    orbitRadius: 250, 
-    periodDays: 30687, 
+  {
+    name: 'Uranus',
+    color: '#87CEEB',
+    orbitRadius: 250,
+    periodDays: 30687,
     size: 49,
     description: 'Ice giant\nOrbit: 84 Earth years\nTemp: -195°C average',
     type: 'planet'
   },
-  { 
-    name: 'Neptune', 
-    color: '#4169E1', 
-    orbitRadius: 290, 
-    periodDays: 60190, 
+  {
+    name: 'Neptune',
+    color: '#4169E1',
+    orbitRadius: 290,
+    periodDays: 60190,
     size: 49,
     description: 'Windiest planet\nOrbit: 165 Earth years\nTemp: -200°C average',
     type: 'planet'
   },
-  { 
-    name: 'Pluto', 
-    color: '#DEB887', 
-    orbitRadius: 330, 
-    periodDays: 90560, 
+  {
+    name: 'Pluto',
+    color: '#DEB887',
+    orbitRadius: 330,
+    periodDays: 90560,
     size: 21,
     description: 'Dwarf planet\nOrbit: 248 Earth years\nTemp: -230°C average',
     type: 'dwarf'
   },
-  { 
-    name: 'Halley\'s Comet', 
-    color: '#E6E6FA', 
-    orbitRadius: 370, 
-    periodDays: 27740, 
+  {
+    name: 'Halley\'s Comet',
+    color: '#E6E6FA',
+    orbitRadius: 370,
+    periodDays: 27740,
     size: 14,
     description: 'Famous periodic comet\nOrbit: 76 Earth years\nLast visit: 1986\nNext visit: 2061',
     type: 'comet'
@@ -172,7 +172,7 @@ export function SolarClock2D() {
     const secondAngle = (
       (currentTime.getSeconds() * 1000 + currentTime.getMilliseconds()) / 60000
     ) * Math.PI * 2 - Math.PI / 2;
-    
+
     // Draw radial glow effect along the entire hand
     const gradient = ctx.createLinearGradient(
       centerX,
@@ -183,7 +183,7 @@ export function SolarClock2D() {
     gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
     gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
-    
+
     // Draw wide glow path
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
@@ -191,7 +191,7 @@ export function SolarClock2D() {
     const perpAngle = secondAngle + Math.PI / 2;
     const px = Math.cos(perpAngle) * glowWidth;
     const py = Math.sin(perpAngle) * glowWidth;
-    
+
     ctx.lineTo(
       centerX + Math.cos(secondAngle) * 390 + px,
       centerY + Math.sin(secondAngle) * 390 + py
@@ -282,14 +282,14 @@ export function SolarClock2D() {
 
     // Animation loop with requestAnimationFrame for smooth movement
     let animationFrameId: number;
-    
+
     const animate = () => {
       const now = new Date();
       setTime(now);
       drawSolarSystem(ctx, now);
       animationFrameId = requestAnimationFrame(animate);
     };
-    
+
     animate();
 
     return () => {
@@ -299,7 +299,17 @@ export function SolarClock2D() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen pt-24">
+    <div className="flex flex-col items-center justify-center min-h-[600px] py-8">
+      {/* Header with current time and instructions */}
+      <div className="text-center mb-6 max-w-xl px-4">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+          Interactive Solar System Clock
+        </h2>
+        <p className="text-gray-600 dark:text-gray-300 text-sm">
+          Watch the planets orbit the Sun in real-time proportional speeds. Hover over any celestial body for details.
+        </p>
+      </div>
+
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -307,18 +317,71 @@ export function SolarClock2D() {
       >
         <canvas
           ref={canvasRef}
-          className="rounded-full bg-black/20 backdrop-blur-xl shadow-2xl"
+          className="rounded-full bg-gradient-to-br from-black/90 to-gray-900/90 backdrop-blur-xl shadow-2xl border border-gray-700/50"
           onMouseMove={handleCanvasMouseMove}
           onMouseLeave={() => setHoverInfo(prev => ({ ...prev, visible: false }))}
         />
-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 text-gray-600 text-sm">
-          {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+
+        {/* Digital time overlay */}
+        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-black/60 backdrop-blur-sm px-4 py-2 rounded-lg border border-gray-600/50">
+          <div className="text-white text-xl font-mono">
+            {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+          </div>
+          <div className="text-gray-400 text-xs text-center">
+            {time.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })}
+          </div>
         </div>
+
+        {/* Legend */}
+        <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm p-3 rounded-lg border border-gray-600/50 text-xs">
+          <div className="text-gray-300 font-semibold mb-2">Legend</div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <span className="text-gray-400">Sun</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <span className="text-gray-400">Planets</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-gray-500" />
+              <span className="text-gray-400">Dwarf Planets</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-0.5 bg-white/60" />
+              <span className="text-gray-400">Second Hand</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Planet names list */}
+        <div className="absolute bottom-4 right-4 bg-black/60 backdrop-blur-sm p-3 rounded-lg border border-gray-600/50 text-xs">
+          <div className="text-gray-300 font-semibold mb-2">Planets (inner→outer)</div>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-gray-400">
+            {PLANETS.slice(0, 4).map(p => (
+              <div key={p.name} className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                <span>{p.name}</span>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-gray-600/50 my-2" />
+          <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-gray-400">
+            {PLANETS.slice(5, 9).map(p => (
+              <div key={p.name} className="flex items-center gap-1">
+                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+                <span>{p.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {hoverInfo.visible && (
-          <div 
-            className="absolute bg-white/90 backdrop-blur-sm text-gray-600 text-sm rounded-lg p-3 pointer-events-none whitespace-pre-line shadow-lg border border-gray-200/50"
-            style={{ 
-              left: `${hoverInfo.x + 10}px`, 
+          <div
+            className="absolute bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm text-gray-800 dark:text-gray-100 text-sm rounded-xl p-4 pointer-events-none whitespace-pre-line shadow-xl border border-gray-200/50 dark:border-gray-700/50 max-w-xs"
+            style={{
+              left: `${hoverInfo.x + 10}px`,
               top: `${hoverInfo.y + 10}px`,
               transform: 'translate(-50%, -100%)'
             }}
@@ -327,6 +390,14 @@ export function SolarClock2D() {
           </div>
         )}
       </motion.div>
+
+      {/* Footer with info */}
+      <div className="mt-6 text-center text-gray-500 dark:text-gray-400 text-xs max-w-md px-4">
+        <p>
+          The white radial hand represents the current second. Planets move at their relative orbital speeds
+          (accelerated for visibility). The innermost planet (Mercury) completes an orbit every 88 Earth days.
+        </p>
+      </div>
     </div>
   );
 } 
