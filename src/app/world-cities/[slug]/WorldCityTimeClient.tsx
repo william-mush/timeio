@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { WorldCity } from '@/data/world-cities';
-import { Clock, MapPin, Users, Calendar, ArrowLeft, Globe, Building } from 'lucide-react';
+import { Clock, MapPin, Users, Calendar, ArrowLeft, Globe, Building, ArrowLeftRight } from 'lucide-react';
 
 interface WorldCityTimeClientProps {
     city: WorldCity;
@@ -280,6 +280,42 @@ export function WorldCityTimeClient({ city, children }: WorldCityTimeClientProps
                             </div>
                             <div className="text-xs text-gray-500 mt-1">London</div>
                         </div>
+                    </div>
+                </div>
+
+                {/* Common Comparisons */}
+                <div className="mb-12">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-6">Popular Time Differences</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        {['new-york-usa', 'london-united-kingdom', 'tokyo-japan', 'dubai-united-arab-emirates', 'sydney-australia', 'paris-france', 'singapore-singapore', 'los-angeles-usa']
+                            .filter(id => id !== city.id)
+                            .slice(0, 6)
+                            .map(targetId => {
+                                // Simple mapping for display names - in real app would lookup
+                                const names: Record<string, string> = {
+                                    'new-york-usa': 'New York',
+                                    'london-united-kingdom': 'London',
+                                    'tokyo-japan': 'Tokyo',
+                                    'dubai-united-arab-emirates': 'Dubai',
+                                    'sydney-australia': 'Sydney',
+                                    'paris-france': 'Paris',
+                                    'singapore-singapore': 'Singapore',
+                                    'los-angeles-usa': 'Los Angeles'
+                                };
+                                const targetName = names[targetId] || targetId;
+                                return (
+                                    <Link
+                                        key={targetId}
+                                        href={`/difference/${city.id}-vs-${targetId}`}
+                                        className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-400 hover:shadow-md transition-all group"
+                                    >
+                                        <span className="font-medium text-gray-700 group-hover:text-blue-600">
+                                            {city.city} vs {targetName}
+                                        </span>
+                                        <ArrowLeftRight className="w-4 h-4 text-gray-400 group-hover:text-blue-500" />
+                                    </Link>
+                                );
+                            })}
                     </div>
                 </div>
 
