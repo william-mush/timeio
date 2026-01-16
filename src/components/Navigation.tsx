@@ -149,8 +149,8 @@ function NavDropdown({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`text-sm transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg whitespace-nowrap ${isActive
-          ? 'text-blue-600 font-medium bg-blue-50'
-          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+          ? 'text-blue-600 font-medium bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+          : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800'
           }`}
       >
         <Icon className="w-4 h-4" />
@@ -159,15 +159,15 @@ function NavDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 min-w-[180px] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-100 dark:border-slate-700 py-1 min-w-[180px] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               onClick={() => setIsOpen(false)}
               className={`flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${pathname === item.href
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-700'
                 }`}
             >
               <item.icon className="w-4 h-4" />
@@ -205,7 +205,8 @@ export function Navigation() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 z-50">
+    <header className="fixed top-0 left-0 w-full bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-200/50 dark:border-slate-800/50 z-50">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo + Mobile menu button */}
@@ -228,9 +229,10 @@ export function Navigation() {
               href="/"
               className="text-xl font-semibold flex items-center hover:opacity-80 transition-opacity"
             >
-              <span className="text-blue-600">time</span>
-              <span className="text-gray-500">.IO</span>
+              <span className="text-blue-600 dark:text-blue-400">time</span>
+              <span className="text-gray-500 dark:text-gray-300">.IO</span>
             </Link>
+
           </div>
 
           {/* Desktop Navigation */}
@@ -258,8 +260,8 @@ export function Navigation() {
             <Link
               href="/alarms"
               className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${pathname === '/alarms'
-                ? 'text-blue-600 bg-blue-50'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800'
                 }`}
               title="Alarms"
             >
@@ -267,19 +269,21 @@ export function Navigation() {
               <span className="hidden md:inline">Alarms</span>
             </Link>
 
+
             {/* Settings - when not authenticated */}
             {status !== 'authenticated' && (
               <Link
                 href="/settings"
                 className={`hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-colors ${pathname === '/settings'
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'text-blue-600 bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800'
                   }`}
                 title="Settings"
               >
                 <Settings className="w-4 h-4" />
                 <span className="hidden md:inline">Settings</span>
               </Link>
+
             )}
 
             {/* Theme Toggle - hidden on very small screens */}

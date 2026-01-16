@@ -38,7 +38,23 @@ function generateSitemap() {
     changefreq: 'weekly' as const,
   }));
 
-  const allPages = [...staticPages, ...usCityPages, ...worldCityPages];
+  // Comparison Pages (Top 10 cities vs Top 10 cities to match static params)
+  const topCities = ALL_WORLD_CITIES.slice(0, 10);
+  const comparisonPages = [];
+
+  for (const c1 of topCities) {
+    for (const c2 of topCities) {
+      if (c1.id !== c2.id) {
+        comparisonPages.push({
+          url: `/difference/${c1.id}-vs-${c2.id}`,
+          priority: '0.7',
+          changefreq: 'weekly' as const,
+        });
+      }
+    }
+  }
+
+  const allPages = [...staticPages, ...usCityPages, ...worldCityPages, ...comparisonPages];
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
