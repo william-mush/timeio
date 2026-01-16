@@ -1,8 +1,10 @@
 import { AuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
+import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import prisma from '@/lib/prisma'
 import { logAuthEvent } from '@/lib/auth-events'
+import bcrypt from 'bcryptjs'
 
 // Log environment variable status (without exposing secrets)
 const logAuthConfig = () => {
@@ -40,11 +42,39 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
+    CredentialsProvider({
+      name: 'Email & Password',
+      credentials: {
+        email: { label: "Email", type: "email", placeholder: "hello@example.com" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Email and password are required')
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        })
+
+        if (!user || !user.password) {
+          throw new Error('No user found with this email')
+        }
+
+        const isValid = await bcrypt.compare(credentials.password, user.password)
+
+        if (!isValid) {
+          throw new Error('Invalid password')
+        }
+
+        return user
+      }
+    })
   ],
   // Enable debug mode for detailed logging
   debug: process.env.NODE_ENV === 'development' || process.env.NEXTAUTH_DEBUG === 'true',
   session: {
-    strategy: 'database',
+    strategy: 'jwt', // Switch to JWT for credentials compatibility and better performance
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   callbacks: {
@@ -65,13 +95,17 @@ export const authOptions: AuthOptions = {
       if (new URL(url).origin === baseUrl) return url
       return baseUrl
     },
-    session({ session, user }) {
-      console.log('[NextAuth] session callback:', {
-        sessionUserId: session?.user?.email,
-        dbUserId: user?.id,
-      })
-      if (session.user) {
-        session.user.id = user.id
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.email = user.email
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (session.user && token) {
+        session.user.id = token.id as string
+        session.user.email = token.email as string
       }
       return session
     },
@@ -94,7 +128,10 @@ export const authOptions: AuthOptions = {
       }).catch(() => { }) // Silently ignore any errors
     },
     async signOut({ session }) {
-      const userId = (session as { userId?: string })?.userId
+      // In JWT strategy, session might be a token payload or just the session object
+      // We'll try to extract userId safely
+      const userId = (session as any)?.token?.sub || (session as any)?.user?.id // Fallback attempt
+
       console.log('[NextAuth] EVENT signOut:', { userId })
 
       // Log to database for analytics (fire-and-forget, never blocks auth)
@@ -117,9 +154,8 @@ export const authOptions: AuthOptions = {
       })
     },
     async session({ session }) {
-      console.log('[NextAuth] EVENT session:', {
-        userEmail: session?.user?.email,
-      })
+      // console.log('[NextAuth] EVENT session check') 
+      // Reduced logging spam
     },
   },
   logger: {

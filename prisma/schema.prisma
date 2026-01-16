@@ -45,7 +45,11 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified DateTime?
+  password      String?   // Hashed password for credentials auth
   image         String?
+  phoneNumber   String?   // For SMS notifications or auth
+  smsEnabled    Boolean   @default(false)
+  
   accounts      Account[]
   sessions      Session[]
   alarms        Alarm[]
@@ -147,4 +151,3 @@ model AuthEvent {
   @@index([userId, createdAt])
   @@index([createdAt])
 }
-
