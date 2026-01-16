@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 import { ALL_WORLD_CITIES, getAllCityById } from '@/data/all-world-cities';
 import { notFound } from 'next/navigation';
 import { WorldCityTimeClient } from './WorldCityTimeClient';
+import { CityWeather } from '@/components/CityWeather';
+
 
 interface PageProps {
     params: {
@@ -89,7 +91,18 @@ export default function WorldCityPage({ params }: PageProps) {
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
             />
-            <WorldCityTimeClient city={city} />
+            <div className="relative">
+                <div className="absolute top-4 right-4 z-10 hidden md:block">
+                    <CityWeather lat={city.coordinates[1]} lng={city.coordinates[0]} />
+                </div>
+                <WorldCityTimeClient city={city}>
+                    {/* Cloud component for mobile layout if needed inside client */}
+                    <div className="md:hidden mb-6">
+                        <CityWeather lat={city.coordinates[1]} lng={city.coordinates[0]} />
+                    </div>
+                </WorldCityTimeClient>
+            </div>
+
         </>
     );
 }

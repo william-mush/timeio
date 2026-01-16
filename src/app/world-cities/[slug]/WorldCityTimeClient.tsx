@@ -7,9 +7,10 @@ import { Clock, MapPin, Users, Calendar, ArrowLeft, Globe, Building } from 'luci
 
 interface WorldCityTimeClientProps {
     city: WorldCity;
+    children?: React.ReactNode;
 }
 
-export function WorldCityTimeClient({ city }: WorldCityTimeClientProps) {
+export function WorldCityTimeClient({ city, children }: WorldCityTimeClientProps) {
     const [currentTime, setCurrentTime] = useState<Date>(new Date());
 
     useEffect(() => {
@@ -102,6 +103,9 @@ export function WorldCityTimeClient({ city }: WorldCityTimeClientProps) {
                         {city.country}
                     </p>
                 </div>
+
+                {/* Mobile Weather Widget (injected via children) */}
+                {children}
 
                 {/* Main Time Display */}
                 <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10 mb-8 text-center border border-gray-100">

@@ -5,6 +5,8 @@ import { Analytics } from "@/components/Analytics";
 import { SessionProvider } from "@/components/SessionProvider";
 import { Suspense } from 'react';
 import type { Metadata, Viewport } from 'next';
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { QuickSearch } from "@/components/QuickSearch";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -123,9 +125,12 @@ export default function RootLayout({
           <Analytics />
         </Suspense>
         <SessionProvider>
-          <ClientLayout>
-            {children}
-          </ClientLayout>
+          <ThemeProvider>
+            <QuickSearch />
+            <ClientLayout>
+              {children}
+            </ClientLayout>
+          </ThemeProvider>
         </SessionProvider>
       </body>
     </html>
