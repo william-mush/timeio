@@ -156,11 +156,11 @@ export function HomepageSearch() {
                 </div>
             </div>
 
-            {/* Dropdown Results */}
+            {/* Dropdown Results - Appears ABOVE the search bar */}
             {isOpen && results.length > 0 && (
                 <div
                     ref={dropdownRef}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50"
+                    className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50"
                 >
                     <div className="max-h-96 overflow-y-auto">
                         {results.map((city, index) => (
@@ -169,8 +169,8 @@ export function HomepageSearch() {
                                 onClick={() => navigateToCity(city)}
                                 onMouseEnter={() => setSelectedIndex(index)}
                                 className={`w-full px-4 py-3 flex items-center gap-3 text-left transition-colors ${index === selectedIndex
-                                        ? 'bg-blue-50 dark:bg-blue-900/30'
-                                        : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
+                                    ? 'bg-blue-50 dark:bg-blue-900/30'
+                                    : 'hover:bg-gray-50 dark:hover:bg-gray-700/50'
                                     }`}
                             >
                                 <div className="flex-shrink-0">
@@ -212,11 +212,11 @@ export function HomepageSearch() {
                 </div>
             )}
 
-            {/* No results message */}
+            {/* No results message - Also appears ABOVE */}
             {isOpen && query.trim() && results.length === 0 && !isLoading && (
                 <div
                     ref={dropdownRef}
-                    className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50 p-6 text-center"
+                    className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50 p-6 text-center"
                 >
                     <Globe className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-2" />
                     <p className="text-gray-500 dark:text-gray-400">No cities found for "{query}"</p>
