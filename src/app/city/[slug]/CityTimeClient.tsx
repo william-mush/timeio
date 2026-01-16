@@ -1,11 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import type { GeoCity } from '@/data/geonames-top-cities';
 import { CityWeather } from '@/components/CityWeather';
 
+// Flexible city interface that works with both static and database data
+interface City {
+    id?: string;
+    geonameid?: number;
+    city: string;
+    asciiName?: string;
+    country: string;
+    countryCode: string;
+    coordinates: [number, number];
+    population: number;
+    timezone: string;
+    continent: string;
+    admin1?: string | null;
+}
+
 interface Props {
-    city: GeoCity;
+    city: City;
 }
 
 export function CityTimeClient({ city }: Props) {

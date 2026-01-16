@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
                     longitude: true,
                     population: true,
                     continent: true,
+                    admin1: true,
                 },
             });
 
@@ -72,6 +73,7 @@ export async function GET(request: NextRequest) {
                 longitude: true,
                 population: true,
                 continent: true,
+                admin1: true,
             },
         });
 

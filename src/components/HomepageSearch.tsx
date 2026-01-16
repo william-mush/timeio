@@ -15,6 +15,7 @@ interface SearchResult {
     longitude: number;
     population: number;
     continent: string;
+    admin1: string | null;
 }
 
 export function HomepageSearch() {
@@ -116,10 +117,34 @@ export function HomepageSearch() {
     };
 
     const navigateToCity = (city: SearchResult) => {
-        const slug = `${city.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.countryCode.toLowerCase()}`;
+        // Use geonameid in slug for unique identification and database lookup
+        const nameSlug = city.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+        const slug = `${nameSlug}-${city.geonameid}`;
         router.push(`/city/${slug}`);
         setQuery('');
         setIsOpen(false);
+    };
+
+    // Get state name from admin1 code for US cities
+    const getStateFromAdmin1 = (admin1: string | null): string => {
+        if (!admin1) return '';
+        // Common US state codes
+        const states: Record<string, string> = {
+            'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+            'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+            'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+            'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+            'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+            'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+            'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+            'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+            'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+            'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+            'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+            'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+            'WI': 'Wisconsin', 'WY': 'Wyoming', 'DC': 'Washington D.C.',
+        };
+        return states[admin1] || admin1;
     };
 
     const formatPopulation = (pop: number) => {
@@ -179,6 +204,11 @@ export function HomepageSearch() {
                                 <div className="flex-1 min-w-0">
                                     <div className="font-medium text-gray-900 dark:text-white truncate">
                                         {city.name}
+                                        {city.countryCode === 'US' && city.admin1 && (
+                                            <span className="text-gray-500 dark:text-gray-400 font-normal">
+                                                , {getStateFromAdmin1(city.admin1)}
+                                            </span>
+                                        )}
                                         <span className="text-gray-500 dark:text-gray-400 font-normal">
                                             , {city.country}
                                         </span>

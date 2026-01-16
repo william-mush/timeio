@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { TOP_CITIES, type GeoCity } from '@/data/geonames-top-cities';
+import { prisma } from '@/lib/prisma';
 import { CityTimeClient } from './CityTimeClient';
 
 interface PageProps {
@@ -9,22 +9,103 @@ interface PageProps {
     }>;
 }
 
-// Helper to find city from either top cities or full dataset
-async function findCity(slug: string): Promise<GeoCity | undefined> {
-    // First check top cities (fast, already loaded)
-    let city = TOP_CITIES.find(c => c.id === slug);
-    if (city) return city;
-
-    // If not found, load full dataset
-    const { ALL_GEONAMES_CITIES } = await import('@/data/geonames-all-cities');
-    return ALL_GEONAMES_CITIES.find(c => c.id === slug);
+// Type for city data from database
+interface CityData {
+    geonameid: number;
+    name: string;
+    asciiName: string;
+    country: string;
+    countryCode: string;
+    timezone: string;
+    latitude: number;
+    longitude: number;
+    population: number;
+    continent: string;
+    admin1: string | null;
 }
 
-// Generate static params for top 500 cities (pre-rendered)
-export async function generateStaticParams() {
-    return TOP_CITIES.map((city) => ({
-        slug: city.id,
-    }));
+// Convert database city to client format
+function toCityClient(city: CityData) {
+    return {
+        id: `${city.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.geonameid}`,
+        geonameid: city.geonameid,
+        city: city.name,
+        asciiName: city.asciiName,
+        country: city.country,
+        countryCode: city.countryCode,
+        coordinates: [city.longitude, city.latitude] as [number, number],
+        population: city.population,
+        timezone: city.timezone,
+        continent: city.continent,
+        admin1: city.admin1,
+    };
+}
+
+// Helper to find city from database by geonameid
+async function findCity(slug: string): Promise<ReturnType<typeof toCityClient> | null> {
+    // New format: name-geonameid (e.g., "tokyo-1850147")
+    // Extract geonameid from the end of the slug
+    const parts = slug.split('-');
+    const lastPart = parts[parts.length - 1];
+    const geonameid = parseInt(lastPart, 10);
+
+    // If the last part is a valid number, search by geonameid
+    if (!isNaN(geonameid) && geonameid > 0) {
+        const city = await prisma.geoCity.findUnique({
+            where: { geonameid },
+            select: {
+                geonameid: true,
+                name: true,
+                asciiName: true,
+                country: true,
+                countryCode: true,
+                timezone: true,
+                latitude: true,
+                longitude: true,
+                population: true,
+                continent: true,
+                admin1: true,
+            },
+        });
+
+        if (city) {
+            return toCityClient(city);
+        }
+    }
+
+    // Fallback: try to match by name and country code (old format like "tokyo-jp")
+    // This supports legacy URLs
+    if (parts.length >= 2) {
+        const countryCode = parts[parts.length - 1].toUpperCase();
+        const cityName = parts.slice(0, -1).join('-');
+
+        const city = await prisma.geoCity.findFirst({
+            where: {
+                asciiName: { equals: cityName.replace(/-/g, ' '), mode: 'insensitive' },
+                countryCode: countryCode,
+            },
+            orderBy: { population: 'desc' },
+            select: {
+                geonameid: true,
+                name: true,
+                asciiName: true,
+                country: true,
+                countryCode: true,
+                timezone: true,
+                latitude: true,
+                longitude: true,
+                population: true,
+                continent: true,
+                admin1: true,
+            },
+        });
+
+        if (city) {
+            return toCityClient(city);
+        }
+    }
+
+    return null;
 }
 
 // Generate metadata for SEO
