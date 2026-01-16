@@ -32,7 +32,7 @@ export default function Home() {
             <div className="scale-90 md:scale-100">
               <TimeDisplay showMilliseconds={showMs} />
             </div>
-            <p className="mt-6 text-gray-500 text-lg max-w-md">
+            <p className="mt-6 text-gray-500 dark:text-gray-400 text-lg max-w-md">
               Your elegant time companion for tracking time around the world
             </p>
           </div>
@@ -92,61 +92,61 @@ export default function Home() {
             {/* World Map */}
             <Link
               href="/world-map"
-              className="group bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-200 transition-all hover:-translate-y-0.5"
+              className="group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-lg hover:border-blue-200 dark:hover:border-blue-800 transition-all hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mb-3">
-                <MapPin className="w-5 h-5 text-blue-600" />
+              <div className="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mb-3">
+                <MapPin className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 World Map
                 <span className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">→</span>
               </h3>
-              <p className="text-sm text-gray-500">Visual time zone explorer</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Visual time zone explorer</p>
             </Link>
 
             {/* US Cities */}
             <Link
               href="/us-cities"
-              className="group bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-emerald-200 transition-all hover:-translate-y-0.5"
+              className="group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-lg hover:border-emerald-200 dark:hover:border-emerald-800 transition-all hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mb-3">
-                <Building2 className="w-5 h-5 text-emerald-600" />
+              <div className="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center mb-3">
+                <Building2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-emerald-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
                 US Cities
                 <span className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">→</span>
               </h3>
-              <p className="text-sm text-gray-500">Find time for any US city</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Find time for any US city</p>
             </Link>
 
             {/* Solar Clock */}
             <Link
               href="/solar-clock"
-              className="group bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-amber-200 transition-all hover:-translate-y-0.5"
+              className="group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-lg hover:border-amber-200 dark:hover:border-amber-800 transition-all hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center mb-3">
-                <Sun className="w-5 h-5 text-amber-600" />
+              <div className="w-10 h-10 bg-amber-50 dark:bg-amber-900/30 rounded-lg flex items-center justify-center mb-3">
+                <Sun className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-amber-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                 Solar Clock
                 <span className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">→</span>
               </h3>
-              <p className="text-sm text-gray-500">Track celestial movements</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Track celestial movements</p>
             </Link>
 
             {/* Time History */}
             <Link
               href="/history"
-              className="group bg-white border border-gray-200 rounded-xl p-5 hover:shadow-lg hover:border-rose-200 transition-all hover:-translate-y-0.5"
+              className="group bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5 hover:shadow-lg hover:border-rose-200 dark:hover:border-rose-800 transition-all hover:-translate-y-0.5"
             >
-              <div className="w-10 h-10 bg-rose-50 rounded-lg flex items-center justify-center mb-3">
-                <History className="w-5 h-5 text-rose-600" />
+              <div className="w-10 h-10 bg-rose-50 dark:bg-rose-900/30 rounded-lg flex items-center justify-center mb-3">
+                <History className="w-5 h-5 text-rose-600 dark:text-rose-400" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-rose-600 transition-colors">
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
                 Time History
                 <span className="inline-block ml-1 transition-transform group-hover:translate-x-0.5">→</span>
               </h3>
-              <p className="text-sm text-gray-500">Explore timekeeping history</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Explore timekeeping history</p>
             </Link>
           </div>
         </div>

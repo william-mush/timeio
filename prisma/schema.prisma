@@ -150,3 +150,29 @@ model AuthEvent {
   @@index([userId, createdAt])
   @@index([createdAt])
 }
+
+// GeoNames Cities - 11M+ places worldwide
+model GeoCity {
+  geonameid   Int      @id                    // GeoNames ID (primary key)
+  name        String                          // UTF-8 city name (e.g., "東京")
+  asciiName   String                          // ASCII name (e.g., "Tokyo")
+  countryCode String   @db.Char(2)            // ISO-3166 2-letter code
+  country     String                          // Full country name
+  timezone    String                          // IANA timezone (e.g., "Asia/Tokyo")
+  latitude    Float
+  longitude   Float
+  population  Int      @default(0)
+  continent   String                          // Asia, Europe, etc.
+  featureCode String?  @db.VarChar(10)        // GeoNames feature code (PPL, PPLA, etc.)
+  admin1      String?                         // State/Province code
+  elevation   Int?                            // Elevation in meters
+  
+  // Indexes for fast searching
+  @@index([asciiName])                        // Primary search index
+  @@index([countryCode])                      // Filter by country
+  @@index([population(sort: Desc)])           // Sort by popularity
+  @@index([continent])                        // Filter by continent
+  @@index([timezone])                         // Filter by timezone
+  
+  @@map("geo_cities")                         // Table name in PostgreSQL
+}

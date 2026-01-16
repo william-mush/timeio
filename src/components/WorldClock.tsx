@@ -489,7 +489,7 @@ export const WorldClock = () => {
                   <div className="flex items-center justify-between text-xs md:text-sm text-muted">
                     <span>GMT {zone.offset >= 0 ? '+' : ''}{zone.offset}</span>
                     <span className="px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded-full">
-                      {zone.timezone}
+                      {zone.timezone.includes('/') ? zone.timezone.split('/').pop()?.replace(/_/g, ' ') : zone.timezone}
                     </span>
                   </div>
                 </div>

@@ -21,101 +21,101 @@ interface HoverInfo {
 }
 
 const PLANETS: Planet[] = [
-  { 
-    name: 'Mercury', 
-    color: '#A0522D', 
-    orbitRadius: 50, 
-    periodDays: 88, 
+  {
+    name: 'Mercury',
+    color: '#A0522D',
+    orbitRadius: 50,
+    periodDays: 88,
     size: 28,
     description: 'Smallest planet, closest to Sun\nOrbit: 88 Earth days\nTemp: 430°C to -180°C',
     type: 'planet'
   },
-  { 
-    name: 'Venus', 
-    color: '#DEB887', 
-    orbitRadius: 75, 
-    periodDays: 225, 
+  {
+    name: 'Venus',
+    color: '#DEB887',
+    orbitRadius: 75,
+    periodDays: 225,
     size: 42,
     description: 'Earth\'s "sister planet"\nOrbit: 225 Earth days\nTemp: 460°C',
     type: 'planet'
   },
-  { 
-    name: 'Earth', 
-    color: '#4169E1', 
-    orbitRadius: 100, 
-    periodDays: 365, 
+  {
+    name: 'Earth',
+    color: '#4169E1',
+    orbitRadius: 100,
+    periodDays: 365,
     size: 42,
     description: 'Our home planet\nOrbit: 365.25 days\nTemp: 15°C average',
     type: 'planet'
   },
-  { 
-    name: 'Mars', 
-    color: '#CD5C5C', 
-    orbitRadius: 125, 
-    periodDays: 687, 
+  {
+    name: 'Mars',
+    color: '#CD5C5C',
+    orbitRadius: 125,
+    periodDays: 687,
     size: 35,
     description: 'The Red Planet\nOrbit: 687 Earth days\nTemp: -63°C average',
     type: 'planet'
   },
-  { 
-    name: 'Ceres', 
-    color: '#8B8989', 
-    orbitRadius: 150, 
-    periodDays: 1682, 
+  {
+    name: 'Ceres',
+    color: '#8B8989',
+    orbitRadius: 150,
+    periodDays: 1682,
     size: 14,
     description: 'Largest asteroid in the belt\nOrbit: 4.6 Earth years\nDiameter: 940 km',
     type: 'dwarf'
   },
-  { 
-    name: 'Jupiter', 
-    color: '#DAA520', 
-    orbitRadius: 170, 
-    periodDays: 4333, 
+  {
+    name: 'Jupiter',
+    color: '#DAA520',
+    orbitRadius: 170,
+    periodDays: 4333,
     size: 84,
     description: 'Largest planet\nOrbit: 11.9 Earth years\nTemp: -110°C average',
     type: 'planet'
   },
-  { 
-    name: 'Saturn', 
-    color: '#F4A460', 
-    orbitRadius: 210, 
-    periodDays: 10759, 
+  {
+    name: 'Saturn',
+    color: '#F4A460',
+    orbitRadius: 210,
+    periodDays: 10759,
     size: 70,
     description: 'Ring system planet\nOrbit: 29.5 Earth years\nTemp: -140°C average',
     type: 'planet'
   },
-  { 
-    name: 'Uranus', 
-    color: '#87CEEB', 
-    orbitRadius: 250, 
-    periodDays: 30687, 
+  {
+    name: 'Uranus',
+    color: '#87CEEB',
+    orbitRadius: 250,
+    periodDays: 30687,
     size: 49,
     description: 'Ice giant\nOrbit: 84 Earth years\nTemp: -195°C average',
     type: 'planet'
   },
-  { 
-    name: 'Neptune', 
-    color: '#4169E1', 
-    orbitRadius: 290, 
-    periodDays: 60190, 
+  {
+    name: 'Neptune',
+    color: '#4169E1',
+    orbitRadius: 290,
+    periodDays: 60190,
     size: 49,
     description: 'Windiest planet\nOrbit: 165 Earth years\nTemp: -200°C average',
     type: 'planet'
   },
-  { 
-    name: 'Pluto', 
-    color: '#DEB887', 
-    orbitRadius: 330, 
-    periodDays: 90560, 
+  {
+    name: 'Pluto',
+    color: '#DEB887',
+    orbitRadius: 330,
+    periodDays: 90560,
     size: 21,
     description: 'Dwarf planet\nOrbit: 248 Earth years\nTemp: -230°C average',
     type: 'dwarf'
   },
-  { 
-    name: 'Halley\'s Comet', 
-    color: '#E6E6FA', 
-    orbitRadius: 370, 
-    periodDays: 27740, 
+  {
+    name: 'Halley\'s Comet',
+    color: '#E6E6FA',
+    orbitRadius: 370,
+    periodDays: 27740,
     size: 14,
     description: 'Famous periodic comet\nOrbit: 76 Earth years\nLast visit: 1986\nNext visit: 2061',
     type: 'comet'
@@ -132,11 +132,11 @@ export function SolarClock() {
     // Convert orbital period to degrees per millisecond
     const msPerOrbit = planet.periodDays * 24 * 60 * 60 * 1000;
     const degreesPerMs = 360 / msPerOrbit;
-    
+
     // Calculate current angle based on time
     const timeMs = currentTime.getTime();
     const angle = (timeMs * degreesPerMs) % 360;
-    
+
     // Convert to radians and calculate position
     const radians = (angle * Math.PI) / 180;
     return {
@@ -173,14 +173,21 @@ export function SolarClock() {
       ctx.arc(centerX + pos.x, centerY + pos.y, planet.size / 2, 0, Math.PI * 2);
       ctx.fillStyle = planet.color;
       ctx.fill();
+
+      // Draw label
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.font = '10px Inter, system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      ctx.fillText(planet.name, centerX + pos.x, centerY + pos.y + planet.size / 2 + 5);
     });
 
     // Draw 24-hour hand
-    const seconds = currentTime.getHours() * 3600 + 
-                   currentTime.getMinutes() * 60 + 
-                   currentTime.getSeconds();
+    const seconds = currentTime.getHours() * 3600 +
+      currentTime.getMinutes() * 60 +
+      currentTime.getSeconds();
     const hourHandAngle = (seconds / (24 * 3600)) * Math.PI * 2 - Math.PI / 2;
-    
+
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
     ctx.lineTo(
@@ -195,7 +202,7 @@ export function SolarClock() {
     const secondAngle = (
       (currentTime.getSeconds() * 1000 + currentTime.getMilliseconds()) / 60000
     ) * Math.PI * 2 - Math.PI / 2;
-    
+
     // Draw radial glow effect along the entire hand
     const gradient = ctx.createLinearGradient(
       centerX,
@@ -206,7 +213,7 @@ export function SolarClock() {
     gradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
     gradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
     gradient.addColorStop(1, 'rgba(255, 255, 255, 0.3)');
-    
+
     // Draw wide glow path
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
@@ -214,7 +221,7 @@ export function SolarClock() {
     const perpAngle = secondAngle + Math.PI / 2;
     const px = Math.cos(perpAngle) * glowWidth;
     const py = Math.sin(perpAngle) * glowWidth;
-    
+
     ctx.lineTo(
       centerX + Math.cos(secondAngle) * 390 + px,
       centerY + Math.sin(secondAngle) * 390 + py
@@ -305,14 +312,14 @@ export function SolarClock() {
 
     // Animation loop with requestAnimationFrame for smooth movement
     let animationFrameId: number;
-    
+
     const animate = () => {
       const now = new Date();
       setTime(now);
       drawSolarSystem(ctx, now);
       animationFrameId = requestAnimationFrame(animate);
     };
-    
+
     animate();
 
     return () => {
@@ -338,10 +345,10 @@ export function SolarClock() {
           {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
         </div>
         {hoverInfo.visible && (
-          <div 
+          <div
             className="absolute bg-white/90 backdrop-blur-sm text-gray-600 text-sm rounded-lg p-4 pointer-events-none shadow-lg border border-gray-200/50 w-48"
-            style={{ 
-              left: `${hoverInfo.x + 10}px`, 
+            style={{
+              left: `${hoverInfo.x + 10}px`,
               top: `${hoverInfo.y + 10}px`,
               transform: 'translate(-50%, -100%)'
             }}

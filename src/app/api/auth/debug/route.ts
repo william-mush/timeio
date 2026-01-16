@@ -100,26 +100,13 @@ export async function GET(request: NextRequest) {
  * 3. In development mode (localhost)
  */
 async function checkAuthorization(request: NextRequest): Promise<boolean> {
-    // Method 1: Check DEBUG_SECRET header
+    // Method 1: Check DEBUG_SECRET header - Valid in all environments
     const debugSecret = request.headers.get('x-debug-secret')
     if (debugSecret && process.env.DEBUG_SECRET && debugSecret === process.env.DEBUG_SECRET) {
         return true
     }
 
-    // Method 2: Check if user is signed in
-    try {
-        const session = await getServerSession(authOptions)
-        if (session?.user?.email) {
-            // Optionally, you could restrict to specific admin emails:
-            // const adminEmails = ['admin@time.io']
-            // if (adminEmails.includes(session.user.email)) return true
-            return true
-        }
-    } catch {
-        // Session check failed, continue to other methods
-    }
-
-    // Method 3: Allow in development mode
+    // Method 2: Allow in development mode
     if (process.env.NODE_ENV === 'development') {
         return true
     }

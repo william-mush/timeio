@@ -54,3 +54,7 @@ pids
 *.pid
 *.seed
 *.pid.lock
+
+# GeoNames large data files (download from geonames.org)
+scripts/geonames/*.txt
+scripts/geonames/*.zip

@@ -112,8 +112,7 @@ const locationItems = [
 
 // Explore dropdown items
 const exploreItems = [
-  { href: '/solar-clock', label: 'Solar Clock 2D', icon: Sun },
-  { href: '/solar-clock-3d', label: 'Solar Clock 3D', icon: Sun },
+  { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
   { href: '/history', label: 'Time History', icon: History },
   { href: '/luxury', label: 'Luxury Watches', icon: Watch },
 ];
@@ -197,8 +196,7 @@ export function Navigation() {
     { href: '/world-map', label: 'World Map', icon: MapPin },
     { href: '/us-cities', label: 'US Cities', icon: Building2 },
     { href: '/alarms', label: 'Alarms', icon: Bell },
-    { href: '/solar-clock', label: 'Solar Clock 2D', icon: Sun },
-    { href: '/solar-clock-3d', label: 'Solar Clock 3D', icon: Sun },
+    { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
     { href: '/history', label: 'Time History', icon: History },
     { href: '/luxury', label: 'Luxury Watches', icon: Watch },
     { href: '/settings', label: 'Settings', icon: Settings },
@@ -294,8 +292,10 @@ export function Navigation() {
             {/* Divider */}
             <div className="hidden sm:block w-px h-6 bg-gray-200" />
 
-            {/* Time Display */}
-            <TimeDisplay />
+            {/* Time Display - Hide on small mobile */}
+            <div className="hidden sm:block">
+              <TimeDisplay />
+            </div>
 
             {/* User Menu / Sign In */}
             {status === 'loading' ? (
