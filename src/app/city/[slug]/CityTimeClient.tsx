@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CityWeather } from '@/components/CityWeather';
-import { HomepageSearch } from '@/components/HomepageSearch';
+import { SmartSearch } from '@/components/SmartSearch';
 
 // Flexible city interface that works with both static and database data
 interface City {
@@ -236,7 +236,7 @@ export function CityTimeClient({ city }: Props) {
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
                     Search Another City
                 </h2>
-                <HomepageSearch />
+                <SmartSearch />
             </div>
         </div>
     );
