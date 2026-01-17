@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { CityWeather } from '@/components/CityWeather';
+import { HomepageSearch } from '@/components/HomepageSearch';
 
 // Flexible city interface that works with both static and database data
 interface City {
@@ -228,6 +229,14 @@ export function CityTimeClient({ city }: Props) {
                         {city.continent || 'Unknown'}
                     </div>
                 </div>
+            </div>
+
+            {/* Search Another City */}
+            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
+                    Search Another City
+                </h2>
+                <HomepageSearch />
             </div>
         </div>
     );
