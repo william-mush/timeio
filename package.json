@@ -62,6 +62,7 @@
     "@types/react-simple-maps": "^3.0.6",
     "@types/three": "0.158.3",
     "autoprefixer": "^10.4.17",
+    "dotenv-cli": "^11.0.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "^15.0.0",
     "jest": "^29.7.0",
