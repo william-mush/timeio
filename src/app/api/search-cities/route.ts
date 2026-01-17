@@ -102,8 +102,8 @@ export async function GET(request: NextRequest) {
             LIMIT ${limit}
         `, ...params);
 
-        // If we have enough results from prefix search, return them
-        if (prefixResults.length >= Math.min(limit, 5)) {
+        // If we have ANY prefix results, return them immediately (fast path)
+        if (prefixResults.length > 0) {
             return NextResponse.json({
                 results: prefixResults,
                 total: prefixResults.length,
@@ -111,8 +111,8 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // TIER 2: Use similarity only if prefix didn't find enough
-        // Limit to high-population cities for performance
+        // TIER 2: Only use similarity if NO prefix matches found
+        // This handles typos like "tokio" -> "Tokyo"
         const similarityResults = await prisma.$queryRawUnsafe<CityResult[]>(`
             SELECT 
                 geonameid, name, "asciiName", country, "countryCode",
