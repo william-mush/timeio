@@ -171,7 +171,7 @@ export function HomepageSearch() {
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => query.trim() && results.length > 0 && setIsOpen(true)}
                     onKeyDown={handleKeyDown}
-                    placeholder="Search 33,000+ cities worldwide..."
+                    placeholder="Search 5 million+ cities worldwide..."
                     className="w-full pl-12 pr-4 py-4 text-lg bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-2xl shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white transition-all hover:shadow-xl"
                 />
                 <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">

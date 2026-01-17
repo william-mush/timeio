@@ -111,36 +111,27 @@ export async function GET(request: NextRequest) {
             });
         }
 
-        // TIER 2: Only use similarity if NO prefix matches found
-        // This handles typos like "tokio" -> "Tokyo"
-        const similarityResults = await prisma.$queryRawUnsafe<CityResult[]>(`
+        // TIER 2: Try contains search if no prefix matches (still uses index)
+        // Skipping similarity search as it's too slow for 5M+ cities
+        const containsResults = await prisma.$queryRawUnsafe<CityResult[]>(`
             SELECT 
                 geonameid, name, "asciiName", country, "countryCode",
                 timezone, latitude, longitude, population, continent, admin1
             FROM geo_cities
-            WHERE population > 10000
-            AND similarity("asciiName", $1) > 0.3
+            WHERE (
+                "asciiName" ILIKE '%' || $1 || '%'
+                OR name ILIKE '%' || $1 || '%'
+            )
+            AND population > 1000
             ${whereClause}
             ORDER BY 
-                similarity("asciiName", $1) DESC,
                 population DESC
             LIMIT ${limit}
-        `, ...params);
-
-        // Merge: prefix matches first, then similarity matches
-        const seenIds = new Set(prefixResults.map(r => r.geonameid));
-        const mergedResults = [...prefixResults];
-
-        for (const city of similarityResults) {
-            if (!seenIds.has(city.geonameid) && mergedResults.length < limit) {
-                mergedResults.push(city);
-                seenIds.add(city.geonameid);
-            }
-        }
+        `, query, ...params.slice(1));
 
         return NextResponse.json({
-            results: mergedResults,
-            total: mergedResults.length,
+            results: containsResults,
+            total: containsResults.length,
             query,
         });
     } catch (error) {

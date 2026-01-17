@@ -136,7 +136,7 @@ export function QuickSearch() {
                 className="hidden sm:flex items-center gap-2 px-3 py-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
                 <Search className="w-4 h-4" />
-                <span className="hidden lg:inline">Search 13M+ places...</span>
+                <span className="hidden lg:inline">Search 5M+ places...</span>
                 <span className="inline lg:hidden">Search...</span>
                 <kbd className="hidden md:inline-flex pointer-events-none h-5 select-none items-center gap-1 rounded border bg-gray-100 dark:bg-gray-900 px-1.5 font-mono text-[10px] font-medium text-gray-500">
                     <span className="text-xs">⌘</span>K
@@ -168,7 +168,7 @@ export function QuickSearch() {
                     {isLoading && (
                         <div className="py-6 text-center">
                             <Loader2 className="mx-auto h-6 w-6 text-blue-500 animate-spin mb-2" />
-                            <p className="text-sm text-gray-500">Searching 13 million places...</p>
+                            <p className="text-sm text-gray-500">Searching 5 million places...</p>
                         </div>
                     )}
 
