@@ -1,4 +1,7 @@
+'use client';
+
 import { Cloud, CloudRain, CloudSnow, Sun, CloudLightning, CloudDrizzle, Wind } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 interface WeatherProps {
     lat: number;
@@ -70,45 +73,84 @@ const getWeatherDescription = (code: number) => {
     return codes[code] || 'Unknown';
 };
 
-export async function CityWeather({ lat, lng, className = '' }: WeatherProps) {
-    try {
-        const res = await fetch(
-            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,is_day,precipitation,rain,showers,snowfall,weather_code,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph`,
-            { next: { revalidate: 1800 } } // Cache for 30 mins
-        );
+export function CityWeather({ lat, lng, className = '' }: WeatherProps) {
+    const [weather, setWeather] = useState<WeatherData | null>(null);
+    const [loading, setLoading] = useState(true);
 
-        if (!res.ok) return null;
+    useEffect(() => {
+        const fetchWeather = async () => {
+            try {
+                const res = await fetch(
+                    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,is_day,precipitation,rain,showers,snowfall,weather_code,wind_speed_10m&temperature_unit=fahrenheit&wind_speed_unit=mph`
+                );
 
-        const data = await res.json();
-        const current = data.current;
+                if (!res.ok) {
+                    setLoading(false);
+                    return;
+                }
 
-        if (!current) return null;
+                const data = await res.json();
+                const current = data.current;
 
+                if (current) {
+                    setWeather({
+                        temperature: current.temperature_2m,
+                        weatherCode: current.weather_code,
+                        windSpeed: current.wind_speed_10m,
+                        isDay: current.is_day,
+                    });
+                }
+            } catch (e) {
+                console.error('Failed to load weather', e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (lat && lng) {
+            fetchWeather();
+        } else {
+            setLoading(false);
+        }
+    }, [lat, lng]);
+
+    if (loading) {
         return (
-            <div className={`bg-white/80 backdrop-blur-sm rounded-xl p-4 border border-gray-100 shadow-sm ${className}`}>
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        {getWeatherIcon(current.weather_code, current.is_day)}
-                        <div>
-                            <div className="text-2xl font-bold text-gray-900">
-                                {Math.round(current.temperature_2m)}°F
-                            </div>
-                            <div className="text-sm font-medium text-gray-500">
-                                {getWeatherDescription(current.weather_code)}
-                            </div>
-                        </div>
-                    </div>
-                    <div className="text-right">
-                        <div className="flex items-center justify-end gap-1 text-gray-500 text-sm">
-                            <Wind className="w-4 h-4" />
-                            {Math.round(current.wind_speed_10m)} mph
-                        </div>
+            <div className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm animate-pulse ${className}`}>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded" />
+                    <div>
+                        <div className="w-16 h-6 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
+                        <div className="w-20 h-4 bg-gray-200 dark:bg-gray-700 rounded" />
                     </div>
                 </div>
             </div>
         );
-    } catch (e) {
-        console.error('Failed to load weather', e);
-        return null; // Fail gracefully
     }
+
+    if (!weather) return null;
+
+    return (
+        <div className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-xl p-4 border border-gray-100 dark:border-gray-700 shadow-sm ${className}`}>
+            <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                    {getWeatherIcon(weather.weatherCode, weather.isDay)}
+                    <div>
+                        <div className="text-2xl font-bold text-gray-900 dark:text-white">
+                            {Math.round(weather.temperature)}°F
+                        </div>
+                        <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                            {getWeatherDescription(weather.weatherCode)}
+                        </div>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <div className="flex items-center justify-end gap-1 text-gray-500 dark:text-gray-400 text-sm">
+                        <Wind className="w-4 h-4" />
+                        {Math.round(weather.windSpeed)} mph
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 }
