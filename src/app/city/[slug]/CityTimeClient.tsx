@@ -22,6 +22,59 @@ interface Props {
     city: City;
 }
 
+// US State name mapping
+const US_STATES: Record<string, string> = {
+    'AL': 'Alabama', 'AK': 'Alaska', 'AZ': 'Arizona', 'AR': 'Arkansas',
+    'CA': 'California', 'CO': 'Colorado', 'CT': 'Connecticut', 'DE': 'Delaware',
+    'FL': 'Florida', 'GA': 'Georgia', 'HI': 'Hawaii', 'ID': 'Idaho',
+    'IL': 'Illinois', 'IN': 'Indiana', 'IA': 'Iowa', 'KS': 'Kansas',
+    'KY': 'Kentucky', 'LA': 'Louisiana', 'ME': 'Maine', 'MD': 'Maryland',
+    'MA': 'Massachusetts', 'MI': 'Michigan', 'MN': 'Minnesota', 'MS': 'Mississippi',
+    'MO': 'Missouri', 'MT': 'Montana', 'NE': 'Nebraska', 'NV': 'Nevada',
+    'NH': 'New Hampshire', 'NJ': 'New Jersey', 'NM': 'New Mexico', 'NY': 'New York',
+    'NC': 'North Carolina', 'ND': 'North Dakota', 'OH': 'Ohio', 'OK': 'Oklahoma',
+    'OR': 'Oregon', 'PA': 'Pennsylvania', 'RI': 'Rhode Island', 'SC': 'South Carolina',
+    'SD': 'South Dakota', 'TN': 'Tennessee', 'TX': 'Texas', 'UT': 'Utah',
+    'VT': 'Vermont', 'VA': 'Virginia', 'WA': 'Washington', 'WV': 'West Virginia',
+    'WI': 'Wisconsin', 'WY': 'Wyoming', 'DC': 'Washington D.C.',
+};
+
+// Timezone to full name mapping
+const TIMEZONE_NAMES: Record<string, string> = {
+    'America/New_York': 'Eastern Standard Time (EST)',
+    'America/Chicago': 'Central Standard Time (CST)',
+    'America/Denver': 'Mountain Standard Time (MST)',
+    'America/Los_Angeles': 'Pacific Standard Time (PST)',
+    'America/Anchorage': 'Alaska Standard Time (AKST)',
+    'Pacific/Honolulu': 'Hawaii-Aleutian Standard Time (HST)',
+    'America/Phoenix': 'Mountain Standard Time (MST)',
+    'Europe/London': 'Greenwich Mean Time (GMT)',
+    'Europe/Paris': 'Central European Time (CET)',
+    'Europe/Berlin': 'Central European Time (CET)',
+    'Europe/Moscow': 'Moscow Standard Time (MSK)',
+    'Asia/Tokyo': 'Japan Standard Time (JST)',
+    'Asia/Shanghai': 'China Standard Time (CST)',
+    'Asia/Kolkata': 'India Standard Time (IST)',
+    'Asia/Dubai': 'Gulf Standard Time (GST)',
+    'Australia/Sydney': 'Australian Eastern Standard Time (AEST)',
+    'Australia/Melbourne': 'Australian Eastern Standard Time (AEST)',
+    'Pacific/Auckland': 'New Zealand Standard Time (NZST)',
+};
+
+function getStateName(admin1: string | null | undefined): string {
+    if (!admin1) return '';
+    return US_STATES[admin1] || admin1;
+}
+
+function getFullTimezoneName(timezone: string): string {
+    const shortName = timezone.split('/').pop()?.replace(/_/g, ' ') || timezone;
+    const fullName = TIMEZONE_NAMES[timezone];
+    if (fullName) {
+        return `${shortName} / ${fullName}`;
+    }
+    return shortName;
+}
+
 export function CityTimeClient({ city }: Props) {
     const [timeStr, setTimeStr] = useState('--:--:--');
     const [dateStr, setDateStr] = useState('---');
@@ -95,6 +148,12 @@ export function CityTimeClient({ city }: Props) {
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
                     <span>{city.continent || 'Unknown'}</span>
                     <span>•</span>
+                    {city.countryCode === 'US' && city.admin1 && (
+                        <>
+                            <span>{getStateName(city.admin1)}</span>
+                            <span>•</span>
+                        </>
+                    )}
                     <span>{city.country || 'Unknown'}</span>
                 </div>
                 <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-2">
@@ -142,7 +201,7 @@ export function CityTimeClient({ city }: Props) {
                 <div className="card p-4">
                     <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Timezone</div>
                     <div className="font-semibold text-gray-900 dark:text-white">
-                        {city.timezone?.split('/').pop()?.replace(/_/g, ' ') || city.timezone || 'Unknown'}
+                        {getFullTimezoneName(city.timezone || '')}
                     </div>
                 </div>
                 <div className="card p-4">
