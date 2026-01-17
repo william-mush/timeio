@@ -68,7 +68,7 @@ async function syncToAlgolia() {
         const batch = records.slice(i, i + BATCH_SIZE);
         await client.saveObjects({
             indexName: algoliaConfig.indexName,
-            objects: batch,
+            objects: batch as unknown as Record<string, unknown>[],
         });
         console.log(`Uploaded ${Math.min(i + BATCH_SIZE, records.length)} / ${records.length}`);
     }

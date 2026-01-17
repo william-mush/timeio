@@ -165,22 +165,74 @@ export default async function CityPage({ params }: PageProps) {
         notFound();
     }
 
-    // JSON-LD structured data
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'Place',
-        name: `${city.city}, ${city.country}`,
-        address: {
-            '@type': 'PostalAddress',
-            addressLocality: city.city,
-            addressCountry: city.countryCode,
+    // JSON-LD structured data - enhanced for SEO
+    const jsonLd = [
+        // Place schema
+        {
+            '@context': 'https://schema.org',
+            '@type': 'Place',
+            name: `${city.city}, ${city.country}`,
+            address: {
+                '@type': 'PostalAddress',
+                addressLocality: city.city,
+                addressCountry: city.countryCode,
+                addressRegion: city.admin1 || undefined,
+            },
+            geo: {
+                '@type': 'GeoCoordinates',
+                latitude: city.coordinates[1],
+                longitude: city.coordinates[0],
+            },
+            identifier: city.geonameid.toString(),
+            population: {
+                '@type': 'QuantitativeValue',
+                value: city.population,
+            },
         },
-        geo: {
-            '@type': 'GeoCoordinates',
-            latitude: city.coordinates[1],
-            longitude: city.coordinates[0],
+        // BreadcrumbList for navigation
+        {
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+                {
+                    '@type': 'ListItem',
+                    position: 1,
+                    name: 'Home',
+                    item: 'https://time.io',
+                },
+                {
+                    '@type': 'ListItem',
+                    position: 2,
+                    name: 'World Cities',
+                    item: 'https://time.io/world-cities',
+                },
+                {
+                    '@type': 'ListItem',
+                    position: 3,
+                    name: city.city,
+                    item: `https://time.io/city/${city.id}`,
+                },
+            ],
         },
-    };
+        // WebPage schema
+        {
+            '@context': 'https://schema.org',
+            '@type': 'WebPage',
+            name: `Current Time in ${city.city}, ${city.country}`,
+            description: `Live local time and timezone information for ${city.city}`,
+            url: `https://time.io/city/${city.id}`,
+            inLanguage: 'en',
+            isPartOf: {
+                '@type': 'WebSite',
+                name: 'Time.IO',
+                url: 'https://time.io',
+            },
+            about: {
+                '@type': 'Place',
+                name: `${city.city}, ${city.country}`,
+            },
+        },
+    ];
 
     return (
         <>
