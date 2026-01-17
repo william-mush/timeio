@@ -13,3 +13,4 @@ export function SmartSearch() {
     return <DatabaseSearch />;
 }
 
+
