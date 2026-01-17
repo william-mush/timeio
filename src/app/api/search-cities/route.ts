@@ -85,22 +85,22 @@ export async function GET(request: NextRequest) {
             ? `AND ${conditions.join(' AND ')}`
             : '';
 
-        // TIER 1: Fast prefix search (uses btree index - very fast!)
+        // TIER 1: Fast prefix search using ILIKE (uses GIN trigram index!)
         const prefixResults = await prisma.$queryRawUnsafe<CityResult[]>(`
             SELECT 
                 geonameid, name, "asciiName", country, "countryCode",
                 timezone, latitude, longitude, population, continent, admin1
             FROM geo_cities
             WHERE (
-                LOWER("asciiName") LIKE $1 || '%'
-                OR LOWER(name) LIKE $1 || '%'
+                "asciiName" ILIKE $1 || '%'
+                OR name ILIKE $1 || '%'
             )
             ${whereClause}
             ORDER BY 
-                CASE WHEN LOWER("asciiName") = $1 THEN 0 ELSE 1 END,
+                CASE WHEN LOWER("asciiName") = LOWER($1) THEN 0 ELSE 1 END,
                 population DESC
             LIMIT ${limit}
-        `, ...params);
+        `, query, ...params.slice(1));
 
         // If we have ANY prefix results, return them immediately (fast path)
         if (prefixResults.length > 0) {
