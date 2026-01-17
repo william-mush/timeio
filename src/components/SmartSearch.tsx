@@ -1,22 +1,15 @@
 'use client';
 
-import { algoliaConfig } from '@/lib/algolia';
-import { AlgoliaSearch } from './AlgoliaSearch';
 import { HomepageSearch as DatabaseSearch } from './HomepageSearch';
 
 /**
- * Smart search component that uses:
- * - Algolia when configured (fast, typo-tolerant)
- * - Database search as fallback
+ * Smart search component
+ * 
+ * Previously supported Algolia but now uses database search exclusively
+ * since we have 2M+ cities in the PostgreSQL database with proper indexing.
+ * This is more reliable and doesn't require external API credentials.
  */
 export function SmartSearch() {
-    // Check if Algolia is configured
-    const isAlgoliaConfigured = !!(algoliaConfig.appId && algoliaConfig.searchApiKey);
-
-    if (isAlgoliaConfigured) {
-        return <AlgoliaSearch />;
-    }
-
-    // Fallback to database search
     return <DatabaseSearch />;
 }
+

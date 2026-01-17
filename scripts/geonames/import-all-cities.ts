@@ -15,12 +15,26 @@
  *   3. Run prisma migrate to create the geo_cities table
  */
 
+import * as dotenv from 'dotenv';
+import * as pathModule from 'path';
+
+// Load environment variables from .env.local first
+dotenv.config({ path: pathModule.join(__dirname, '../../.env.local') });
+dotenv.config({ path: pathModule.join(__dirname, '../../.env') });
+
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 const { PrismaClient } = require('@prisma/client');
+const { Pool } = require('pg');
+const { PrismaPg } = require('@prisma/adapter-pg');
 
-const prisma = new PrismaClient();
+// Initialize Prisma with pg adapter for Prisma 7
+const connectionString = process.env.DATABASE_URL;
+console.log('Using database:', connectionString ? connectionString.substring(0, 50) + '...' : 'NOT SET');
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 // GeoNames allCountries.txt format (tab-separated):
 // 0: geonameid, 1: name, 2: asciiname, 3: alternatenames, 4: latitude, 5: longitude,
