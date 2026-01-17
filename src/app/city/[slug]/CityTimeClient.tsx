@@ -39,40 +39,50 @@ const US_STATES: Record<string, string> = {
     'WI': 'Wisconsin', 'WY': 'Wyoming', 'DC': 'Washington D.C.',
 };
 
-// Timezone to full name mapping
-const TIMEZONE_NAMES: Record<string, string> = {
-    'America/New_York': 'Eastern Standard Time (EST)',
-    'America/Chicago': 'Central Standard Time (CST)',
-    'America/Denver': 'Mountain Standard Time (MST)',
-    'America/Los_Angeles': 'Pacific Standard Time (PST)',
-    'America/Anchorage': 'Alaska Standard Time (AKST)',
-    'Pacific/Honolulu': 'Hawaii-Aleutian Standard Time (HST)',
-    'America/Phoenix': 'Mountain Standard Time (MST)',
-    'Europe/London': 'Greenwich Mean Time (GMT)',
-    'Europe/Paris': 'Central European Time (CET)',
-    'Europe/Berlin': 'Central European Time (CET)',
-    'Europe/Moscow': 'Moscow Standard Time (MSK)',
-    'Asia/Tokyo': 'Japan Standard Time (JST)',
-    'Asia/Shanghai': 'China Standard Time (CST)',
-    'Asia/Kolkata': 'India Standard Time (IST)',
-    'Asia/Dubai': 'Gulf Standard Time (GST)',
-    'Australia/Sydney': 'Australian Eastern Standard Time (AEST)',
-    'Australia/Melbourne': 'Australian Eastern Standard Time (AEST)',
-    'Pacific/Auckland': 'New Zealand Standard Time (NZST)',
-};
-
 function getStateName(admin1: string | null | undefined): string {
     if (!admin1) return '';
     return US_STATES[admin1] || admin1;
 }
 
+// Get the full timezone name dynamically (DST-aware)
 function getFullTimezoneName(timezone: string): string {
+    if (!timezone) return 'Unknown';
+
     const shortName = timezone.split('/').pop()?.replace(/_/g, ' ') || timezone;
-    const fullName = TIMEZONE_NAMES[timezone];
-    if (fullName) {
-        return `${shortName} / ${fullName}`;
+
+    try {
+        // Use Intl.DateTimeFormat to get the actual timezone name
+        // This automatically handles DST (e.g., "Eastern Standard Time" vs "Eastern Daylight Time")
+        const formatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: timezone,
+            timeZoneName: 'long',
+        });
+
+        // Extract just the timezone name from the formatted date
+        const parts = formatter.formatToParts(new Date());
+        const tzNamePart = parts.find(p => p.type === 'timeZoneName');
+        const fullName = tzNamePart?.value || '';
+
+        // Also get the abbreviation
+        const shortFormatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: timezone,
+            timeZoneName: 'short',
+        });
+        const shortParts = shortFormatter.formatToParts(new Date());
+        const abbrevPart = shortParts.find(p => p.type === 'timeZoneName');
+        const abbrev = abbrevPart?.value || '';
+
+        if (fullName && abbrev) {
+            return `${shortName} / ${fullName} (${abbrev})`;
+        } else if (fullName) {
+            return `${shortName} / ${fullName}`;
+        }
+
+        return shortName;
+    } catch (e) {
+        // Fallback if timezone is invalid
+        return shortName;
     }
-    return shortName;
 }
 
 export function CityTimeClient({ city }: Props) {
