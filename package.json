@@ -14,6 +14,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@algolia/client-search": "^5.46.3",
     "@auth/core": "^0.34.2",
     "@auth/prisma-adapter": "^2.8.0",
     "@prisma/adapter-pg": "^7.2.0",
@@ -24,6 +25,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/sharp": "^0.31.1",
     "@vercel/analytics": "^1.5.0",
+    "algoliasearch": "^5.46.3",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -38,6 +40,7 @@
     "pg": "^8.17.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
+    "react-instantsearch": "^7.22.1",
     "react-simple-maps": "^3.0.0",
     "replicate": "^1.0.1",
     "sharp": "^0.34.2",
