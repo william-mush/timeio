@@ -3,6 +3,12 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { CityTimeClient } from './CityTimeClient';
 
+// ISR: Revalidate pages every hour for fresh data
+export const revalidate = 3600;
+
+// Allow dynamic rendering for database queries
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
     params: Promise<{
         slug: string;

@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { US_CITIES } from '@/data/us-cities';
-import { ALL_WORLD_CITIES } from '@/data/all-world-cities';
+import { prisma } from '@/lib/prisma';
 
 const BASE_URL = 'https://time.io';
 
-function generateSitemap() {
+// Generate sitemap with all cities from database
+async function generateSitemap() {
   const now = new Date().toISOString();
 
   // Static pages with priorities
@@ -24,38 +24,35 @@ function generateSitemap() {
     { url: '/auth/signin', priority: '0.4', changefreq: 'monthly' },
   ];
 
-  // Dynamic US city pages
-  const usCityPages = US_CITIES.map((city) => ({
-    url: `/us-cities/${city.id}`,
-    priority: '0.6',
-    changefreq: 'weekly' as const,
-  }));
+  // Get all cities from database
+  const cities = await prisma.geoCity.findMany({
+    select: {
+      geonameid: true,
+      asciiName: true,
+      population: true,
+    },
+    orderBy: { population: 'desc' },
+  });
 
-  // Dynamic World city pages
-  const worldCityPages = ALL_WORLD_CITIES.map((city) => ({
-    url: `/world-cities/${city.id}`,
-    priority: '0.6',
-    changefreq: 'weekly' as const,
-  }));
+  // Generate city page URLs with priority based on population
+  const cityPages = cities.map((city) => {
+    const slug = `${city.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.geonameid}`;
+    // Higher population = higher priority (0.5 to 0.8)
+    let priority = '0.5';
+    if (city.population > 5000000) priority = '0.8';
+    else if (city.population > 1000000) priority = '0.7';
+    else if (city.population > 100000) priority = '0.6';
 
-  // Comparison Pages (Top 10 cities vs Top 10 cities to match static params)
-  const topCities = ALL_WORLD_CITIES.slice(0, 10);
-  const comparisonPages = [];
+    return {
+      url: `/city/${slug}`,
+      priority,
+      changefreq: 'weekly' as const,
+    };
+  });
 
-  for (const c1 of topCities) {
-    for (const c2 of topCities) {
-      if (c1.id !== c2.id) {
-        comparisonPages.push({
-          url: `/difference/${c1.id}-vs-${c2.id}`,
-          priority: '0.7',
-          changefreq: 'weekly' as const,
-        });
-      }
-    }
-  }
+  const allPages = [...staticPages, ...cityPages];
 
-  const allPages = [...staticPages, ...usCityPages, ...worldCityPages, ...comparisonPages];
-
+  // Build sitemap XML
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${allPages.map(page => `  <url>
@@ -70,12 +67,34 @@ ${allPages.map(page => `  <url>
 }
 
 export async function GET() {
-  const sitemap = generateSitemap();
+  try {
+    const sitemap = await generateSitemap();
 
-  return new NextResponse(sitemap, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600, s-maxage=86400',
-    },
-  });
+    return new NextResponse(sitemap, {
+      headers: {
+        'Content-Type': 'application/xml',
+        'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+      },
+    });
+  } catch (error) {
+    console.error('Sitemap generation error:', error);
+
+    // Fallback to basic sitemap on error
+    const fallbackSitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>${BASE_URL}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>`;
+
+    return new NextResponse(fallbackSitemap, {
+      headers: {
+        'Content-Type': 'application/xml',
+        'Cache-Control': 'public, max-age=3600',
+      },
+    });
+  }
 }
