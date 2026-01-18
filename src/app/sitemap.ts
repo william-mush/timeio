@@ -1,9 +1,13 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 
+// Force dynamic generation - don't run at build time
+export const dynamic = 'force-dynamic';
+export const revalidate = 3600; // Revalidate every hour
+
 /**
  * Dynamic sitemap generation for Time.IO
- * Includes all city pages for SEO indexing
+ * Includes top city pages for SEO indexing
  * 
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
@@ -50,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ];
 
-    // Fetch top cities from database (limit to 50K to prevent memory issues)
+    // Fetch top cities from database (limit to 10K to prevent memory issues)
     // Select only needed fields for efficiency
     const cities = await prisma.geoCity.findMany({
         select: {
@@ -59,7 +63,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             population: true,
         },
         orderBy: { population: 'desc' },
-        take: 50000,  // Limit to prevent OOM during build
+        take: 10000,  // Limit to prevent OOM during build
     });
 
     // Generate city URLs with priority based on population
