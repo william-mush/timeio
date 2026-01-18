@@ -1,5 +1,7 @@
 import { SolarClock2D } from '@/components/SolarClock2D';
 
+export const dynamic = 'force-dynamic';
+
 export default function SolarClockPage() {
   return (
     <div className="page-container">

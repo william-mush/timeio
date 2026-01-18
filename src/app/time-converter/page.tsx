@@ -1,6 +1,8 @@
 import { TimeZoneConverter } from "@/components/TimeZoneConverter";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
     title: "Time Zone Converter - Convert Time Between Cities",
     description: "Free time zone converter. Convert time between cities and time zones instantly. Calculate time differences, schedule international meetings, and find the best time to call.",

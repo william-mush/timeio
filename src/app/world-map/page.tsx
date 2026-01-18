@@ -1,6 +1,8 @@
 import { WorldMap } from "@/components/WorldMap";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Interactive World Time Zone Map",
   description: "Explore time zones visually with our interactive world map. Click any city to see local time, find time differences, and understand global time zones at a glance.",

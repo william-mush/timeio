@@ -1,6 +1,8 @@
 import { AlarmManager } from "@/components/Alarm";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Online Alarm Clock - Set Alarms & Timers",
   description: "Set alarms and timers online with our free alarm clock. Create multiple alarms, customize sounds, and get browser notifications. Works on desktop and mobile.",

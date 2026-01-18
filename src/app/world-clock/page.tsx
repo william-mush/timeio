@@ -1,6 +1,8 @@
 import { WorldClock } from "@/components/WorldClock";
 import { Metadata } from "next";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "World Clock - Current Time in Every Time Zone",
   description: "Check the current time anywhere in the world. Add multiple cities to track time zones, compare international times, and never miss a meeting across time zones.",
