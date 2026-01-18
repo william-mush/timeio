@@ -269,30 +269,66 @@ export function TimeZoneConverter() {
     const getCity = (cityId: string) => WORLD_CITIES.find(c => c.id === cityId);
 
     const convertTime = (targetCityId: string) => {
+        const sourceCity = getCity(sourceCityId);
         const targetCity = getCity(targetCityId);
-        if (!sourceTime || !sourceDate || !targetCity) return { time: '--:--', date: '---', diff: '' };
+        if (!sourceTime || !sourceDate || !targetCity || !sourceCity) return { time: '--:--', date: '---', diff: '' };
 
         try {
+            // Create a date string that represents the source time in the source timezone
+            // We use the Temporal-like approach: create a datetime in source TZ, get UTC, then convert to target TZ
             const [hours, minutes] = sourceTime.split(':').map(Number);
             const [year, month, day] = sourceDate.split('-').map(Number);
 
-            const sourceDate_ = new Date(year, month - 1, day, hours, minutes);
+            // Format as ISO string with the source timezone
+            // We need to find what UTC time corresponds to the given local time in the source timezone
+            const dateInSourceTz = new Date(Date.UTC(year, month - 1, day, hours, minutes));
 
-            const timeStr = sourceDate_.toLocaleTimeString('en-US', {
+            // Get the source timezone offset at this time
+            const sourceFormatter = new Intl.DateTimeFormat('en-US', {
+                timeZone: sourceCity.timezone,
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            });
+
+            // Parse what time it would be in source TZ if dateInSourceTz was UTC
+            const sourceParts = sourceFormatter.formatToParts(dateInSourceTz);
+            const getPartValue = (type: string) => parseInt(sourceParts.find(p => p.type === type)?.value || '0');
+
+            const sourceHourInTz = getPartValue('hour');
+            const sourceMinuteInTz = getPartValue('minute');
+            const sourceDayInTz = getPartValue('day');
+
+            // Calculate the offset between what we want and what we got
+            const hourDiff = hours - sourceHourInTz;
+            const minuteDiff = minutes - sourceMinuteInTz;
+
+            // Adjust the UTC time by the difference to get the correct UTC time
+            const adjustedUtc = new Date(dateInSourceTz.getTime() + (hourDiff * 60 + minuteDiff) * 60 * 1000);
+
+            // Handle day boundary issues
+            if (sourceDayInTz !== day) {
+                const dayDiff = day - sourceDayInTz;
+                adjustedUtc.setTime(adjustedUtc.getTime() + dayDiff * 24 * 60 * 60 * 1000);
+            }
+
+            const timeStr = adjustedUtc.toLocaleTimeString('en-US', {
                 timeZone: targetCity.timezone,
                 hour: '2-digit',
                 minute: '2-digit',
                 hour12: true,
             });
 
-            const dateStr = sourceDate_.toLocaleDateString('en-US', {
+            const dateStr = adjustedUtc.toLocaleDateString('en-US', {
                 timeZone: targetCity.timezone,
                 weekday: 'short',
                 month: 'short',
                 day: 'numeric',
             });
 
-            const sourceCity = getCity(sourceCityId);
             const sourceOffset = sourceCity?.offset || 0;
             const targetOffset = targetCity.offset;
             const diff = targetOffset - sourceOffset;
