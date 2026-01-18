@@ -3,6 +3,10 @@ import { ALL_WORLD_CITIES, getAllCityById } from '@/data/all-world-cities';
 import { notFound } from 'next/navigation';
 import CityComparisonClient from './CityComparisonClient';
 
+// ISR: Revalidate every hour, render dynamically on-demand
+export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
     params: Promise<{
         slug: string;
@@ -28,10 +32,10 @@ function parseCitiesFromSlug(slug: string) {
 }
 
 // Generate static params for TOP 20 cities vs TOP 20 cities (400 pages) to save build time
-// Otherwise 500*500 = 250,000 pages which will timeout build.
+// Pre-generate only top 5x5 combinations; rest generated on-demand via ISR
 export async function generateStaticParams() {
-    // Only generate top 10 most popular interactions statically
-    const topCities = ALL_WORLD_CITIES.slice(0, 10);
+    // Only generate top 5 most popular interactions statically (20 pages instead of 90)
+    const topCities = ALL_WORLD_CITIES.slice(0, 5);
     const params = [];
 
     for (const c1 of topCities) {

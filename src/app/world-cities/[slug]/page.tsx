@@ -4,6 +4,9 @@ import { notFound } from 'next/navigation';
 import { WorldCityTimeClient } from './WorldCityTimeClient';
 import { CityWeather } from '@/components/CityWeather';
 
+// ISR: Revalidate every hour, render dynamically on-demand
+export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
     params: Promise<{
@@ -11,9 +14,12 @@ interface PageProps {
     }>;
 }
 
-// Generate static params for all world cities
+// Pre-generate only top 20 cities by population; rest generated on-demand via ISR
 export async function generateStaticParams() {
-    return ALL_WORLD_CITIES.map((city) => ({
+    const topCities = [...ALL_WORLD_CITIES]
+        .sort((a, b) => b.population - a.population)
+        .slice(0, 20);
+    return topCities.map((city) => ({
         slug: city.id,
     }));
 }

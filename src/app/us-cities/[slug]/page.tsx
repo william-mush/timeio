@@ -3,16 +3,21 @@ import { getCityById, US_CITIES } from '@/data/us-cities';
 import { notFound } from 'next/navigation';
 import { CityTimeClient } from './CityTimeClient';
 
+// ISR: Revalidate every hour, render dynamically on-demand
+export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
   params: Promise<{
     slug: string;
   }>;
 }
 
-// Generate static params for all cities
+// Pre-generate only top 20 cities by population; rest generated on-demand via ISR
 export async function generateStaticParams() {
-  return US_CITIES
-    .filter(city => city.population >= 24000)
+  return [...US_CITIES]
+    .sort((a, b) => b.population - a.population)
+    .slice(0, 20)
     .map((city) => ({
       slug: city.id,
     }));

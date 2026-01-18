@@ -3,6 +3,10 @@ import { US_CITIES } from '@/data/us-cities';
 import { notFound } from 'next/navigation';
 import { StatePageClient } from './StatePageClient';
 
+// ISR: Revalidate every hour, render dynamically on-demand
+export const revalidate = 3600;
+export const dynamic = 'force-dynamic';
+
 interface PageProps {
     params: Promise<{
         state: string;
