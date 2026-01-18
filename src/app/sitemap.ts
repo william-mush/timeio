@@ -50,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         },
     ];
 
-    // Fetch all cities from database
+    // Fetch top cities from database (limit to 50K to prevent memory issues)
     // Select only needed fields for efficiency
     const cities = await prisma.geoCity.findMany({
         select: {
@@ -59,6 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             population: true,
         },
         orderBy: { population: 'desc' },
+        take: 50000,  // Limit to prevent OOM during build
     });
 
     // Generate city URLs with priority based on population
