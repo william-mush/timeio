@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && PORT=3000 next dev",
     "dev:clean": "lsof -ti:3000 | xargs kill -9 2>/dev/null || true && next dev",
-    "build": "prisma generate && next build",
+    "build": "NODE_OPTIONS='--max-old-space-size=4096' prisma generate && next build",
     "build:with-db": "prisma generate && prisma db push --skip-generate && next build",
     "start": "next start",
     "lint": "next lint",
@@ -73,4 +73,3 @@
     "typescript": "^5.9.3"
   }
 }
-
