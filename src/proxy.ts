@@ -21,7 +21,7 @@ function isRateLimited(key: string): { limited: boolean; remaining: number } {
 
     // Clean up expired entries periodically
     if (rateLimitMap.size > 10000) {
-        for (const [k, v] of rateLimitMap.entries()) {
+        for (const [k, v] of Array.from(rateLimitMap.entries())) {
             if (now > v.resetTime) {
                 rateLimitMap.delete(k);
             }
@@ -60,7 +60,7 @@ const securityHeaders = {
     ].join('; '),
 };
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Rate limiting for auth endpoints
