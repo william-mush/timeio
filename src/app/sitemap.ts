@@ -1,72 +1,37 @@
 import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 
-// Force dynamic generation - don't run at build time
 export const dynamic = 'force-dynamic';
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 86400; // Revalidate daily
+
+const CITIES_PER_SITEMAP = 50000;
+const MIN_POPULATION = 5000;
 
 /**
- * Dynamic sitemap generation for Time.IO
- * Includes top city pages for SEO indexing
+ * Sitemap Index for Time.IO
+ * 
+ * Returns references to:
+ * - Main sitemap (static pages, countries, timezones)
+ * - City sub-sitemaps (50K cities each, population 5K+)
  * 
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://time.io';
 
-    // Static pages with high priority
+    // Static pages
     const staticPages: MetadataRoute.Sitemap = [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 1.0,
-        },
-        {
-            url: `${baseUrl}/world-clock`,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/time-converter`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/world-cities`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/us-cities`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/cities`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/timezone`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/difference`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.7,
-        },
+        { url: baseUrl, lastModified: new Date(), changeFrequency: 'daily', priority: 1.0 },
+        { url: `${baseUrl}/world-clock`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+        { url: `${baseUrl}/time-converter`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+        { url: `${baseUrl}/world-cities`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+        { url: `${baseUrl}/us-cities`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+        { url: `${baseUrl}/cities`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+        { url: `${baseUrl}/timezone`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.9 },
+        { url: `${baseUrl}/difference`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.7 },
     ];
 
-    // Top countries for SEO
+    // Countries
     const topCountries = ['us', 'gb', 'jp', 'de', 'fr', 'it', 'es', 'ca', 'au', 'br', 'in', 'cn', 'kr', 'mx', 'nl', 'se', 'ch', 'pl', 'be', 'at'];
     const countryPages: MetadataRoute.Sitemap = topCountries.map(code => ({
         url: `${baseUrl}/cities/${code}`,
@@ -84,7 +49,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
     }));
 
-    // Top timezones
+    // Timezones
     const topTimezones = [
         'america-new_york', 'america-los_angeles', 'america-chicago', 'europe-london',
         'europe-paris', 'europe-berlin', 'asia-tokyo', 'asia-shanghai', 'asia-kolkata',
@@ -97,28 +62,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
     }));
 
-    // Fetch top cities from database (limit to 10K to prevent memory issues)
-    // Select only needed fields for efficiency
-    const cities = await prisma.geoCity.findMany({
-        select: {
-            geonameid: true,
-            asciiName: true,
-            population: true,
-        },
-        orderBy: { population: 'desc' },
-        take: 10000,  // Limit to prevent OOM during build
+    // Get total count of cities with population 5K+
+    const totalCities = await prisma.geoCity.count({
+        where: { population: { gte: MIN_POPULATION } },
     });
 
-    // Generate city URLs with priority based on population
-    const cityPages: MetadataRoute.Sitemap = cities.map(city => {
+    // Calculate number of sub-sitemaps needed
+    const numSitemaps = Math.ceil(totalCities / CITIES_PER_SITEMAP);
+
+    // Fetch top 10K cities directly (most important ones)
+    const topCities = await prisma.geoCity.findMany({
+        select: { geonameid: true, asciiName: true, population: true },
+        where: { population: { gte: MIN_POPULATION } },
+        orderBy: { population: 'desc' },
+        take: 10000,
+    });
+
+    const cityPages: MetadataRoute.Sitemap = topCities.map(city => {
         const nameSlug = city.asciiName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
         const slug = `${nameSlug}-${city.geonameid}`;
 
-        // Priority based on population tiers
         let priority = 0.5;
-        if (city.population >= 1000000) priority = 0.8;      // Major cities (1M+)
-        else if (city.population >= 500000) priority = 0.7;  // Large cities
-        else if (city.population >= 100000) priority = 0.6;  // Medium cities
+        if (city.population >= 1000000) priority = 0.8;
+        else if (city.population >= 500000) priority = 0.7;
+        else if (city.population >= 100000) priority = 0.6;
 
         return {
             url: `${baseUrl}/city/${slug}`,
@@ -127,6 +94,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority,
         };
     });
+
+    // Note: For the remaining ~73K cities, Google will discover them via:
+    // /api/sitemap/cities/0, /api/sitemap/cities/1
+    // These are referenced in robots.txt
 
     return [...staticPages, ...countryPages, ...continentPages, ...timezonePages, ...cityPages];
 }

@@ -2,9 +2,14 @@
 User-agent: *
 Allow: /
 
-# Disallow admin
+# Disallow admin and most API routes
 Disallow: /admin
 Disallow: /api/
 
-# Sitemap location
+# But allow sitemap API routes
+Allow: /api/sitemap/
+
+# Sitemap locations
 Sitemap: https://time.io/sitemap.xml
+Sitemap: https://time.io/api/sitemap/cities/0
+Sitemap: https://time.io/api/sitemap/cities/1
