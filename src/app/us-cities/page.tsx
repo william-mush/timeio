@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { US_CITIES } from "@/data/us-cities";
 import { USCitiesClient } from "./USCitiesClient";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "Current Time in US Cities - All Time Zones",
   description: "Find the current local time in any US city. Browse 300+ cities across all American time zones including Eastern, Central, Mountain, Pacific, Alaska, and Hawaii.",

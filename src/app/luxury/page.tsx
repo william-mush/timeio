@@ -1,6 +1,8 @@
 import { luxuryTimepieces } from '../../data/luxuryTimepieces';
 import LuxuryTimepieceCard from '../../components/LuxuryTimepieceCard';
 
+export const dynamic = 'force-dynamic';
+
 export default function LuxuryTimepiecesPage() {
   return (
     <div className="min-h-screen bg-gray-100 py-12">
@@ -14,7 +16,7 @@ export default function LuxuryTimepiecesPage() {
             and current market values for both new and pre-owned timepieces.
           </p>
         </div>
-        
+
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
           {luxuryTimepieces.map((timepiece) => (
             <LuxuryTimepieceCard key={timepiece.id} timepiece={timepiece} />

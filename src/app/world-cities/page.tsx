@@ -3,6 +3,8 @@ import Link from "next/link";
 import { ALL_WORLD_CITIES, getAllUniqueCountries, getAllCitiesByContinent } from "@/data/all-world-cities";
 import { Clock, Globe, Users, MapPin } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
     title: "World Cities Time - Current Time in 500+ International Cities",
     description: "Find the current local time in major cities around the world. Browse by continent or country. Track time in Tokyo, London, Paris, Sydney, and hundreds more.",
