@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { CityWeather } from '@/components/CityWeather';
 import { SmartSearch } from '@/components/SmartSearch';
+import { CityMap } from '@/components/CityMap';
 
 // Flexible city interface that works with both static and database data
 interface City {
@@ -230,6 +231,17 @@ export function CityTimeClient({ city }: Props) {
                     </div>
                 </div>
             </div>
+
+            {/* City Map with Nearby Cities */}
+            {city.coordinates && city.coordinates.length >= 2 && (
+                <CityMap
+                    centerLat={city.coordinates[1]}
+                    centerLng={city.coordinates[0]}
+                    cityName={city.city}
+                    geonameid={city.geonameid}
+                    countryCode={city.countryCode}
+                />
+            )}
 
             {/* Search Another City */}
             <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
