@@ -60,7 +60,7 @@ async function getCountryData(countryCode: string) {
     if (cities.length === 0) return null;
 
     // Get unique timezones
-    const timezones = [...new Set(cities.map(c => c.timezone))];
+    const timezones = Array.from(new Set(cities.map(c => c.timezone)));
 
     // Get total city count for this country
     const totalCities = await prisma.geoCity.count({
