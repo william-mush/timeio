@@ -251,21 +251,51 @@ export function Navigation() {
 
           </div>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Clean direct links */}
           <nav className="hidden lg:flex items-center gap-1">
-            {/* Location Tools dropdown */}
-            <NavDropdown
-              label="Location"
-              icon={MapPin}
-              items={locationItems}
-              pathname={pathname}
-            />
+            <Link
+              href="/world-clock"
+              className={`text-sm transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg ${pathname === '/world-clock'
+                ? 'text-blue-600 font-medium bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800'
+                }`}
+            >
+              <Clock className="w-4 h-4" />
+              World Clock
+            </Link>
 
-            {/* Explore dropdown */}
+            <Link
+              href="/cities"
+              className={`text-sm transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg ${pathname.startsWith('/cities')
+                ? 'text-blue-600 font-medium bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800'
+                }`}
+            >
+              <Globe className="w-4 h-4" />
+              Cities
+            </Link>
+
+            <Link
+              href="/time-converter"
+              className={`text-sm transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg ${pathname === '/time-converter'
+                ? 'text-blue-600 font-medium bg-blue-50 dark:bg-blue-900/30 dark:text-blue-400'
+                : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800'
+                }`}
+            >
+              <History className="w-4 h-4" />
+              Converter
+            </Link>
+
+            {/* More dropdown for less-used items */}
             <NavDropdown
-              label="Explore"
-              icon={Globe}
-              items={exploreItems}
+              label="More"
+              icon={ChevronDown}
+              items={[
+                { href: '/world-map', label: 'World Map', icon: MapPin },
+                { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
+                { href: '/us-cities', label: 'US Cities', icon: Building2 },
+                { href: '/luxury', label: 'Luxury Watches', icon: Watch },
+              ]}
               pathname={pathname}
             />
           </nav>
