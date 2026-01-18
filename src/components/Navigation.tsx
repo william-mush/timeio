@@ -189,17 +189,35 @@ export function Navigation() {
     setIsMobileMenuOpen(false);
   }, [pathname]);
 
-  // All items for mobile menu
-  const allMobileItems = [
-    { href: '/', label: 'Home', icon: Globe },
-    { href: '/world-clock', label: 'World Clock', icon: Clock },
-    { href: '/world-map', label: 'World Map', icon: MapPin },
-    { href: '/us-cities', label: 'US Cities', icon: Building2 },
-    { href: '/alarms', label: 'Alarms', icon: Bell },
-    { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
-    { href: '/history', label: 'Time History', icon: History },
-    { href: '/luxury', label: 'Luxury Watches', icon: Watch },
-    { href: '/settings', label: 'Settings', icon: Settings },
+  // All items for mobile menu - organized by category
+  const mobileMenuCategories = [
+    {
+      title: 'Time Tools',
+      items: [
+        { href: '/', label: 'Home', icon: Clock },
+        { href: '/world-clock', label: 'World Clock', icon: Clock },
+        { href: '/time-converter', label: 'Time Converter', icon: Globe },
+        { href: '/alarms', label: 'Alarms', icon: Bell },
+      ]
+    },
+    {
+      title: 'Explore Cities',
+      items: [
+        { href: '/cities', label: 'Browse by Country', icon: Globe },
+        { href: '/world-cities', label: 'World Cities', icon: Globe },
+        { href: '/us-cities', label: 'US Cities', icon: Building2 },
+        { href: '/world-map', label: 'World Map', icon: MapPin },
+      ]
+    },
+    {
+      title: 'Discover',
+      items: [
+        { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
+        { href: '/history', label: 'Time History', icon: History },
+        { href: '/luxury', label: 'Luxury Watches', icon: Watch },
+        { href: '/settings', label: 'Settings', icon: Settings },
+      ]
+    },
   ];
 
   return (
@@ -391,21 +409,35 @@ export function Navigation() {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden py-3 border-t border-gray-100">
-            <div className="flex flex-col space-y-1">
-              {allMobileItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`text-sm transition-colors flex items-center gap-3 px-3 py-3 rounded-lg ${pathname === item.href
-                    ? 'text-blue-600 font-medium bg-blue-50'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                >
-                  <item.icon className="w-5 h-5" />
-                  {item.label}
-                </Link>
-              ))}
+          <div className="lg:hidden py-3 border-t border-gray-100 dark:border-slate-700 max-h-[70vh] overflow-y-auto">
+            {mobileMenuCategories.map((category) => (
+              <div key={category.title} className="mb-4">
+                <h3 className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider px-3 mb-2">
+                  {category.title}
+                </h3>
+                <div className="flex flex-col space-y-1">
+                  {category.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`text-sm transition-colors flex items-center gap-3 px-3 py-2.5 rounded-lg ${pathname === item.href
+                        ? 'text-blue-600 dark:text-blue-400 font-medium bg-blue-50 dark:bg-blue-900/30'
+                        : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-800'
+                        }`}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      {item.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+            {/* Theme toggle in mobile menu */}
+            <div className="px-3 pt-2 border-t border-gray-100 dark:border-slate-700 mt-2">
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-gray-600 dark:text-gray-300">Theme</span>
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         )}

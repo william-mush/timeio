@@ -74,6 +74,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: 'https://time.io',
   },
+  verification: {
+    google: 'A3edmW2ty8WmjWG4-2ePkyHSdM3KiGI4Y41dmhJLClI',
+  },
 };
 
 export const viewport: Viewport = {
