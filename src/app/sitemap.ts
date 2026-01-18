@@ -47,12 +47,55 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.8,
         },
         {
+            url: `${baseUrl}/cities`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/timezone`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.9,
+        },
+        {
             url: `${baseUrl}/difference`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.7,
         },
     ];
+
+    // Top countries for SEO
+    const topCountries = ['us', 'gb', 'jp', 'de', 'fr', 'it', 'es', 'ca', 'au', 'br', 'in', 'cn', 'kr', 'mx', 'nl', 'se', 'ch', 'pl', 'be', 'at'];
+    const countryPages: MetadataRoute.Sitemap = topCountries.map(code => ({
+        url: `${baseUrl}/cities/${code}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+    }));
+
+    // Continents
+    const continents = ['north-america', 'south-america', 'europe', 'asia', 'africa', 'oceania'];
+    const continentPages: MetadataRoute.Sitemap = continents.map(cont => ({
+        url: `${baseUrl}/cities/continent/${cont}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+    }));
+
+    // Top timezones
+    const topTimezones = [
+        'america-new_york', 'america-los_angeles', 'america-chicago', 'europe-london',
+        'europe-paris', 'europe-berlin', 'asia-tokyo', 'asia-shanghai', 'asia-kolkata',
+        'australia-sydney', 'pacific-auckland', 'america-toronto', 'asia-dubai',
+    ];
+    const timezonePages: MetadataRoute.Sitemap = topTimezones.map(tz => ({
+        url: `${baseUrl}/timezone/${tz}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.7,
+    }));
 
     // Fetch top cities from database (limit to 10K to prevent memory issues)
     // Select only needed fields for efficiency
@@ -85,5 +128,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         };
     });
 
-    return [...staticPages, ...cityPages];
+    return [...staticPages, ...countryPages, ...continentPages, ...timezonePages, ...cityPages];
 }
