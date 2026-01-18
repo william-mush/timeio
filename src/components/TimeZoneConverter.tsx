@@ -231,18 +231,40 @@ export function TimeZoneConverter() {
     const [modalMode, setModalMode] = useState<'source' | 'target' | string>('source');
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-    // Initialize with current time
-    useEffect(() => {
+    // Helper to get current time in a specific timezone
+    const getCurrentTimeInTimezone = (timezone: string) => {
         const now = new Date();
-        const hours = now.getHours().toString().padStart(2, '0');
-        const minutes = now.getMinutes().toString().padStart(2, '0');
-        setSourceTime(`${hours}:${minutes}`);
+        const timeStr = now.toLocaleTimeString('en-US', {
+            timeZone: timezone,
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+        });
+        const dateStr = now.toLocaleDateString('en-CA', { // YYYY-MM-DD format
+            timeZone: timezone,
+        });
+        return { time: timeStr, date: dateStr };
+    };
 
-        const year = now.getFullYear();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        setSourceDate(`${year}-${month}-${day}`);
-    }, []);
+    // Initialize with current time in source city's timezone
+    useEffect(() => {
+        const sourceCity = WORLD_CITIES.find(c => c.id === sourceCityId);
+        if (sourceCity) {
+            const { time, date } = getCurrentTimeInTimezone(sourceCity.timezone);
+            setSourceTime(time);
+            setSourceDate(date);
+        }
+    }, []); // Only on mount
+
+    // Update time when source city changes
+    useEffect(() => {
+        const sourceCity = WORLD_CITIES.find(c => c.id === sourceCityId);
+        if (sourceCity) {
+            const { time, date } = getCurrentTimeInTimezone(sourceCity.timezone);
+            setSourceTime(time);
+            setSourceDate(date);
+        }
+    }, [sourceCityId]);
 
     const getCity = (cityId: string) => WORLD_CITIES.find(c => c.id === cityId);
 
