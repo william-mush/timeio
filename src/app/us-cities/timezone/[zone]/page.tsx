@@ -28,13 +28,7 @@ const timezoneMap: Record<string, { timezone: string; label: string }> = {
     'kentucky-louisville': { timezone: 'America/Kentucky/Louisville', label: 'Eastern (Louisville)' },
 };
 
-// Generate static params
-export async function generateStaticParams() {
-    const zones = Array.from(new Set(US_CITIES.map(c => c.timezone)));
-    return zones.map(tz => ({
-        zone: tz.replace('America/', '').replace('Pacific/', '').toLowerCase().replace(/_/g, '-').replace(/\//g, '-'),
-    }));
-}
+// All pages generated on-demand via ISR (no static pre-generation to avoid OOM)
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

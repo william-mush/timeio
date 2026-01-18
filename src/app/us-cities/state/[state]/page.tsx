@@ -32,13 +32,7 @@ const stateNames: Record<string, string> = {
     'wisconsin': 'Wisconsin', 'wyoming': 'Wyoming', 'district-of-columbia': 'District of Columbia',
 };
 
-// Generate static params for all states
-export async function generateStaticParams() {
-    const states = Array.from(new Set(US_CITIES.map(c => c.state)));
-    return states.map(state => ({
-        state: state.toLowerCase().replace(/\s+/g, '-'),
-    }));
-}
+// All pages generated on-demand via ISR (no static pre-generation to avoid OOM)
 
 // Generate metadata
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

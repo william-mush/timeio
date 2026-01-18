@@ -31,24 +31,7 @@ function parseCitiesFromSlug(slug: string) {
     return null;
 }
 
-// Generate static params for TOP 20 cities vs TOP 20 cities (400 pages) to save build time
-// Pre-generate only top 5x5 combinations; rest generated on-demand via ISR
-export async function generateStaticParams() {
-    // Only generate top 5 most popular interactions statically (20 pages instead of 90)
-    const topCities = ALL_WORLD_CITIES.slice(0, 5);
-    const params = [];
-
-    for (const c1 of topCities) {
-        for (const c2 of topCities) {
-            if (c1.id !== c2.id) {
-                params.push({
-                    slug: `${c1.id}-vs-${c2.id}`
-                });
-            }
-        }
-    }
-    return params;
-}
+// All pages generated on-demand via ISR (no static pre-generation to avoid OOM)
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;

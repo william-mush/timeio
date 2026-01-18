@@ -8,20 +8,12 @@ import { CityWeather } from '@/components/CityWeather';
 export const revalidate = 3600;
 export const dynamic = 'force-dynamic';
 
+// All pages generated on-demand via ISR (no static pre-generation to avoid OOM)
+
 interface PageProps {
     params: Promise<{
         slug: string;
     }>;
-}
-
-// Pre-generate only top 20 cities by population; rest generated on-demand via ISR
-export async function generateStaticParams() {
-    const topCities = [...ALL_WORLD_CITIES]
-        .sort((a, b) => b.population - a.population)
-        .slice(0, 20);
-    return topCities.map((city) => ({
-        slug: city.id,
-    }));
 }
 
 // Generate metadata for SEO
