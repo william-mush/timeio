@@ -316,7 +316,16 @@ export function TimeZoneConverter() {
             const sourceOffset = -new Date(now.toLocaleString('en-US', { timeZone: sourceCity.timezone })).getTimezoneOffset() / 60;
             const targetOffset = -new Date(now.toLocaleString('en-US', { timeZone: targetCity.timezone })).getTimezoneOffset() / 60;
             const diff = targetOffset - sourceOffset;
-            const diffStr = diff >= 0 ? `+${diff}h` : `${diff}h`;
+
+            // Create human-readable difference string
+            let diffStr = '';
+            if (diff === 0) {
+                diffStr = 'Same time';
+            } else if (diff > 0) {
+                diffStr = `${diff} ${diff === 1 ? 'hour' : 'hours'} ahead`;
+            } else {
+                diffStr = `${Math.abs(diff)} ${Math.abs(diff) === 1 ? 'hour' : 'hours'} behind`;
+            }
 
             return { time: timeStr, date: dateStr, diff: diffStr };
         } catch {
