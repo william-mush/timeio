@@ -435,13 +435,14 @@ export function TimeZoneConverter() {
                         </button>
 
                         {/* Time selector - PRIMARY */}
-                        <div className="md:w-56 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="md:w-64 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                             <div className="text-xs text-blue-100 uppercase tracking-wide mb-1">Time</div>
                             <input
                                 type="time"
                                 value={sourceTime}
                                 onChange={(e) => setSourceTime(e.target.value)}
-                                className="w-full text-2xl font-semibold text-white bg-transparent border-none outline-none cursor-pointer"
+                                className="w-full text-2xl font-semibold text-white bg-transparent border-none outline-none cursor-pointer [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-inner-spin-button]:hidden"
+                                style={{ colorScheme: 'dark' }}
                             />
                         </div>
 
