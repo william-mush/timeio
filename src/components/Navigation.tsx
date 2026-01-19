@@ -283,7 +283,7 @@ export function Navigation() {
                 }`}
             >
               <History className="w-4 h-4" />
-              Converter
+              City Time
             </Link>
 
             {/* More dropdown for less-used items */}

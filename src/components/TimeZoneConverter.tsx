@@ -311,11 +311,39 @@ export function TimeZoneConverter() {
                 day: 'numeric',
             });
 
-            // Calculate offset diff using Intl (more accurate than static offsets)
+            // Calculate offset diff by comparing actual times in each timezone
             const now = new Date();
-            const sourceOffset = -new Date(now.toLocaleString('en-US', { timeZone: sourceCity.timezone })).getTimezoneOffset() / 60;
-            const targetOffset = -new Date(now.toLocaleString('en-US', { timeZone: targetCity.timezone })).getTimezoneOffset() / 60;
-            const diff = targetOffset - sourceOffset;
+
+            // Get current hour in each timezone
+            const sourceHour = parseInt(now.toLocaleString('en-US', {
+                timeZone: sourceCity.timezone,
+                hour: 'numeric',
+                hour12: false
+            }));
+            const targetHour = parseInt(now.toLocaleString('en-US', {
+                timeZone: targetCity.timezone,
+                hour: 'numeric',
+                hour12: false
+            }));
+
+            // Get dates to handle day boundary
+            const sourceDate2 = now.toLocaleDateString('en-CA', { timeZone: sourceCity.timezone });
+            const targetDate2 = now.toLocaleDateString('en-CA', { timeZone: targetCity.timezone });
+
+            let diff = targetHour - sourceHour;
+
+            // Adjust for day difference
+            if (sourceDate2 !== targetDate2) {
+                if (targetDate2 > sourceDate2) {
+                    diff += 24; // Target is a day ahead
+                } else {
+                    diff -= 24; // Target is a day behind
+                }
+            }
+
+            // Normalize to -12 to +12 range for readable display
+            if (diff > 12) diff -= 24;
+            if (diff < -12) diff += 24;
 
             // Create human-readable difference string
             let diffStr = '';
