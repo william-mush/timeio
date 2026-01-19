@@ -3,84 +3,61 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { ArrowRight, Plus, Trash2, Clock, Search, X, ChevronDown, Calendar } from 'lucide-react';
 
-// Extended list of world cities with timezones
-const WORLD_CITIES = [
-    // Americas
-    { id: 'new-york', city: 'New York', country: 'USA', timezone: 'America/New_York', offset: -5 },
-    { id: 'los-angeles', city: 'Los Angeles', country: 'USA', timezone: 'America/Los_Angeles', offset: -8 },
-    { id: 'chicago', city: 'Chicago', country: 'USA', timezone: 'America/Chicago', offset: -6 },
-    { id: 'houston', city: 'Houston', country: 'USA', timezone: 'America/Chicago', offset: -6 },
-    { id: 'phoenix', city: 'Phoenix', country: 'USA', timezone: 'America/Phoenix', offset: -7 },
-    { id: 'miami', city: 'Miami', country: 'USA', timezone: 'America/New_York', offset: -5 },
-    { id: 'denver', city: 'Denver', country: 'USA', timezone: 'America/Denver', offset: -7 },
-    { id: 'seattle', city: 'Seattle', country: 'USA', timezone: 'America/Los_Angeles', offset: -8 },
-    { id: 'boston', city: 'Boston', country: 'USA', timezone: 'America/New_York', offset: -5 },
-    { id: 'san-francisco', city: 'San Francisco', country: 'USA', timezone: 'America/Los_Angeles', offset: -8 },
-    { id: 'toronto', city: 'Toronto', country: 'Canada', timezone: 'America/Toronto', offset: -5 },
-    { id: 'vancouver', city: 'Vancouver', country: 'Canada', timezone: 'America/Vancouver', offset: -8 },
-    { id: 'mexico-city', city: 'Mexico City', country: 'Mexico', timezone: 'America/Mexico_City', offset: -6 },
-    { id: 'sao-paulo', city: 'São Paulo', country: 'Brazil', timezone: 'America/Sao_Paulo', offset: -3 },
-    { id: 'buenos-aires', city: 'Buenos Aires', country: 'Argentina', timezone: 'America/Argentina/Buenos_Aires', offset: -3 },
-    { id: 'bogota', city: 'Bogotá', country: 'Colombia', timezone: 'America/Bogota', offset: -5 },
-    { id: 'lima', city: 'Lima', country: 'Peru', timezone: 'America/Lima', offset: -5 },
-    { id: 'santiago', city: 'Santiago', country: 'Chile', timezone: 'America/Santiago', offset: -3 },
+// City type definition
+interface CityData {
+    id: string;
+    city: string;
+    country: string;
+    timezone: string;
+}
 
-    // Europe
-    { id: 'london', city: 'London', country: 'UK', timezone: 'Europe/London', offset: 0 },
-    { id: 'paris', city: 'Paris', country: 'France', timezone: 'Europe/Paris', offset: 1 },
-    { id: 'berlin', city: 'Berlin', country: 'Germany', timezone: 'Europe/Berlin', offset: 1 },
-    { id: 'madrid', city: 'Madrid', country: 'Spain', timezone: 'Europe/Madrid', offset: 1 },
-    { id: 'rome', city: 'Rome', country: 'Italy', timezone: 'Europe/Rome', offset: 1 },
-    { id: 'amsterdam', city: 'Amsterdam', country: 'Netherlands', timezone: 'Europe/Amsterdam', offset: 1 },
-    { id: 'moscow', city: 'Moscow', country: 'Russia', timezone: 'Europe/Moscow', offset: 3 },
-    { id: 'istanbul', city: 'Istanbul', country: 'Turkey', timezone: 'Europe/Istanbul', offset: 3 },
-    { id: 'athens', city: 'Athens', country: 'Greece', timezone: 'Europe/Athens', offset: 2 },
-    { id: 'vienna', city: 'Vienna', country: 'Austria', timezone: 'Europe/Vienna', offset: 1 },
-    { id: 'zurich', city: 'Zurich', country: 'Switzerland', timezone: 'Europe/Zurich', offset: 1 },
-    { id: 'stockholm', city: 'Stockholm', country: 'Sweden', timezone: 'Europe/Stockholm', offset: 1 },
-    { id: 'oslo', city: 'Oslo', country: 'Norway', timezone: 'Europe/Oslo', offset: 1 },
-    { id: 'copenhagen', city: 'Copenhagen', country: 'Denmark', timezone: 'Europe/Copenhagen', offset: 1 },
-    { id: 'dublin', city: 'Dublin', country: 'Ireland', timezone: 'Europe/Dublin', offset: 0 },
-    { id: 'lisbon', city: 'Lisbon', country: 'Portugal', timezone: 'Europe/Lisbon', offset: 0 },
-    { id: 'warsaw', city: 'Warsaw', country: 'Poland', timezone: 'Europe/Warsaw', offset: 1 },
-    { id: 'prague', city: 'Prague', country: 'Czech Republic', timezone: 'Europe/Prague', offset: 1 },
-    { id: 'budapest', city: 'Budapest', country: 'Hungary', timezone: 'Europe/Budapest', offset: 1 },
-    { id: 'brussels', city: 'Brussels', country: 'Belgium', timezone: 'Europe/Brussels', offset: 1 },
-
-    // Asia
-    { id: 'tokyo', city: 'Tokyo', country: 'Japan', timezone: 'Asia/Tokyo', offset: 9 },
-    { id: 'shanghai', city: 'Shanghai', country: 'China', timezone: 'Asia/Shanghai', offset: 8 },
-    { id: 'beijing', city: 'Beijing', country: 'China', timezone: 'Asia/Shanghai', offset: 8 },
-    { id: 'hong-kong', city: 'Hong Kong', country: 'China', timezone: 'Asia/Hong_Kong', offset: 8 },
-    { id: 'singapore', city: 'Singapore', country: 'Singapore', timezone: 'Asia/Singapore', offset: 8 },
-    { id: 'seoul', city: 'Seoul', country: 'South Korea', timezone: 'Asia/Seoul', offset: 9 },
-    { id: 'mumbai', city: 'Mumbai', country: 'India', timezone: 'Asia/Kolkata', offset: 5.5 },
-    { id: 'delhi', city: 'Delhi', country: 'India', timezone: 'Asia/Kolkata', offset: 5.5 },
-    { id: 'bangalore', city: 'Bangalore', country: 'India', timezone: 'Asia/Kolkata', offset: 5.5 },
-    { id: 'bangkok', city: 'Bangkok', country: 'Thailand', timezone: 'Asia/Bangkok', offset: 7 },
-    { id: 'jakarta', city: 'Jakarta', country: 'Indonesia', timezone: 'Asia/Jakarta', offset: 7 },
-    { id: 'dubai', city: 'Dubai', country: 'UAE', timezone: 'Asia/Dubai', offset: 4 },
-    { id: 'riyadh', city: 'Riyadh', country: 'Saudi Arabia', timezone: 'Asia/Riyadh', offset: 3 },
-    { id: 'tel-aviv', city: 'Tel Aviv', country: 'Israel', timezone: 'Asia/Jerusalem', offset: 2 },
-    { id: 'manila', city: 'Manila', country: 'Philippines', timezone: 'Asia/Manila', offset: 8 },
-    { id: 'kuala-lumpur', city: 'Kuala Lumpur', country: 'Malaysia', timezone: 'Asia/Kuala_Lumpur', offset: 8 },
-    { id: 'taipei', city: 'Taipei', country: 'Taiwan', timezone: 'Asia/Taipei', offset: 8 },
-    { id: 'ho-chi-minh', city: 'Ho Chi Minh City', country: 'Vietnam', timezone: 'Asia/Ho_Chi_Minh', offset: 7 },
-
-    // Oceania
-    { id: 'sydney', city: 'Sydney', country: 'Australia', timezone: 'Australia/Sydney', offset: 11 },
-    { id: 'melbourne', city: 'Melbourne', country: 'Australia', timezone: 'Australia/Melbourne', offset: 11 },
-    { id: 'brisbane', city: 'Brisbane', country: 'Australia', timezone: 'Australia/Brisbane', offset: 10 },
-    { id: 'perth', city: 'Perth', country: 'Australia', timezone: 'Australia/Perth', offset: 8 },
-    { id: 'auckland', city: 'Auckland', country: 'New Zealand', timezone: 'Pacific/Auckland', offset: 13 },
-
-    // Africa
-    { id: 'cairo', city: 'Cairo', country: 'Egypt', timezone: 'Africa/Cairo', offset: 2 },
-    { id: 'johannesburg', city: 'Johannesburg', country: 'South Africa', timezone: 'Africa/Johannesburg', offset: 2 },
-    { id: 'lagos', city: 'Lagos', country: 'Nigeria', timezone: 'Africa/Lagos', offset: 1 },
-    { id: 'nairobi', city: 'Nairobi', country: 'Kenya', timezone: 'Africa/Nairobi', offset: 3 },
-    { id: 'casablanca', city: 'Casablanca', country: 'Morocco', timezone: 'Africa/Casablanca', offset: 1 },
+// Fallback cities for instant loading (top 20 by population)
+const FALLBACK_CITIES: CityData[] = [
+    { id: 'tokyo-1850147', city: 'Tokyo', country: 'Japan', timezone: 'Asia/Tokyo' },
+    { id: 'delhi-1273294', city: 'Delhi', country: 'India', timezone: 'Asia/Kolkata' },
+    { id: 'shanghai-1796236', city: 'Shanghai', country: 'China', timezone: 'Asia/Shanghai' },
+    { id: 'sao-paulo-3448439', city: 'Sao Paulo', country: 'Brazil', timezone: 'America/Sao_Paulo' },
+    { id: 'mexico-city-3530597', city: 'Mexico City', country: 'Mexico', timezone: 'America/Mexico_City' },
+    { id: 'cairo-360630', city: 'Cairo', country: 'Egypt', timezone: 'Africa/Cairo' },
+    { id: 'mumbai-1275339', city: 'Mumbai', country: 'India', timezone: 'Asia/Kolkata' },
+    { id: 'beijing-1816670', city: 'Beijing', country: 'China', timezone: 'Asia/Shanghai' },
+    { id: 'dhaka-1185241', city: 'Dhaka', country: 'Bangladesh', timezone: 'Asia/Dhaka' },
+    { id: 'osaka-1853909', city: 'Osaka', country: 'Japan', timezone: 'Asia/Tokyo' },
+    { id: 'new-york-5128581', city: 'New York', country: 'United States', timezone: 'America/New_York' },
+    { id: 'karachi-1174872', city: 'Karachi', country: 'Pakistan', timezone: 'Asia/Karachi' },
+    { id: 'buenos-aires-3435910', city: 'Buenos Aires', country: 'Argentina', timezone: 'America/Argentina/Buenos_Aires' },
+    { id: 'chongqing-1814906', city: 'Chongqing', country: 'China', timezone: 'Asia/Shanghai' },
+    { id: 'istanbul-745044', city: 'Istanbul', country: 'Turkey', timezone: 'Europe/Istanbul' },
+    { id: 'kolkata-1275004', city: 'Kolkata', country: 'India', timezone: 'Asia/Kolkata' },
+    { id: 'manila-1701668', city: 'Manila', country: 'Philippines', timezone: 'Asia/Manila' },
+    { id: 'lagos-2332459', city: 'Lagos', country: 'Nigeria', timezone: 'Africa/Lagos' },
+    { id: 'rio-de-janeiro-3451190', city: 'Rio de Janeiro', country: 'Brazil', timezone: 'America/Sao_Paulo' },
+    { id: 'london-2643743', city: 'London', country: 'United Kingdom', timezone: 'Europe/London' },
 ];
+
+// Client-side cache for cities
+let citiesCache: CityData[] | null = null;
+let cacheTimestamp = 0;
+const CACHE_TTL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+
+async function fetchTopCities(): Promise<CityData[]> {
+    // Return cached cities if valid
+    if (citiesCache && Date.now() - cacheTimestamp < CACHE_TTL) {
+        return citiesCache;
+    }
+
+    try {
+        const response = await fetch('/api/cities/top');
+        if (!response.ok) throw new Error('Failed to fetch cities');
+        const cities = await response.json();
+        citiesCache = cities;
+        cacheTimestamp = Date.now();
+        return cities;
+    } catch (error) {
+        console.error('Error fetching cities:', error);
+        return FALLBACK_CITIES;
+    }
+}
 
 interface ConversionRow {
     id: string;
@@ -93,12 +70,14 @@ function CitySearchModal({
     onClose,
     onSelect,
     excludeIds,
+    cities,
     title = 'Select City'
 }: {
     isOpen: boolean;
     onClose: () => void;
     onSelect: (cityId: string) => void;
     excludeIds: string[];
+    cities: CityData[];
     title?: string;
 }) {
     const [searchValue, setSearchValue] = useState('');
@@ -119,18 +98,18 @@ function CitySearchModal({
         const query = searchValue.toLowerCase().trim();
         if (!query) {
             // Show popular cities when no search
-            return WORLD_CITIES
+            return cities
                 .filter(city => !excludeIds.includes(city.id))
                 .slice(0, 15);
         }
-        return WORLD_CITIES
+        return cities
             .filter(city => !excludeIds.includes(city.id))
             .filter(city =>
                 city.city.toLowerCase().includes(query) ||
                 city.country.toLowerCase().includes(query)
             )
             .slice(0, 20);
-    }, [searchValue, excludeIds]);
+    }, [searchValue, excludeIds, cities]);
 
     if (!isOpen) return null;
 
@@ -207,7 +186,7 @@ function CitySearchModal({
                                         </div>
                                     </div>
                                     <div className="text-sm text-gray-400">
-                                        {(city as any).displayTimezone || city.timezone.split('/').pop()?.replace(/_/g, ' ')}
+                                        {city.timezone.split('/').pop()?.replace(/_/g, ' ')}
                                     </div>
                                 </button>
                             ))}
@@ -220,16 +199,28 @@ function CitySearchModal({
 }
 
 export function TimeZoneConverter() {
-    const [sourceCityId, setSourceCityId] = useState('new-york');
+    // Dynamic cities state - starts with fallback, loads full list from API
+    const [cities, setCities] = useState<CityData[]>(FALLBACK_CITIES);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [sourceCityId, setSourceCityId] = useState('tokyo-1850147');
     const [sourceTime, setSourceTime] = useState('');
     const [sourceDate, setSourceDate] = useState('');
     const [rows, setRows] = useState<ConversionRow[]>([
-        { id: '1', cityId: 'london' },
-        { id: '2', cityId: 'tokyo' },
+        { id: '1', cityId: 'london-2643743' },
+        { id: '2', cityId: 'new-york-5128581' },
     ]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState<'source' | 'target' | string>('source');
     const [showDatePicker, setShowDatePicker] = useState(false);
+
+    // Fetch cities on mount
+    useEffect(() => {
+        fetchTopCities().then(fetchedCities => {
+            setCities(fetchedCities);
+            setIsLoading(false);
+        });
+    }, []);
 
     // Helper to get current time in a specific timezone
     const getCurrentTimeInTimezone = (timezone: string) => {
@@ -248,25 +239,25 @@ export function TimeZoneConverter() {
 
     // Initialize with current time in source city's timezone
     useEffect(() => {
-        const sourceCity = WORLD_CITIES.find(c => c.id === sourceCityId);
+        const sourceCity = cities.find((c: CityData) => c.id === sourceCityId);
         if (sourceCity) {
             const { time, date } = getCurrentTimeInTimezone(sourceCity.timezone);
             setSourceTime(time);
             setSourceDate(date);
         }
-    }, []); // Only on mount
+    }, [cities]); // Re-run when cities load
 
     // Update time when source city changes
     useEffect(() => {
-        const sourceCity = WORLD_CITIES.find(c => c.id === sourceCityId);
+        const sourceCity = cities.find((c: CityData) => c.id === sourceCityId);
         if (sourceCity) {
             const { time, date } = getCurrentTimeInTimezone(sourceCity.timezone);
             setSourceTime(time);
             setSourceDate(date);
         }
-    }, [sourceCityId]);
+    }, [sourceCityId, cities]);
 
-    const getCity = (cityId: string) => WORLD_CITIES.find(c => c.id === cityId);
+    const getCity = (cityId: string): CityData | undefined => cities.find((c: CityData) => c.id === cityId);
 
     const convertTime = (targetCityId: string) => {
         const sourceCity = getCity(sourceCityId);
@@ -274,16 +265,11 @@ export function TimeZoneConverter() {
         if (!sourceTime || !sourceDate || !targetCity || !sourceCity) return { time: '--:--', date: '---', diff: '' };
 
         try {
-            // Create a date string that represents the source time in the source timezone
-            // We use the Temporal-like approach: create a datetime in source TZ, get UTC, then convert to target TZ
             const [hours, minutes] = sourceTime.split(':').map(Number);
             const [year, month, day] = sourceDate.split('-').map(Number);
 
-            // Format as ISO string with the source timezone
-            // We need to find what UTC time corresponds to the given local time in the source timezone
             const dateInSourceTz = new Date(Date.UTC(year, month - 1, day, hours, minutes));
 
-            // Get the source timezone offset at this time
             const sourceFormatter = new Intl.DateTimeFormat('en-US', {
                 timeZone: sourceCity.timezone,
                 year: 'numeric',
@@ -294,7 +280,6 @@ export function TimeZoneConverter() {
                 hour12: false,
             });
 
-            // Parse what time it would be in source TZ if dateInSourceTz was UTC
             const sourceParts = sourceFormatter.formatToParts(dateInSourceTz);
             const getPartValue = (type: string) => parseInt(sourceParts.find(p => p.type === type)?.value || '0');
 
@@ -302,14 +287,11 @@ export function TimeZoneConverter() {
             const sourceMinuteInTz = getPartValue('minute');
             const sourceDayInTz = getPartValue('day');
 
-            // Calculate the offset between what we want and what we got
             const hourDiff = hours - sourceHourInTz;
             const minuteDiff = minutes - sourceMinuteInTz;
 
-            // Adjust the UTC time by the difference to get the correct UTC time
             const adjustedUtc = new Date(dateInSourceTz.getTime() + (hourDiff * 60 + minuteDiff) * 60 * 1000);
 
-            // Handle day boundary issues
             if (sourceDayInTz !== day) {
                 const dayDiff = day - sourceDayInTz;
                 adjustedUtc.setTime(adjustedUtc.getTime() + dayDiff * 24 * 60 * 60 * 1000);
@@ -329,8 +311,10 @@ export function TimeZoneConverter() {
                 day: 'numeric',
             });
 
-            const sourceOffset = sourceCity?.offset || 0;
-            const targetOffset = targetCity.offset;
+            // Calculate offset diff using Intl (more accurate than static offsets)
+            const now = new Date();
+            const sourceOffset = -new Date(now.toLocaleString('en-US', { timeZone: sourceCity.timezone })).getTimezoneOffset() / 60;
+            const targetOffset = -new Date(now.toLocaleString('en-US', { timeZone: targetCity.timezone })).getTimezoneOffset() / 60;
             const diff = targetOffset - sourceOffset;
             const diffStr = diff >= 0 ? `+${diff}h` : `${diff}h`;
 
@@ -349,7 +333,6 @@ export function TimeZoneConverter() {
         if (modalMode === 'source') {
             setSourceCityId(cityId);
         } else {
-            // Find if we're editing or adding
             const existingRow = rows.find(r => r.id === modalMode);
             if (existingRow) {
                 setRows(rows.map(r => r.id === modalMode ? { ...r, cityId } : r));
@@ -390,6 +373,7 @@ export function TimeZoneConverter() {
                 onClose={() => setIsModalOpen(false)}
                 onSelect={handleCitySelect}
                 excludeIds={modalMode === 'new' ? usedCityIds : usedCityIds.filter(id => id !== (modalMode === 'source' ? sourceCityId : rows.find(r => r.id === modalMode)?.cityId))}
+                cities={cities}
                 title={modalMode === 'source' ? 'From City' : 'To City'}
             />
 
