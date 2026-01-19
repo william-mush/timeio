@@ -289,7 +289,7 @@ export function Navigation() {
             {/* More dropdown for less-used items */}
             <NavDropdown
               label="More"
-              icon={ChevronDown}
+              icon={Globe}
               items={[
                 { href: '/world-map', label: 'World Map', icon: MapPin },
                 { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
