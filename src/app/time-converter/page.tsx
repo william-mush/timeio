@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-    title: "Time Zone Converter - Convert Time Between Cities",
+    title: "City Time - Compare Time Between Cities | Time.IO",
     description: "Free time zone converter. Convert time between cities and time zones instantly. Calculate time differences, schedule international meetings, and find the best time to call.",
     keywords: [
         "time zone converter",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
         "time difference between cities",
     ],
     openGraph: {
-        title: "Time Zone Converter - Time.IO",
+        title: "City Time - Compare Time Between Cities | Time.IO",
         description: "Convert time between any cities and time zones instantly.",
         type: "website",
         url: "https://time.io/time-converter",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
 const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
-    name: 'Time Zone Converter',
+    name: 'City Time',
     url: 'https://time.io/time-converter',
     description: 'Convert time between cities and time zones instantly.',
     applicationCategory: 'UtilitiesApplication',
@@ -57,7 +57,7 @@ export default function TimeConverterPage() {
                     {/* Hero */}
                     <div className="text-center mb-10">
                         <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                            Time Zone Converter
+                            City Time
                         </h1>
                         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                             Convert time between cities and time zones. Perfect for scheduling
@@ -71,7 +71,7 @@ export default function TimeConverterPage() {
                     <div className="mt-16 max-w-3xl mx-auto">
                         <div className="bg-gray-50 rounded-2xl p-8">
                             <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-                                How to Use the Time Zone Converter
+                                How to Use City Time
                             </h2>
 
                             <div className="space-y-6 text-gray-600">

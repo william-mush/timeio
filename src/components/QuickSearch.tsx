@@ -187,7 +187,7 @@ export function QuickSearch() {
                             <CommandGroup heading="Quick Access">
                                 <CommandItem onSelect={() => runCommand(() => router.push('/time-converter'))}>
                                     <Calculator className="mr-2 h-4 w-4" />
-                                    <span>Time Converter</span>
+                                    <span>City Time</span>
                                 </CommandItem>
                                 <CommandItem onSelect={() => runCommand(() => router.push('/world-clock'))}>
                                     <Clock className="mr-2 h-4 w-4" />

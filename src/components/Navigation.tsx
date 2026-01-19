@@ -104,7 +104,7 @@ const UserAvatar = ({ image, name }: { image?: string | null; name?: string | nu
 // Location dropdown items
 const locationItems = [
   { href: '/world-clock', label: 'World Clock', icon: Clock },
-  { href: '/time-converter', label: 'Time Converter', icon: Globe },
+  { href: '/time-converter', label: 'City Time', icon: Globe },
   { href: '/world-map', label: 'World Map', icon: MapPin },
   { href: '/world-cities', label: 'World Cities', icon: Globe },
   { href: '/us-cities', label: 'US Cities', icon: Building2 },
@@ -196,7 +196,7 @@ export function Navigation() {
       items: [
         { href: '/', label: 'Home', icon: Clock },
         { href: '/world-clock', label: 'World Clock', icon: Clock },
-        { href: '/time-converter', label: 'Time Converter', icon: Globe },
+        { href: '/time-converter', label: 'City Time', icon: Globe },
         { href: '/alarms', label: 'Alarms', icon: Bell },
       ]
     },
