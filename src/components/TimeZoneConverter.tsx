@@ -435,7 +435,7 @@ export function TimeZoneConverter() {
                         </button>
 
                         {/* Time selector - PRIMARY */}
-                        <div className="md:w-48 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                        <div className="md:w-56 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
                             <div className="text-xs text-blue-100 uppercase tracking-wide mb-1">Time</div>
                             <input
                                 type="time"
