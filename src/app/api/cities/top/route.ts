@@ -6,7 +6,8 @@ const CACHE_DURATION = 86400;
 
 export async function GET() {
     try {
-        const cities = await prisma.geoCity.findMany({
+        // Fetch top 1000 cities worldwide by population
+        const worldwideCities = await prisma.geoCity.findMany({
             select: {
                 geonameid: true,
                 asciiName: true,
@@ -15,14 +16,54 @@ export async function GET() {
                 population: true,
             },
             where: {
-                population: { gte: 100000 }, // Cities with 100K+ population
+                population: { gte: 50000 },
                 timezone: { not: '' },
             },
             orderBy: { population: 'desc' },
-            take: 500,
+            take: 1000,
         });
 
-        const formattedCities = cities.map(city => ({
+        // Fetch all US cities with 50k+ population
+        const usCities = await prisma.geoCity.findMany({
+            select: {
+                geonameid: true,
+                asciiName: true,
+                country: true,
+                timezone: true,
+                population: true,
+            },
+            where: {
+                country: 'United States',
+                population: { gte: 50000 },
+                timezone: { not: '' },
+            },
+            orderBy: { population: 'desc' },
+        });
+
+        // Combine and deduplicate by geonameid
+        const seenIds = new Set<number>();
+        const combinedCities = [];
+
+        // Add worldwide first (already sorted by population)
+        for (const city of worldwideCities) {
+            if (!seenIds.has(city.geonameid)) {
+                seenIds.add(city.geonameid);
+                combinedCities.push(city);
+            }
+        }
+
+        // Add remaining US cities not already in the list
+        for (const city of usCities) {
+            if (!seenIds.has(city.geonameid)) {
+                seenIds.add(city.geonameid);
+                combinedCities.push(city);
+            }
+        }
+
+        // Sort final list by population
+        combinedCities.sort((a, b) => b.population - a.population);
+
+        const formattedCities = combinedCities.map(city => ({
             id: `${city.asciiName.toLowerCase().replace(/\s+/g, '-')}-${city.geonameid}`,
             city: city.asciiName,
             country: city.country || 'Unknown',
