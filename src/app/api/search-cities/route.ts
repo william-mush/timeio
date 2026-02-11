@@ -99,8 +99,8 @@ export async function GET(request: NextRequest) {
             ORDER BY 
                 CASE WHEN LOWER("asciiName") = LOWER($1) THEN 0 ELSE 1 END,
                 population DESC
-            LIMIT ${limit}
-        `, query, ...params.slice(1));
+            LIMIT $${paramIndex}
+        `, query, ...params.slice(1), limit);
 
         // If we have ANY prefix results, return them immediately (fast path)
         if (prefixResults.length > 0) {
@@ -126,8 +126,8 @@ export async function GET(request: NextRequest) {
             ${whereClause}
             ORDER BY 
                 population DESC
-            LIMIT ${limit}
-        `, query, ...params.slice(1));
+            LIMIT $${paramIndex}
+        `, query, ...params.slice(1), limit);
 
         return NextResponse.json({
             results: containsResults,
@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
     } catch (error) {
         console.error('City search error:', error);
         return NextResponse.json(
-            { error: 'Search failed', message: String(error) },
+            { error: 'Search failed' },
             { status: 500 }
         );
     }

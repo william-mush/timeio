@@ -23,63 +23,6 @@ interface TimeSettings {
   dateFormat: string;
 }
 
-// Create timezone mappings for better time display
-const getTimezoneFromOffset = (offset: number, country: string): string => {
-  const timezoneMap: { [key: string]: string } = {
-    // US Timezones
-    'United States|-4': 'America/New_York',
-    'United States|-5': 'America/Chicago',
-    'United States|-6': 'America/Denver',
-    'United States|-7': 'America/Los_Angeles',
-    // Major international timezones
-    'United Kingdom|1': 'Europe/London',
-    'France|2': 'Europe/Paris',
-    'Germany|2': 'Europe/Berlin',
-    'Italy|2': 'Europe/Rome',
-    'Spain|2': 'Europe/Madrid',
-    'Japan|9': 'Asia/Tokyo',
-    'China|8': 'Asia/Shanghai',
-    'Australia|10': 'Australia/Sydney',
-    'Australia|8': 'Australia/Perth',
-    'India|5.5': 'Asia/Kolkata',
-    'Brazil|-3': 'America/Sao_Paulo',
-    'Canada|-4': 'America/Toronto',
-    'Canada|-5': 'America/Winnipeg',
-    'Canada|-6': 'America/Edmonton',
-    'Canada|-7': 'America/Vancouver',
-    'Russia|3': 'Europe/Moscow',
-    // Middle East
-    'UAE|4': 'Asia/Dubai',
-    'Saudi Arabia|3': 'Asia/Riyadh',
-    'Israel|3': 'Asia/Jerusalem',
-    'Israel|2': 'Asia/Jerusalem',
-    'Turkey|3': 'Europe/Istanbul',
-    'Qatar|3': 'Asia/Qatar',
-    // Asia Pacific
-    'Singapore|8': 'Asia/Singapore',
-    'South Korea|9': 'Asia/Seoul',
-    'Thailand|7': 'Asia/Bangkok',
-    'Indonesia|7': 'Asia/Jakarta',
-    'Malaysia|8': 'Asia/Kuala_Lumpur',
-    'Philippines|8': 'Asia/Manila',
-    'Vietnam|7': 'Asia/Ho_Chi_Minh',
-    'Taiwan|8': 'Asia/Taipei',
-    // Oceania
-    'New Zealand|12': 'Pacific/Auckland',
-    'New Zealand|13': 'Pacific/Auckland',
-    // Africa
-    'Egypt|2': 'Africa/Cairo',
-    'South Africa|2': 'Africa/Johannesburg',
-    'Nigeria|1': 'Africa/Lagos',
-    'Kenya|3': 'Africa/Nairobi',
-    'Morocco|1': 'Africa/Casablanca',
-  };
-
-  const key = `${country}|${offset}`;
-  // Fallback to a GMT offset string if not in the map
-  return timezoneMap[key] || `GMT${offset >= 0 ? '+' : ''}${offset}`;
-};
-
 const WORLD_TIMEZONES: TimeZone[] = CITIES.map(city => ({
   id: city.id,
   name: `${city.city.replace(/\s+/g, '_')}`,
@@ -87,7 +30,7 @@ const WORLD_TIMEZONES: TimeZone[] = CITIES.map(city => ({
   city: city.city,
   country: city.country,
   region: getRegion(city.coordinates[1]),
-  timezone: getTimezoneFromOffset(city.offset, city.country)
+  timezone: city.timezone || `Etc/GMT${city.offset <= 0 ? '+' : '-'}${Math.abs(city.offset)}`
 }));
 
 function getRegion(latitude: number): string {
@@ -216,15 +159,18 @@ export const WorldClock = () => {
         if (timeZonesResponse.ok) {
           const timeZones = await timeZonesResponse.json();
           if (Array.isArray(timeZones) && timeZones.length > 0) {
-            const zones = timeZones.map((tz: any) => ({
-              id: tz.cityId,
-              name: tz.cityName,
-              city: tz.cityName,
-              country: tz.country,
-              offset: tz.offset,
-              region: tz.region,
-              timezone: getTimezoneFromOffset(tz.offset, tz.country)
-            }));
+            const zones = timeZones.map((tz: any) => {
+              const cityData = CITIES.find(c => c.id === tz.cityId);
+              return {
+                id: tz.cityId,
+                name: tz.cityName,
+                city: tz.cityName,
+                country: tz.country,
+                offset: tz.offset,
+                region: tz.region,
+                timezone: cityData?.timezone || `Etc/GMT${tz.offset <= 0 ? '+' : '-'}${Math.abs(tz.offset)}`
+              };
+            });
             setSelectedZones(zones);
           } else {
             // If no time zones found, set default world cities
@@ -328,7 +274,7 @@ export const WorldClock = () => {
         country: newTimeZone.country,
         offset: newTimeZone.offset,
         region: newTimeZone.region,
-        timezone: getTimezoneFromOffset(newTimeZone.offset, newTimeZone.country)
+        timezone: zone.timezone || `Etc/GMT${newTimeZone.offset <= 0 ? '+' : '-'}${Math.abs(newTimeZone.offset)}`
       };
 
       setSelectedZones(prev => [...prev, newZone]);
