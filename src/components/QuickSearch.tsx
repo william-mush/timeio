@@ -12,6 +12,7 @@ import {
     CommandSeparator,
 } from './ui/command';
 import { Calculator, Clock, Globe, Loader2, Map, Search, Sun, Watch } from 'lucide-react';
+import { searchCitiesLocal } from '@/lib/searchCitiesLocal';
 
 interface SearchResult {
     geonameid: number;
@@ -46,26 +47,42 @@ export function QuickSearch() {
         return () => document.removeEventListener('keydown', down);
     }, []);
 
-    // Debounced search with API
+    // Local-first search with API fallback
     React.useEffect(() => {
+        if (!open) return;
+
+        const query = search.trim();
+
+        // No query: show top cities from local data instantly
+        if (!query) {
+            setResults(searchCitiesLocal('', 20));
+            setHasSearched(true);
+            return;
+        }
+
+        // Instant local search
+        const localResults = searchCitiesLocal(query, 30);
+        setResults(localResults);
+        setHasSearched(true);
+
+        // If local has enough results, skip API
+        if (localResults.length >= 3) return;
+
+        // Fallback: hit API for obscure queries
         const controller = new AbortController();
+        setIsLoading(true);
 
-        const searchCities = async () => {
-            setIsLoading(true);
+        const timeoutId = setTimeout(async () => {
             try {
-                const params = new URLSearchParams({
-                    q: search.trim(),
-                    limit: '30',
-                });
-
+                const params = new URLSearchParams({ q: query, limit: '30' });
                 const response = await fetch(`/api/search-cities?${params}`, {
                     signal: controller.signal,
                 });
-
                 if (response.ok) {
                     const data = await response.json();
-                    setResults(data.results || []);
-                    setHasSearched(true);
+                    if (data.results?.length > 0) {
+                        setResults(data.results);
+                    }
                 }
             } catch (error) {
                 if ((error as Error).name !== 'AbortError') {
@@ -74,35 +91,14 @@ export function QuickSearch() {
             } finally {
                 setIsLoading(false);
             }
-        };
-
-        // Debounce: wait 150ms after user stops typing
-        const timeoutId = setTimeout(() => {
-            if (open) {
-                searchCities();
-            }
         }, 150);
 
         return () => {
             clearTimeout(timeoutId);
             controller.abort();
+            setIsLoading(false);
         };
     }, [search, open]);
-
-    // Load initial results when dialog opens
-    React.useEffect(() => {
-        if (open && !hasSearched) {
-            setIsLoading(true);
-            fetch('/api/search-cities?limit=20')
-                .then(res => res.json())
-                .then(data => {
-                    setResults(data.results || []);
-                    setHasSearched(true);
-                })
-                .catch(console.error)
-                .finally(() => setIsLoading(false));
-        }
-    }, [open, hasSearched]);
 
     const runCommand = React.useCallback((command: () => unknown) => {
         setOpen(false);

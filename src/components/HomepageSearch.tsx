@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Search, Globe, Loader2, MapPin } from 'lucide-react';
+import { searchCitiesLocal } from '@/lib/searchCitiesLocal';
 
 interface SearchResult {
     geonameid: number;
@@ -28,31 +29,38 @@ export function HomepageSearch() {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const router = useRouter();
 
-    // Debounced search
+    // Local-first search with API fallback
     useEffect(() => {
+        const q = query.trim();
+        if (!q) {
+            setResults([]);
+            setIsOpen(false);
+            return;
+        }
+
+        // Instant local search
+        const localResults = searchCitiesLocal(q, 8);
+        setResults(localResults);
+        setIsOpen(true);
+
+        // If local has enough results, skip API
+        if (localResults.length >= 3) return;
+
+        // Fallback: hit API for obscure queries
         const controller = new AbortController();
+        setIsLoading(true);
 
-        const searchCities = async () => {
-            if (!query.trim()) {
-                setResults([]);
-                return;
-            }
-
-            setIsLoading(true);
+        const timeoutId = setTimeout(async () => {
             try {
-                const params = new URLSearchParams({
-                    q: query.trim(),
-                    limit: '8',
-                });
-
+                const params = new URLSearchParams({ q, limit: '8' });
                 const response = await fetch(`/api/search-cities?${params}`, {
                     signal: controller.signal,
                 });
-
                 if (response.ok) {
                     const data = await response.json();
-                    setResults(data.results || []);
-                    setIsOpen(true);
+                    if (data.results?.length > 0) {
+                        setResults(data.results);
+                    }
                 }
             } catch (error) {
                 if ((error as Error).name !== 'AbortError') {
@@ -61,15 +69,12 @@ export function HomepageSearch() {
             } finally {
                 setIsLoading(false);
             }
-        };
-
-        const timeoutId = setTimeout(() => {
-            searchCities();
-        }, 200);
+        }, 150);
 
         return () => {
             clearTimeout(timeoutId);
             controller.abort();
+            setIsLoading(false);
         };
     }, [query]);
 
