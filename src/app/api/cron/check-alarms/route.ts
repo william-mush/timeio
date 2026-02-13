@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { webpush } from '@/lib/webpush';
+import { getWebPush } from '@/lib/webpush';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
@@ -69,7 +69,7 @@ export async function GET(req: Request) {
       const subscriptions = alarm.user.pushSubscriptions;
       for (const sub of subscriptions) {
         try {
-          await webpush.sendNotification(
+          await getWebPush().sendNotification(
             {
               endpoint: sub.endpoint,
               keys: { p256dh: sub.p256dh, auth: sub.auth },
