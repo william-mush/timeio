@@ -4,7 +4,29 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { AlarmSound, ALARM_SOUNDS, alarmSoundService } from '@/services/AlarmSound';
 import { useSession, signIn } from 'next-auth/react';
-import { Bell, Plus, Trash2, Clock, Volume2, Lock } from 'lucide-react';
+import { Bell, Plus, Trash2, Clock, Volume2, Lock, BellRing } from 'lucide-react';
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray.buffer as ArrayBuffer;
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
 
 interface AlarmTime {
   id: string;
@@ -26,10 +48,23 @@ export const AlarmManager = () => {
   const [activeAlarm, setActiveAlarm] = useState<AlarmTime | null>(null);
   const [loading, setLoading] = useState(true);
   const [userTimezone, setUserTimezone] = useState('');
+  const [warningDismissed, setWarningDismissed] = useState(false);
+  const [snoozeTimeout, setSnoozeTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [snoozeEndTime, setSnoozeEndTime] = useState<number | null>(null);
+  const [snoozeTimeLeft, setSnoozeTimeLeft] = useState<number | null>(null);
+  const [pushEnabled, setPushEnabled] = useState(false);
+  const [pushRegistering, setPushRegistering] = useState(false);
 
   // Get user's timezone
   useEffect(() => {
     setUserTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  }, []);
+
+  // Check if warning was dismissed
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setWarningDismissed(localStorage.getItem('alarmWarningDismissed') === 'true');
+    }
   }, []);
 
   // Set mounted state once on mount
@@ -62,6 +97,50 @@ export const AlarmManager = () => {
     loadAlarms();
   }, [session?.user?.id, mounted]);
 
+  // Register service worker and subscribe to push if already permitted
+  useEffect(() => {
+    if (!mounted || !session?.user?.id) return;
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+    const setupPush = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('/sw.js');
+        await navigator.serviceWorker.ready;
+
+        if (Notification.permission === 'granted') {
+          const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+          if (!vapidKey) return;
+
+          let subscription = await registration.pushManager.getSubscription();
+          if (!subscription) {
+            subscription = await registration.pushManager.subscribe({
+              userVisibleOnly: true,
+              applicationServerKey: urlBase64ToUint8Array(vapidKey),
+            });
+          }
+
+          await fetch('/api/push/subscribe', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              endpoint: subscription.endpoint,
+              keys: {
+                p256dh: arrayBufferToBase64(subscription.getKey('p256dh')!),
+                auth: arrayBufferToBase64(subscription.getKey('auth')!),
+              },
+            }),
+          });
+
+          setPushEnabled(true);
+        }
+      } catch (e) {
+        console.error('Failed to setup push notifications:', e);
+      }
+    };
+
+    setupPush();
+  }, [mounted, session?.user?.id]);
+
   // Check alarms every second
   useEffect(() => {
     if (!mounted || !session) return;
@@ -71,13 +150,21 @@ export const AlarmManager = () => {
       const currentHours = now.getHours();
       const currentMinutes = now.getMinutes();
       const currentSeconds = now.getSeconds();
+      const currentDay = now.getDay();
 
       alarms.forEach(alarm => {
         if (alarm.isEnabled &&
           alarm.hours === currentHours &&
           alarm.minutes === currentMinutes &&
           currentSeconds === 0) {
-          triggerAlarm(alarm);
+          // If repeatDays is set, only trigger on matching days
+          if (alarm.repeatDays && alarm.repeatDays.length > 0) {
+            if (alarm.repeatDays.includes(currentDay)) {
+              triggerAlarm(alarm);
+            }
+          } else {
+            triggerAlarm(alarm);
+          }
         }
       });
     };
@@ -119,8 +206,34 @@ export const AlarmManager = () => {
     try {
       alarmSoundService?.stopSound();
       setActiveAlarm(null);
+      if (snoozeTimeout) {
+        clearTimeout(snoozeTimeout);
+        setSnoozeTimeout(null);
+        setSnoozeEndTime(null);
+        setSnoozeTimeLeft(null);
+      }
     } catch (e) {
       console.error('Failed to stop alarm:', e);
+    }
+  };
+
+  const snoozeAlarm = () => {
+    if (!activeAlarm) return;
+    try {
+      alarmSoundService?.stopSound();
+      const snoozedAlarm = activeAlarm;
+      setActiveAlarm(null);
+      const endTime = Date.now() + 5 * 60 * 1000;
+      setSnoozeEndTime(endTime);
+      const timeout = setTimeout(() => {
+        setSnoozeEndTime(null);
+        setSnoozeTimeLeft(null);
+        setSnoozeTimeout(null);
+        triggerAlarm(snoozedAlarm);
+      }, 5 * 60 * 1000);
+      setSnoozeTimeout(timeout);
+    } catch (e) {
+      console.error('Failed to snooze alarm:', e);
     }
   };
 
@@ -176,10 +289,72 @@ export const AlarmManager = () => {
     }
   };
 
-  // Request notification permission
+  const dismissWarning = () => {
+    setWarningDismissed(true);
+    localStorage.setItem('alarmWarningDismissed', 'true');
+  };
+
+  // Cleanup snooze timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (snoozeTimeout) clearTimeout(snoozeTimeout);
+    };
+  }, [snoozeTimeout]);
+
+  // Snooze countdown timer
+  useEffect(() => {
+    if (!snoozeEndTime) return;
+    const interval = setInterval(() => {
+      const remaining = Math.max(0, Math.ceil((snoozeEndTime - Date.now()) / 1000));
+      setSnoozeTimeLeft(remaining);
+      if (remaining <= 0) clearInterval(interval);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [snoozeEndTime]);
+
+  // Request notification permission and subscribe to push
   const requestNotificationPermission = async () => {
-    if ('Notification' in window && Notification.permission === 'default') {
-      await Notification.requestPermission();
+    if (!('Notification' in window)) return;
+    if (Notification.permission === 'default') {
+      const result = await Notification.requestPermission();
+      if (result !== 'granted') return;
+    }
+    if (Notification.permission !== 'granted') return;
+
+    // Subscribe to push after permission granted
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      try {
+        setPushRegistering(true);
+        const registration = await navigator.serviceWorker.ready;
+        const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+        if (!vapidKey) return;
+
+        let subscription = await registration.pushManager.getSubscription();
+        if (!subscription) {
+          subscription = await registration.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(vapidKey),
+          });
+        }
+
+        await fetch('/api/push/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            endpoint: subscription.endpoint,
+            keys: {
+              p256dh: arrayBufferToBase64(subscription.getKey('p256dh')!),
+              auth: arrayBufferToBase64(subscription.getKey('auth')!),
+            },
+          }),
+        });
+
+        setPushEnabled(true);
+      } catch (e) {
+        console.error('Failed to subscribe to push:', e);
+      } finally {
+        setPushRegistering(false);
+      }
     }
   };
 
@@ -260,6 +435,50 @@ export const AlarmManager = () => {
   // Authenticated user view
   return (
     <div className="max-w-2xl mx-auto p-4 md:p-6">
+      {!warningDismissed && (
+        pushEnabled ? (
+          <div className="mb-4 flex items-center justify-between bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
+            <div className="flex items-center gap-2">
+              <BellRing className="w-4 h-4 flex-shrink-0" />
+              <span className="text-sm">Push notifications enabled - alarms will work even when this tab is closed</span>
+            </div>
+            <button
+              onClick={dismissWarning}
+              className="text-green-600 hover:text-green-800 p-1"
+              aria-label="Dismiss"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        ) : (
+          <div className="mb-4 flex items-center justify-between bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-lg">
+            <div className="flex items-center gap-2">
+              <Bell className="w-4 h-4 flex-shrink-0" />
+              <span className="text-sm">Enable notifications to receive alarms even when this tab is closed</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={requestNotificationPermission}
+                disabled={pushRegistering}
+                className="text-sm bg-amber-600 hover:bg-amber-700 text-white px-3 py-1 rounded-md transition-colors disabled:opacity-50"
+              >
+                {pushRegistering ? 'Enabling...' : 'Enable'}
+              </button>
+              <button
+                onClick={dismissWarning}
+                className="text-amber-600 hover:text-amber-800 p-1"
+                aria-label="Dismiss warning"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )
+      )}
       {/* Header with timezone info */}
       <div className="text-center mb-8">
         <div className="flex items-center justify-center gap-2 mb-4">
@@ -327,6 +546,11 @@ export const AlarmManager = () => {
                       <Volume2 className="w-3 h-3" />
                       {alarm.sound}
                     </div>
+                    {alarm.repeatDays && alarm.repeatDays.length > 0 && (
+                      <div className="text-xs text-gray-400 mt-1">
+                        {alarm.repeatDays.map(d => DAY_NAMES[d]).join(', ')}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -384,12 +608,40 @@ export const AlarmManager = () => {
               {activeAlarm.minutes.toString().padStart(2, '0')}
             </p>
             <button
+              onClick={snoozeAlarm}
+              className="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-xl text-lg font-semibold transition-colors mb-3"
+            >
+              Snooze (5 min)
+            </button>
+            <button
               onClick={stopAlarm}
               className="w-full bg-red-500 hover:bg-red-600 text-white py-4 rounded-xl text-xl font-semibold transition-colors"
             >
               Stop Alarm
             </button>
           </motion.div>
+        </div>
+      )}
+
+      {/* Snooze indicator */}
+      {snoozeTimeLeft !== null && snoozeTimeLeft > 0 && (
+        <div className="fixed bottom-6 right-6 bg-amber-500 text-white px-4 py-3 rounded-xl shadow-lg flex items-center gap-3 z-50">
+          <Bell className="w-5 h-5" />
+          <div>
+            <div className="text-sm font-medium">Alarm snoozed</div>
+            <div className="text-xs opacity-90">
+              Ringing in {Math.floor(snoozeTimeLeft / 60)}:{(snoozeTimeLeft % 60).toString().padStart(2, '0')}
+            </div>
+          </div>
+          <button
+            onClick={stopAlarm}
+            className="ml-2 text-amber-200 hover:text-white"
+            aria-label="Cancel snooze"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       )}
     </div>
@@ -408,6 +660,13 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
   const [selectedSound, setSelectedSound] = useState(ALARM_SOUNDS[0]?.id || 'default');
   const [volume, setVolume] = useState(0.5);
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
+  const [repeatDays, setRepeatDays] = useState<number[]>([]);
+
+  const toggleDay = (dayIndex: number) => {
+    setRepeatDays(prev =>
+      prev.includes(dayIndex) ? prev.filter(d => d !== dayIndex) : [...prev, dayIndex].sort()
+    );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -418,7 +677,7 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
       isEnabled: true,
       label: label.trim() || 'Alarm',
       sound: selectedSound,
-      repeatDays: [],
+      repeatDays,
     });
   };
 
@@ -535,6 +794,29 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
               }}
               className="w-full accent-blue-600"
             />
+          </div>
+
+          {/* Repeat Days */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Repeat
+            </label>
+            <div className="flex gap-2">
+              {DAY_NAMES.map((day, index) => (
+                <button
+                  key={day}
+                  type="button"
+                  onClick={() => toggleDay(index)}
+                  className={`w-10 h-10 rounded-full text-sm font-medium transition-colors ${
+                    repeatDays.includes(index)
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {day}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Actions */}

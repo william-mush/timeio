@@ -56,6 +56,7 @@ model User {
   timezone      String    @default("UTC")
   timeZones     UserTimeZone[]
   settings      UserSettings?
+  pushSubscriptions PushSubscription[]
   createdAt     DateTime  @default(now())
 }
 
@@ -77,9 +78,23 @@ model Alarm {
   sound         String
   isEnabled     Boolean   @default(true)
   repeatDays    Int[]     // 0-6 for Sunday-Saturday
+  timezone      String    @default("UTC")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   lastTriggered DateTime?
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model ArchivedAlarm {

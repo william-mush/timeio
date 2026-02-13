@@ -34,7 +34,7 @@ export async function POST(req: Request) {
 
   try {
     const data = await req.json();
-    const { hours, minutes, label, sound, isEnabled = true } = data;
+    const { hours, minutes, label, sound, isEnabled = true, repeatDays, timezone } = data;
 
     const alarm = await prisma.alarm.create({
       data: {
@@ -44,7 +44,8 @@ export async function POST(req: Request) {
         label,
         sound,
         isEnabled,
-        repeatDays: [],
+        repeatDays: repeatDays || [],
+        timezone: timezone || 'UTC',
       },
     });
 
