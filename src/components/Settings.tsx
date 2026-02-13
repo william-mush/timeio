@@ -179,9 +179,12 @@ export function Settings() {
             <h3 className="heading-3 mb-4">Time Format</h3>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">
-                  24-hour format
-                </label>
+                <div>
+                  <label className="text-sm font-medium">
+                    24-hour format
+                  </label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Display time in 24-hour format (e.g., 14:00 instead of 2:00 PM)</p>
+                </div>
                 <Switch
                   checked={settings.format24Hour}
                   onChange={(checked: boolean) => handleSettingChange('format24Hour', checked)}
@@ -189,9 +192,12 @@ export function Settings() {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">
-                  Show seconds
-                </label>
+                <div>
+                  <label className="text-sm font-medium">
+                    Show seconds
+                  </label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Include seconds in time displays</p>
+                </div>
                 <Switch
                   checked={settings.showSeconds}
                   onChange={(checked: boolean) => handleSettingChange('showSeconds', checked)}
@@ -199,9 +205,12 @@ export function Settings() {
               </div>
 
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">
-                  Show milliseconds
-                </label>
+                <div>
+                  <label className="text-sm font-medium">
+                    Show milliseconds
+                  </label>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Show millisecond precision (requires seconds enabled)</p>
+                </div>
                 <Switch
                   checked={settings.showMilliseconds}
                   onChange={(checked: boolean) => handleSettingChange('showMilliseconds', checked)}

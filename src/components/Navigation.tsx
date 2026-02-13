@@ -341,7 +341,7 @@ export function Navigation() {
             <div className="hidden sm:block w-px h-6 bg-gray-200" />
 
             {/* Time Display - Hide on small mobile */}
-            <div className="hidden sm:block">
+            <div className="block">
               <TimeDisplay />
             </div>
 

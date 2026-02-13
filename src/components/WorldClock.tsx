@@ -134,7 +134,25 @@ export const WorldClock = () => {
       setError(null);
 
       if (!session) {
-        // Default to major world cities for non-authenticated users
+        // Check localStorage for saved cities
+        const savedCities = localStorage.getItem('worldClockCities');
+        if (savedCities) {
+          try {
+            const cityIds: string[] = JSON.parse(savedCities);
+            const zones = cityIds
+              .map(id => WORLD_TIMEZONES.find(z => z.id === id))
+              .filter((z): z is TimeZone => z !== undefined);
+            if (zones.length > 0) {
+              setSelectedZones(zones);
+              setIsLoading(false);
+              setMounted(true);
+              return;
+            }
+          } catch (e) {
+            console.error('Failed to parse saved cities:', e);
+          }
+        }
+        // Default to major world cities for brand-new anonymous visitors
         const defaultZones = WORLD_TIMEZONES.filter(zone =>
           ['nyc', 'london', 'tokyo', 'sydney', 'dubai', 'la'].includes(zone.id)
         );
@@ -212,6 +230,51 @@ export const WorldClock = () => {
     loadData();
   }, [session]);
 
+  // Merge localStorage cities into database on sign-in
+  useEffect(() => {
+    if (!session || !mounted) return;
+    const savedCities = localStorage.getItem('worldClockCities');
+    if (!savedCities) return;
+
+    try {
+      const cityIds: string[] = JSON.parse(savedCities);
+      const existingIds = selectedZones.map(z => z.id);
+      const newCityIds = cityIds.filter(id => !existingIds.includes(id));
+
+      if (newCityIds.length === 0) {
+        localStorage.removeItem('worldClockCities');
+        return;
+      }
+
+      const newZones = newCityIds
+        .map(id => WORLD_TIMEZONES.find(z => z.id === id))
+        .filter((z): z is TimeZone => z !== undefined);
+
+      // Save to database and add to state
+      Promise.all(newZones.map((zone, index) =>
+        fetch('/api/time-zones', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            cityId: zone.id,
+            cityName: zone.city,
+            country: zone.country,
+            offset: zone.offset,
+            region: zone.region,
+            order: selectedZones.length + index
+          })
+        })
+      )).then(() => {
+        setSelectedZones(prev => [...prev, ...newZones]);
+        localStorage.removeItem('worldClockCities');
+      }).catch(e => console.error('Failed to merge cities:', e));
+    } catch (e) {
+      console.error('Failed to parse saved cities for merge:', e);
+      localStorage.removeItem('worldClockCities');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, mounted]);
+
   // Listen for settings changes
   useEffect(() => {
     const handleSettingsChange = (event: CustomEvent<TimeSettings>) => {
@@ -236,7 +299,11 @@ export const WorldClock = () => {
 
   const addTimeZone = async (zone: TimeZone) => {
     if (!session) {
-      signIn('google');
+      // Save to localStorage for anonymous users
+      setSelectedZones(prev => [...prev, zone]);
+      const cityIds = [...selectedZones, zone].map(z => z.id);
+      localStorage.setItem('worldClockCities', JSON.stringify(cityIds));
+      setShowAddZone(false);
       return;
     }
 
@@ -288,7 +355,20 @@ export const WorldClock = () => {
   };
 
   const removeTimeZone = async (zoneId: string) => {
-    if (!session) return;
+    if (!session) {
+      // Remove from localStorage for anonymous users
+      setSelectedZones(prev => {
+        const updated = prev.filter(zone => zone.id !== zoneId);
+        const cityIds = updated.map(z => z.id);
+        if (cityIds.length > 0) {
+          localStorage.setItem('worldClockCities', JSON.stringify(cityIds));
+        } else {
+          localStorage.removeItem('worldClockCities');
+        }
+        return updated;
+      });
+      return;
+    }
 
     setIsLoading(true);
     setError(null);
@@ -348,26 +428,16 @@ export const WorldClock = () => {
               Real-time display across major cities worldwide
             </p>
           </div>
-          {session ? (
-            <button
-              onClick={() => setShowAddZone(true)}
-              className="w-full sm:w-auto button-primary px-4 py-2 flex items-center gap-2"
-              disabled={isLoading}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-              Add City
-            </button>
-          ) : (
-            <button
-              onClick={handleGoogleAuth}
-              className="w-full sm:w-auto button-primary flex items-center justify-center gap-2 px-4 py-2"
-            >
-              <img src="/google-icon.svg" alt="Google" className="w-5 h-5 md:w-6 md:h-6" />
-              Sign in to Add Cities
-            </button>
-          )}
+          <button
+            onClick={() => setShowAddZone(true)}
+            className="w-full sm:w-auto button-primary px-4 py-2 flex items-center gap-2"
+            disabled={isLoading}
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Add City
+          </button>
         </div>
 
         {error && (
@@ -416,17 +486,15 @@ export const WorldClock = () => {
                       {getLocalDate(zone.timezone)}
                     </p>
                   </div>
-                  {session && (
-                    <button
-                      onClick={() => removeTimeZone(zone.id)}
-                      className="text-gray-400 hover:text-red-500 text-sm md:text-base p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                      title="Remove city"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  )}
+                  <button
+                    onClick={() => removeTimeZone(zone.id)}
+                    className="text-gray-400 hover:text-red-500 text-sm md:text-base p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                    title="Remove city"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
                 </div>
                 <div className="space-y-2">
                   <div className="text-2xl md:text-3xl font-mono font-bold text-gray-900 dark:text-white">
@@ -444,7 +512,7 @@ export const WorldClock = () => {
           </div>
         )}
 
-        {showAddZone && session && (
+        {showAddZone && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
