@@ -86,8 +86,9 @@ export async function GET(request: NextRequest) {
             : '';
 
         // TIER 1: Fast prefix search using ILIKE (uses GIN trigram index!)
+        // Filter to population > 0 to exclude tiny hamlets and keep results relevant
         const prefixResults = await prisma.$queryRawUnsafe<CityResult[]>(`
-            SELECT 
+            SELECT
                 geonameid, name, "asciiName", country, "countryCode",
                 timezone, latitude, longitude, population, continent, admin1
             FROM geo_cities
@@ -95,8 +96,9 @@ export async function GET(request: NextRequest) {
                 "asciiName" ILIKE $1 || '%'
                 OR name ILIKE $1 || '%'
             )
+            AND population > 0
             ${whereClause}
-            ORDER BY 
+            ORDER BY
                 CASE WHEN LOWER("asciiName") = LOWER($1) THEN 0 ELSE 1 END,
                 population DESC
             LIMIT $${paramIndex}

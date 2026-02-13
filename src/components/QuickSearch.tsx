@@ -76,12 +76,12 @@ export function QuickSearch() {
             }
         };
 
-        // Debounce: wait 300ms after user stops typing
+        // Debounce: wait 150ms after user stops typing
         const timeoutId = setTimeout(() => {
             if (open) {
                 searchCities();
             }
-        }, 300);
+        }, 150);
 
         return () => {
             clearTimeout(timeoutId);
@@ -152,7 +152,7 @@ export function QuickSearch() {
                 <Search className="w-5 h-5" />
             </button>
 
-            <CommandDialog open={open} onOpenChange={(isOpen) => {
+            <CommandDialog shouldFilter={false} open={open} onOpenChange={(isOpen) => {
                 setOpen(isOpen);
                 if (!isOpen) {
                     setSearch('');
