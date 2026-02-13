@@ -78,6 +78,9 @@ export async function GET(req: Request) {
               title: `Alarm: ${alarm.label || 'Alarm'}`,
               body: `It's ${alarm.hours.toString().padStart(2, '0')}:${alarm.minutes.toString().padStart(2, '0')}`,
               url: '/alarms',
+              sound: alarm.sound,
+              alarmId: alarm.id,
+              label: alarm.label || 'Alarm',
             })
           );
           pushSent++;
@@ -108,6 +111,57 @@ export async function GET(req: Request) {
       triggered++;
     }
 
+    // Check for snoozed alarms that are due
+    let snoozedTriggered = 0;
+    const snoozedAlarms = await prisma.alarm.findMany({
+      where: {
+        snoozeUntil: { not: null, lte: new Date() },
+      },
+      include: {
+        user: {
+          include: { pushSubscriptions: true },
+        },
+      },
+    });
+
+    for (const alarm of snoozedAlarms) {
+      const subscriptions = alarm.user.pushSubscriptions;
+      for (const sub of subscriptions) {
+        try {
+          await getWebPush().sendNotification(
+            {
+              endpoint: sub.endpoint,
+              keys: { p256dh: sub.p256dh, auth: sub.auth },
+            },
+            JSON.stringify({
+              title: `Snoozed: ${alarm.label || 'Alarm'}`,
+              body: `It's ${alarm.hours.toString().padStart(2, '0')}:${alarm.minutes.toString().padStart(2, '0')}`,
+              url: '/alarms',
+              sound: alarm.sound,
+              alarmId: alarm.id,
+              label: alarm.label || 'Alarm',
+            })
+          );
+          pushSent++;
+        } catch (err: unknown) {
+          const pushErr = err as { statusCode?: number };
+          if (pushErr.statusCode === 410 || pushErr.statusCode === 404) {
+            expiredEndpoints.push(sub.endpoint);
+          } else {
+            console.error(`Push failed for snoozed alarm ${sub.endpoint}:`, err);
+          }
+        }
+      }
+
+      // Clear snoozeUntil and update lastTriggered
+      await prisma.alarm.update({
+        where: { id: alarm.id },
+        data: { snoozeUntil: null, lastTriggered: new Date() },
+      });
+
+      snoozedTriggered++;
+    }
+
     // Clean up expired subscriptions
     if (expiredEndpoints.length > 0) {
       await prisma.pushSubscription.deleteMany({
@@ -119,6 +173,7 @@ export async function GET(req: Request) {
       ok: true,
       alarmsChecked: alarms.length,
       triggered,
+      snoozedTriggered,
       pushSent,
       expiredCleaned: expiredEndpoints.length,
     });

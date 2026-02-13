@@ -82,6 +82,7 @@ model Alarm {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   lastTriggered DateTime?
+  snoozeUntil   DateTime?
 }
 
 model PushSubscription {

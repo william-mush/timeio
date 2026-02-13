@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { AlarmSound, ALARM_SOUNDS, alarmSoundService } from '@/services/AlarmSound';
 import { useSession, signIn } from 'next-auth/react';
-import { Bell, Plus, Trash2, Clock, Volume2, Lock, BellRing } from 'lucide-react';
+import { Bell, Plus, Trash2, Clock, Volume2, Lock, BellRing, Pencil } from 'lucide-react';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -52,6 +52,7 @@ export const AlarmManager = () => {
   const [snoozeTimeout, setSnoozeTimeout] = useState<NodeJS.Timeout | null>(null);
   const [snoozeEndTime, setSnoozeEndTime] = useState<number | null>(null);
   const [snoozeTimeLeft, setSnoozeTimeLeft] = useState<number | null>(null);
+  const [editingAlarm, setEditingAlarm] = useState<AlarmTime | null>(null);
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushRegistering, setPushRegistering] = useState(false);
 
@@ -289,6 +290,23 @@ export const AlarmManager = () => {
     }
   };
 
+  const editAlarm = async (alarm: Omit<AlarmTime, 'id'>) => {
+    if (!editingAlarm) return;
+    try {
+      const response = await fetch('/api/alarms', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: editingAlarm.id, ...alarm, timezone: userTimezone }),
+      });
+      if (!response.ok) throw new Error('Failed to update alarm');
+      const updated = await response.json();
+      setAlarms(prev => prev.map(a => a.id === editingAlarm.id ? updated : a));
+      setEditingAlarm(null);
+    } catch (e) {
+      console.error('Failed to edit alarm:', e);
+    }
+  };
+
   const dismissWarning = () => {
     setWarningDismissed(true);
     localStorage.setItem('alarmWarningDismissed', 'true');
@@ -311,6 +329,65 @@ export const AlarmManager = () => {
     }, 1000);
     return () => clearInterval(interval);
   }, [snoozeEndTime]);
+
+  // Listen for alarm triggers from the service worker (via postMessage)
+  // and from URL search params (when a new window is opened by the SW)
+  useEffect(() => {
+    if (!mounted) return;
+
+    // Handle service worker messages
+    const handleSWMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'ALARM_TRIGGER') {
+        const { sound, alarmId, label } = event.data;
+        const now = new Date();
+        const syntheticAlarm: AlarmTime = {
+          id: alarmId || 'push-alarm',
+          hours: now.getHours(),
+          minutes: now.getMinutes(),
+          isEnabled: true,
+          label: label || 'Alarm',
+          sound: sound || 'gentle',
+          repeatDays: [],
+        };
+        setActiveAlarm(syntheticAlarm);
+        alarmSoundService?.playSound(syntheticAlarm.sound);
+      }
+    };
+
+    if ('serviceWorker' in navigator && navigator.serviceWorker) {
+      navigator.serviceWorker.addEventListener('message', handleSWMessage);
+    }
+
+    // Check URL search params on mount (for when SW opens a new window)
+    const params = new URLSearchParams(window.location.search);
+    const alarmSound = params.get('alarmSound');
+    const alarmId = params.get('alarmId');
+    const alarmLabel = params.get('alarmLabel');
+
+    if (alarmSound) {
+      const now = new Date();
+      const syntheticAlarm: AlarmTime = {
+        id: alarmId || 'push-alarm',
+        hours: now.getHours(),
+        minutes: now.getMinutes(),
+        isEnabled: true,
+        label: alarmLabel || 'Alarm',
+        sound: alarmSound,
+        repeatDays: [],
+      };
+      setActiveAlarm(syntheticAlarm);
+      alarmSoundService?.playSound(syntheticAlarm.sound);
+
+      // Clean up the URL so the params don't persist on refresh
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+
+    return () => {
+      if ('serviceWorker' in navigator && navigator.serviceWorker) {
+        navigator.serviceWorker.removeEventListener('message', handleSWMessage);
+      }
+    };
+  }, [mounted]);
 
   // Request notification permission and subscribe to push
   const requestNotificationPermission = async () => {
@@ -569,6 +646,15 @@ export const AlarmManager = () => {
                     />
                   </button>
 
+                  {/* Edit button */}
+                  <button
+                    onClick={() => setEditingAlarm(alarm)}
+                    className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
+                    aria-label={`Edit alarm ${alarm.label}`}
+                  >
+                    <Pencil className="w-5 h-5" />
+                  </button>
+
                   {/* Delete button */}
                   <button
                     onClick={() => deleteAlarm(alarm)}
@@ -586,9 +672,18 @@ export const AlarmManager = () => {
 
       {/* New Alarm Modal */}
       {showNewAlarm && (
-        <NewAlarmForm
+        <AlarmForm
           onSubmit={addAlarm}
           onCancel={() => setShowNewAlarm(false)}
+        />
+      )}
+
+      {/* Edit Alarm Modal */}
+      {editingAlarm && (
+        <AlarmForm
+          initialAlarm={editingAlarm}
+          onSubmit={editAlarm}
+          onCancel={() => setEditingAlarm(null)}
         />
       )}
 
@@ -648,19 +743,21 @@ export const AlarmManager = () => {
   );
 };
 
-interface NewAlarmFormProps {
+interface AlarmFormProps {
+  initialAlarm?: AlarmTime;
   onSubmit: (alarm: Omit<AlarmTime, 'id'>) => void;
   onCancel: () => void;
 }
 
-const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
-  const [hours, setHours] = useState('08');
-  const [minutes, setMinutes] = useState('00');
-  const [label, setLabel] = useState('');
-  const [selectedSound, setSelectedSound] = useState(ALARM_SOUNDS[0]?.id || 'default');
+const AlarmForm = ({ initialAlarm, onSubmit, onCancel }: AlarmFormProps) => {
+  const isEditing = !!initialAlarm;
+  const [hours, setHours] = useState(initialAlarm ? initialAlarm.hours.toString().padStart(2, '0') : '08');
+  const [minutes, setMinutes] = useState(initialAlarm ? initialAlarm.minutes.toString().padStart(2, '0') : '00');
+  const [label, setLabel] = useState(initialAlarm?.label || '');
+  const [selectedSound, setSelectedSound] = useState(initialAlarm?.sound || ALARM_SOUNDS[0]?.id || 'default');
   const [volume, setVolume] = useState(0.5);
   const [isPreviewPlaying, setIsPreviewPlaying] = useState(false);
-  const [repeatDays, setRepeatDays] = useState<number[]>([]);
+  const [repeatDays, setRepeatDays] = useState<number[]>(initialAlarm?.repeatDays || []);
 
   const toggleDay = (dayIndex: number) => {
     setRepeatDays(prev =>
@@ -705,7 +802,7 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
         animate={{ opacity: 1, scale: 1 }}
         className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full"
       >
-        <h2 className="text-2xl font-bold mb-6 text-gray-900">New Alarm</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-900">{isEditing ? 'Edit Alarm' : 'New Alarm'}</h2>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Time picker */}
@@ -832,7 +929,7 @@ const NewAlarmForm = ({ onSubmit, onCancel }: NewAlarmFormProps) => {
               type="submit"
               className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-medium"
             >
-              Create Alarm
+              {isEditing ? 'Save Changes' : 'Create Alarm'}
             </button>
           </div>
         </form>
