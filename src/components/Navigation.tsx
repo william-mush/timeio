@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings, Sun, Menu, X, History, Building2, ChevronDown, Watch, Globe } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, Sun, Menu, X, History, Building2, ChevronDown, Watch, Globe, Timer, Users, Code } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
@@ -197,6 +197,8 @@ export function Navigation() {
         { href: '/', label: 'Home', icon: Clock },
         { href: '/world-clock', label: 'World Clock', icon: Clock },
         { href: '/time-converter', label: 'City Time', icon: Globe },
+        { href: '/timer', label: 'Timer', icon: Timer },
+        { href: '/meeting-planner', label: 'Meeting Planner', icon: Users },
         { href: '/alarms', label: 'Alarms', icon: Bell },
       ]
     },
@@ -215,6 +217,7 @@ export function Navigation() {
         { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
         { href: '/history', label: 'Time History', icon: History },
         { href: '/luxury', label: 'Luxury Watches', icon: Watch },
+        { href: '/embed', label: 'Embed Widget', icon: Code },
         { href: '/settings', label: 'Settings', icon: Settings },
       ]
     },
@@ -291,10 +294,13 @@ export function Navigation() {
               label="More"
               icon={Globe}
               items={[
+                { href: '/timer', label: 'Timer & Stopwatch', icon: Timer },
+                { href: '/meeting-planner', label: 'Meeting Planner', icon: Users },
                 { href: '/world-map', label: 'World Map', icon: MapPin },
                 { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
                 { href: '/us-cities', label: 'US Cities', icon: Building2 },
                 { href: '/luxury', label: 'Luxury Watches', icon: Watch },
+                { href: '/embed', label: 'Embed Widget', icon: Code },
               ]}
               pathname={pathname}
             />

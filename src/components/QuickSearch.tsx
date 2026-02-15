@@ -11,7 +11,7 @@ import {
     CommandList,
     CommandSeparator,
 } from './ui/command';
-import { Calculator, Clock, Globe, Loader2, Map, Search, Sun, Watch } from 'lucide-react';
+import { Calculator, Clock, Globe, Loader2, Map, Search, Sun, Watch, X } from 'lucide-react';
 import { searchCitiesLocal } from '@/lib/searchCitiesLocal';
 
 interface SearchResult {
@@ -27,13 +27,57 @@ interface SearchResult {
     continent: string;
 }
 
+const RECENT_SEARCHES_KEY = 'recentSearches';
+const MAX_RECENT = 10;
+
+function loadRecentSearches(): SearchResult[] {
+    if (typeof window === 'undefined') return [];
+    try {
+        const raw = localStorage.getItem(RECENT_SEARCHES_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+        return [];
+    } catch {
+        return [];
+    }
+}
+
+function saveRecentSearches(items: SearchResult[]): void {
+    if (typeof window === 'undefined') return;
+    try {
+        localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(items));
+    } catch {
+        // localStorage may be full or unavailable
+    }
+}
+
+function addRecentSearch(city: SearchResult, current: SearchResult[]): SearchResult[] {
+    const filtered = current.filter((item) => item.geonameid !== city.geonameid);
+    const updated = [city, ...filtered].slice(0, MAX_RECENT);
+    saveRecentSearches(updated);
+    return updated;
+}
+
+function removeRecentSearch(geonameid: number, current: SearchResult[]): SearchResult[] {
+    const updated = current.filter((item) => item.geonameid !== geonameid);
+    saveRecentSearches(updated);
+    return updated;
+}
+
 export function QuickSearch() {
     const [open, setOpen] = React.useState(false);
     const [search, setSearch] = React.useState('');
     const [results, setResults] = React.useState<SearchResult[]>([]);
     const [isLoading, setIsLoading] = React.useState(false);
     const [hasSearched, setHasSearched] = React.useState(false);
+    const [recentSearches, setRecentSearches] = React.useState<SearchResult[]>([]);
     const router = useRouter();
+
+    // Load recent searches on mount
+    React.useEffect(() => {
+        setRecentSearches(loadRecentSearches());
+    }, []);
 
     React.useEffect(() => {
         const down = (e: KeyboardEvent) => {
@@ -100,11 +144,20 @@ export function QuickSearch() {
         };
     }, [search, open]);
 
-    const runCommand = React.useCallback((command: () => unknown) => {
+    const runCommand = React.useCallback((command: () => unknown, city?: SearchResult) => {
         setOpen(false);
         setSearch('');
         setHasSearched(false);
+        if (city) {
+            setRecentSearches((prev) => addRecentSearch(city, prev));
+        }
         command();
+    }, []);
+
+    const handleRemoveRecent = React.useCallback((e: React.MouseEvent, geonameid: number) => {
+        e.stopPropagation();
+        e.preventDefault();
+        setRecentSearches((prev) => removeRecentSearch(geonameid, prev));
     }, []);
 
     const getTimezoneDisplay = (tz: string) => {
@@ -180,6 +233,37 @@ export function QuickSearch() {
 
                     {!search.trim() && !isLoading && (
                         <>
+                            {recentSearches.length > 0 && (
+                                <>
+                                    <CommandGroup heading="Recent">
+                                        {recentSearches.map((city) => (
+                                            <CommandItem
+                                                key={`recent-${city.geonameid}`}
+                                                value={`recent-${city.name} ${city.asciiName} ${city.country} ${city.countryCode}`}
+                                                onSelect={() => runCommand(() => router.push(getCityUrl(city)), city)}
+                                            >
+                                                <Globe className="mr-2 h-4 w-4 text-emerald-500 flex-shrink-0" />
+                                                <div className="flex-1 min-w-0">
+                                                    <span className="font-medium">{city.name}</span>
+                                                    <span className="text-gray-500">, {city.country}</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-gray-400 flex-shrink-0">
+                                                    <span className="hidden sm:inline">{getTimezoneDisplay(city.timezone)}</span>
+                                                    <button
+                                                        type="button"
+                                                        className="ml-1 p-0.5 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                                                        onClick={(e) => handleRemoveRecent(e, city.geonameid)}
+                                                        aria-label={`Remove ${city.name} from recent searches`}
+                                                    >
+                                                        <X className="h-3 w-3" />
+                                                    </button>
+                                                </div>
+                                            </CommandItem>
+                                        ))}
+                                    </CommandGroup>
+                                    <CommandSeparator />
+                                </>
+                            )}
                             <CommandGroup heading="Quick Access">
                                 <CommandItem onSelect={() => runCommand(() => router.push('/time-converter'))}>
                                     <Calculator className="mr-2 h-4 w-4" />
@@ -212,7 +296,7 @@ export function QuickSearch() {
                                 <CommandItem
                                     key={city.geonameid}
                                     value={`${city.name} ${city.asciiName} ${city.country} ${city.countryCode}`}
-                                    onSelect={() => runCommand(() => router.push(getCityUrl(city)))}
+                                    onSelect={() => runCommand(() => router.push(getCityUrl(city)), city)}
                                 >
                                     <Globe className="mr-2 h-4 w-4 text-emerald-500 flex-shrink-0" />
                                     <div className="flex-1 min-w-0">

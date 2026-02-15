@@ -42,6 +42,17 @@ function getRegion(latitude: number): string {
   return 'Antarctic';
 }
 
+function formatOffsetLabel(minutes: number): string {
+  if (minutes === 0) return 'Now';
+  const sign = minutes > 0 ? '+' : '-';
+  const abs = Math.abs(minutes);
+  const h = Math.floor(abs / 60);
+  const m = abs % 60;
+  if (m === 0) return `${sign}${h}h`;
+  if (h === 0) return `${sign}${m}m`;
+  return `${sign}${h}h ${m}m`;
+}
+
 export const WorldClock = () => {
   const { data: session } = useSession();
   const [mounted, setMounted] = useState(false);
@@ -55,6 +66,10 @@ export const WorldClock = () => {
   const [showMilliseconds, setShowMilliseconds] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [timeOffset, setTimeOffset] = useState(0); // in minutes, range -720 to +720
+
+  // Compute the offset time once, derived from currentTime + offset
+  const offsetTime = new Date(currentTime.getTime() + timeOffset * 60000);
 
   const handleGoogleAuth = () => {
     signIn('google');
@@ -63,8 +78,10 @@ export const WorldClock = () => {
   // Enhanced time formatting with proper timezone support
   const getTimeInZone = (timezone: string, offset: number) => {
     try {
+      // Build a reference date that incorporates the slider offset
+      const refDate = offsetTime;
       // Try to use the proper timezone first
-      const timeInZone = new Date().toLocaleString('en-US', {
+      const timeInZone = refDate.toLocaleString('en-US', {
         timeZone: timezone,
         hour: '2-digit',
         minute: '2-digit',
@@ -74,8 +91,8 @@ export const WorldClock = () => {
       return timeInZone;
     } catch (error) {
       // Fallback to offset calculation if timezone is not supported
-      const localTime = currentTime.getTime();
-      const localOffset = currentTime.getTimezoneOffset() * 60000;
+      const localTime = offsetTime.getTime();
+      const localOffset = offsetTime.getTimezoneOffset() * 60000;
       const targetTime = new Date(localTime + localOffset + (offset * 3600000));
       return formatTime(targetTime);
     }
@@ -112,19 +129,31 @@ export const WorldClock = () => {
 
   const getLocalDate = (timezone: string) => {
     try {
-      return new Date().toLocaleDateString('en-US', {
+      return offsetTime.toLocaleDateString('en-US', {
         timeZone: timezone,
         weekday: 'short',
         month: 'short',
         day: 'numeric',
       });
     } catch (error) {
-      return new Date().toLocaleDateString('en-US', {
+      return offsetTime.toLocaleDateString('en-US', {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
       });
     }
+  };
+
+  // Format the banner time string showing the computed offset time
+  const getBannerTimeString = () => {
+    return offsetTime.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: !format24Hour,
+    });
   };
 
   // Load settings and time zones from database
@@ -440,6 +469,63 @@ export const WorldClock = () => {
           </button>
         </div>
 
+        {/* Time Offset Slider */}
+        <div className="card p-4 md:p-5 space-y-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex-1 w-full">
+              <label htmlFor="time-offset-slider" className="block text-xs font-medium text-muted mb-1.5">
+                Time Travel
+              </label>
+              <input
+                id="time-offset-slider"
+                type="range"
+                min={-720}
+                max={720}
+                step={15}
+                value={timeOffset}
+                onChange={(e) => setTimeOffset(Number(e.target.value))}
+                className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gray-200 dark:bg-gray-700 accent-blue-500"
+              />
+              <div className="flex justify-between text-[10px] text-muted mt-0.5 px-0.5">
+                <span>-12h</span>
+                <span>-6h</span>
+                <span>0</span>
+                <span>+6h</span>
+                <span>+12h</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 sm:pt-3 shrink-0">
+              <span className="text-sm font-semibold text-blue-600 dark:text-blue-400 tabular-nums min-w-[5rem] text-right">
+                {formatOffsetLabel(timeOffset)}
+              </span>
+              {timeOffset !== 0 && (
+                <button
+                  onClick={() => setTimeOffset(0)}
+                  className="px-2.5 py-1 text-xs font-medium rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:hover:bg-blue-900/60 transition-colors"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Offset Banner */}
+        {timeOffset !== 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-sm text-blue-700 dark:text-blue-300"
+          >
+            <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>
+              Showing time at <strong>{getBannerTimeString()}</strong> ({formatOffsetLabel(timeOffset)} from now)
+            </span>
+          </motion.div>
+        )}
+
         {error && (
           <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 text-red-600 dark:text-red-400">
             {error}
@@ -595,4 +681,4 @@ export const WorldClock = () => {
       </motion.div>
     </div>
   );
-}; 
+};

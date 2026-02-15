@@ -61,6 +61,10 @@ export async function GET(request: NextRequest) {
                 results: cities,
                 total: cities.length,
                 query: '',
+            }, {
+                headers: {
+                    'Cache-Control': 'public, max-age=300, s-maxage=3600',
+                },
             });
         }
 
@@ -110,6 +114,10 @@ export async function GET(request: NextRequest) {
                 results: prefixResults,
                 total: prefixResults.length,
                 query,
+            }, {
+                headers: {
+                    'Cache-Control': 'public, max-age=300, s-maxage=3600',
+                },
             });
         }
 
@@ -135,6 +143,10 @@ export async function GET(request: NextRequest) {
             results: containsResults,
             total: containsResults.length,
             query,
+        }, {
+            headers: {
+                'Cache-Control': 'public, max-age=300, s-maxage=3600',
+            },
         });
     } catch (error) {
         console.error('City search error:', error);
