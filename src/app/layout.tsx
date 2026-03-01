@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
 import { Analytics } from "@/components/Analytics";
@@ -9,6 +9,12 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { QuickSearch } from "@/components/QuickSearch";
 
 const inter = Inter({ subsets: ["latin"] });
+const cormorant = Cormorant_Garamond({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-elegant",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://time.io'),
@@ -123,7 +129,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${inter.className} bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen`}>
+      <body className={`${inter.className} ${cormorant.variable} bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen`}>
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
