@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Clock, MapPin, Bell, Settings, Sun, Menu, X, History, Building2, ChevronDown, Watch, Globe, Timer, Users, Code } from 'lucide-react';
+import { Clock, MapPin, Bell, Settings, Sun, Menu, X, History, Building2, ChevronDown, Watch, Globe, Timer, Users, Code, Sparkles } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
@@ -113,6 +113,7 @@ const locationItems = [
 // Explore dropdown items
 const exploreItems = [
   { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
+  { href: '/clock', label: 'Every Minute Matters', icon: Sparkles },
   { href: '/history', label: 'Time History', icon: History },
   { href: '/luxury', label: 'Luxury Watches', icon: Watch },
 ];
@@ -215,6 +216,7 @@ export function Navigation() {
       title: 'Discover',
       items: [
         { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
+        { href: '/clock', label: 'Every Minute Matters', icon: Sparkles },
         { href: '/history', label: 'Time History', icon: History },
         { href: '/luxury', label: 'Luxury Watches', icon: Watch },
         { href: '/embed', label: 'Embed Widget', icon: Code },
@@ -298,6 +300,7 @@ export function Navigation() {
                 { href: '/meeting-planner', label: 'Meeting Planner', icon: Users },
                 { href: '/world-map', label: 'World Map', icon: MapPin },
                 { href: '/solar-clock', label: 'Solar Clock', icon: Sun },
+                { href: '/clock', label: 'Every Minute Matters', icon: Sparkles },
                 { href: '/us-cities', label: 'US Cities', icon: Building2 },
                 { href: '/luxury', label: 'Luxury Watches', icon: Watch },
                 { href: '/embed', label: 'Embed Widget', icon: Code },
