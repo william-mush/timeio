@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { AlarmSound, ALARM_SOUNDS, alarmSoundService } from '@/services/AlarmSound';
 import { useSession, signIn } from 'next-auth/react';
 import { Bell, Plus, Trash2, Clock, Volume2, Lock, BellRing, Pencil } from 'lucide-react';
+import { safeGetItem, safeSetItem } from '@/lib/storage';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -64,7 +65,7 @@ export const AlarmManager = () => {
   // Check if warning was dismissed
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setWarningDismissed(localStorage.getItem('alarmWarningDismissed') === 'true');
+      setWarningDismissed(safeGetItem('alarmWarningDismissed') === 'true');
     }
   }, []);
 
@@ -120,14 +121,21 @@ export const AlarmManager = () => {
             });
           }
 
+          const p256dhKey = subscription.getKey('p256dh');
+          const authKey = subscription.getKey('auth');
+          if (!p256dhKey || !authKey) {
+            console.error('Push subscription keys (p256dh or auth) are missing');
+            return;
+          }
+
           await fetch('/api/push/subscribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               endpoint: subscription.endpoint,
               keys: {
-                p256dh: arrayBufferToBase64(subscription.getKey('p256dh')!),
-                auth: arrayBufferToBase64(subscription.getKey('auth')!),
+                p256dh: arrayBufferToBase64(p256dhKey),
+                auth: arrayBufferToBase64(authKey),
               },
             }),
           });
@@ -309,7 +317,7 @@ export const AlarmManager = () => {
 
   const dismissWarning = () => {
     setWarningDismissed(true);
-    localStorage.setItem('alarmWarningDismissed', 'true');
+    safeSetItem('alarmWarningDismissed', 'true');
   };
 
   // Cleanup snooze timeout on unmount
@@ -414,14 +422,21 @@ export const AlarmManager = () => {
           });
         }
 
+        const p256dhKey = subscription.getKey('p256dh');
+        const authKey = subscription.getKey('auth');
+        if (!p256dhKey || !authKey) {
+          console.error('Push subscription keys (p256dh or auth) are missing');
+          return;
+        }
+
         await fetch('/api/push/subscribe', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             endpoint: subscription.endpoint,
             keys: {
-              p256dh: arrayBufferToBase64(subscription.getKey('p256dh')!),
-              auth: arrayBufferToBase64(subscription.getKey('auth')!),
+              p256dh: arrayBufferToBase64(p256dhKey),
+              auth: arrayBufferToBase64(authKey),
             },
           }),
         });
@@ -689,7 +704,7 @@ export const AlarmManager = () => {
 
       {/* Active Alarm Modal */}
       {activeAlarm && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true">
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -796,7 +811,7 @@ const AlarmForm = ({ initialAlarm, onSubmit, onCancel }: AlarmFormProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" role="dialog" aria-modal="true">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}

@@ -34,8 +34,8 @@ export async function GET(request: NextRequest) {
         const lat = parseFloat(searchParams.get('lat') || '0');
         const lng = parseFloat(searchParams.get('lng') || '0');
         const excludeId = parseInt(searchParams.get('excludeId') || '0');
-        const radiusKm = parseFloat(searchParams.get('radius') || '150');
-        const limit = parseInt(searchParams.get('limit') || '10');
+        const radiusKm = Math.min(parseFloat(searchParams.get('radius') || '150'), 500);
+        const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 100);
 
         if (!lat || !lng) {
             return NextResponse.json({ error: 'lat and lng are required' }, { status: 400 });

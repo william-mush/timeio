@@ -7,8 +7,10 @@ import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 import { ThemeToggle } from './ThemeToggle';
+import { safeGetItem } from '@/lib/storage';
 
 const TimeDisplay = () => {
+  const [mounted, setMounted] = useState(false);
   const [hours, setHours] = useState('00');
   const [minutes, setMinutes] = useState('00');
   const [seconds, setSeconds] = useState('00');
@@ -16,8 +18,10 @@ const TimeDisplay = () => {
   const [format24Hour, setFormat24Hour] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+
     const loadSettings = () => {
-      const savedSettings = localStorage.getItem('timeSettings');
+      const savedSettings = safeGetItem('timeSettings');
       if (savedSettings) {
         try {
           const settings = JSON.parse(savedSettings);
@@ -65,6 +69,14 @@ const TimeDisplay = () => {
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, [format24Hour]);
+
+  if (!mounted) {
+    return (
+      <div className="text-sm font-mono tabular-nums whitespace-nowrap bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow-sm">
+        --:--:--
+      </div>
+    );
+  }
 
   return (
     <div className="text-sm font-mono tabular-nums whitespace-nowrap bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow-sm">
@@ -140,8 +152,17 @@ function NavDropdown({
         setIsOpen(false);
       }
     };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
     document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   return (
@@ -159,7 +180,7 @@ function NavDropdown({
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-100 dark:border-slate-700 py-1 min-w-[180px] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
+        <div role="menu" className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-gray-100 dark:border-slate-700 py-1 min-w-[180px] z-50 animate-in fade-in slide-in-from-top-1 duration-150">
           {items.map((item) => (
             <Link
               key={item.href}
@@ -189,6 +210,18 @@ export function Navigation() {
   useEffect(() => {
     setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  // Close user menu and mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsUserMenuOpen(false);
+        setIsMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // All items for mobile menu - organized by category
   const mobileMenuCategories = [
@@ -380,7 +413,7 @@ export function Navigation() {
                       className="fixed inset-0 z-30"
                       onClick={() => setIsUserMenuOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-40 animate-in fade-in slide-in-from-top-1 duration-200">
+                    <div role="menu" className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-40 animate-in fade-in slide-in-from-top-1 duration-200">
                       <div className="px-4 py-3 border-b border-gray-100">
                         <p className="text-sm font-medium text-gray-900 truncate">
                           {session.user.name}

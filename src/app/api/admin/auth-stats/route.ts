@@ -5,7 +5,7 @@ import { getAuthStats, getUserStats } from '@/lib/auth-events'
 
 // Admin emails that can access the dashboard
 // Falls back to default admins if env var not set
-const DEFAULT_ADMIN_EMAILS = ['williammushkin@gmail.com', 'w@the.com']
+const DEFAULT_ADMIN_EMAILS: string[] = []
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') || DEFAULT_ADMIN_EMAILS
 
 /**
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
 
     // Get the time period from query params (default 30 days)
     const searchParams = request.nextUrl.searchParams
-    const days = parseInt(searchParams.get('days') || '30', 10)
+    const days = Math.min(parseInt(searchParams.get('days') || '30', 10), 365)
 
     try {
         const [authStats, userStats] = await Promise.all([

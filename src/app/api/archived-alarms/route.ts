@@ -11,10 +11,15 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const archivedAlarms = await prisma.archivedAlarm.findMany({
-    where: { userId: session.user.id },
-    orderBy: { archivedAt: 'desc' },
-  });
+  try {
+    const archivedAlarms = await prisma.archivedAlarm.findMany({
+      where: { userId: session.user.id },
+      orderBy: { archivedAt: 'desc' },
+    });
 
-  return NextResponse.json(archivedAlarms);
+    return NextResponse.json(archivedAlarms);
+  } catch (error) {
+    console.error('Failed to fetch archived alarms:', error);
+    return NextResponse.json({ error: 'Failed to fetch archived alarms' }, { status: 500 });
+  }
 } 

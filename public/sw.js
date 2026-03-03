@@ -1,6 +1,7 @@
 // Service Worker for Web Push Notifications + Offline Caching
 
-const CACHE_NAME = 'timeio-v1';
+// Bump this version on significant deployments to evict stale caches
+const CACHE_NAME = 'timeio-v2';
 
 const APP_SHELL_URLS = [
   '/',

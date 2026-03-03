@@ -16,9 +16,23 @@ interface Lap {
 
 // ─── Audio helper ───────────────────────────────────────────────────
 
+// Lazily-created AudioContext reused across all beep calls
+let _audioCtx: AudioContext | null = null;
+
+function getAudioContext(): AudioContext {
+  if (!_audioCtx || _audioCtx.state === 'closed') {
+    _audioCtx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+  }
+  // Resume if suspended (browsers suspend until user gesture)
+  if (_audioCtx.state === 'suspended') {
+    _audioCtx.resume();
+  }
+  return _audioCtx;
+}
+
 function playBeep() {
   try {
-    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const ctx = getAudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
 
@@ -56,9 +70,6 @@ function playBeep() {
     gain3.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 3.5);
     osc3.start(ctx.currentTime + 2);
     osc3.stop(ctx.currentTime + 3.5);
-
-    // Cleanup
-    setTimeout(() => ctx.close(), 4000);
   } catch {
     // Audio not available — silently ignore
   }

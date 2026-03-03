@@ -11,6 +11,11 @@ import { authOptions } from '@/lib/auth'
  * and helpful debugging information.
  */
 export async function GET(request: NextRequest) {
+    // Hard check: block in production if DEBUG_SECRET is not configured
+    if (process.env.NODE_ENV === 'production' && !process.env.DEBUG_SECRET) {
+        return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+
     // Check authorization
     const isAuthorized = await checkAuthorization(request)
 
@@ -29,21 +34,21 @@ export async function GET(request: NextRequest) {
         environment: process.env.NODE_ENV,
         config: {
             GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID
-                ? `Set (${process.env.GOOGLE_CLIENT_ID.substring(0, 10)}...)`
+                ? 'Set'
                 : 'MISSING',
             GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET
-                ? 'Set (hidden)'
+                ? 'Set'
                 : 'MISSING',
-            NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'MISSING',
+            NEXTAUTH_URL: process.env.NEXTAUTH_URL ? 'Set' : 'MISSING',
             NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET
-                ? 'Set (hidden)'
+                ? 'Set'
                 : 'MISSING',
             DATABASE_URL: process.env.DATABASE_URL
-                ? `Set (${process.env.DATABASE_URL.split('@')[1]?.split('/')[0] || 'hidden'})`
+                ? 'Set'
                 : 'MISSING',
         },
         expectedCallbackUrl: process.env.NEXTAUTH_URL
-            ? `${process.env.NEXTAUTH_URL}/api/auth/callback/google`
+            ? 'Set (ends with /api/auth/callback/google)'
             : 'Cannot determine - NEXTAUTH_URL not set',
         issues: [] as string[],
         recommendations: [] as string[],
@@ -79,7 +84,7 @@ export async function GET(request: NextRequest) {
 
     // Add Google Console reminder
     diagnostics.recommendations.push(
-        `Ensure "${diagnostics.expectedCallbackUrl}" is added to Authorized redirect URIs in Google Cloud Console`
+        'Ensure your NEXTAUTH_URL/api/auth/callback/google is added to Authorized redirect URIs in Google Cloud Console'
     )
 
     const hasIssues = diagnostics.issues.length > 0

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { safeGetItem } from '@/lib/storage';
 
 interface TimeSettings {
   format24Hour: boolean;
@@ -77,7 +78,7 @@ export const TimeDisplay = ({
     setMounted(true);
 
     const loadSettings = () => {
-      const savedSettings = localStorage.getItem('timeSettings');
+      const savedSettings = safeGetItem('timeSettings');
       if (savedSettings) {
         try {
           const settings = JSON.parse(savedSettings);

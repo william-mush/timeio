@@ -38,6 +38,19 @@ export async function PUT(req: Request) {
   try {
     const settings = await req.json();
 
+    // Only include fields that are explicitly provided (not undefined)
+    const updateData: Record<string, unknown> = {};
+    if (settings.format24Hour !== undefined) updateData.format24Hour = settings.format24Hour;
+    if (settings.showSeconds !== undefined) updateData.showSeconds = settings.showSeconds;
+    if (settings.showMilliseconds !== undefined) updateData.showMilliseconds = settings.showMilliseconds;
+    if (settings.timeZone !== undefined) updateData.timeZone = settings.timeZone;
+    if (settings.dateFormat !== undefined) updateData.dateFormat = settings.dateFormat;
+    if (settings.defaultClockCount !== undefined) updateData.defaultClockCount = settings.defaultClockCount;
+    if (settings.sortOrder !== undefined) updateData.sortOrder = settings.sortOrder;
+    if (settings.theme !== undefined) updateData.theme = settings.theme;
+    if (settings.clockStyle !== undefined) updateData.clockStyle = settings.clockStyle;
+    if (settings.colorScheme !== undefined) updateData.colorScheme = settings.colorScheme;
+
     const updatedSettings = await prisma.userSettings.upsert({
       where: { userId: session.user.id },
       create: {
@@ -53,18 +66,7 @@ export async function PUT(req: Request) {
         clockStyle: settings.clockStyle ?? "digital",
         colorScheme: settings.colorScheme ?? "blue"
       },
-      update: {
-        format24Hour: settings.format24Hour ?? false,
-        showSeconds: settings.showSeconds ?? true,
-        showMilliseconds: settings.showMilliseconds ?? false,
-        timeZone: settings.timeZone ?? "UTC",
-        dateFormat: settings.dateFormat ?? "MM/dd/yyyy",
-        defaultClockCount: settings.defaultClockCount ?? 3,
-        sortOrder: settings.sortOrder ?? "timezone",
-        theme: settings.theme ?? "light",
-        clockStyle: settings.clockStyle ?? "digital",
-        colorScheme: settings.colorScheme ?? "blue"
-      }
+      update: updateData
     });
 
     return NextResponse.json(updatedSettings);

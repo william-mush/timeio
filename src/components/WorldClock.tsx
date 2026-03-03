@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CITIES } from '@/data/cities';
 import { useSession, signIn } from 'next-auth/react';
+import { safeGetItem, safeSetItem, safeRemoveItem } from '@/lib/storage';
 
 interface TimeZone {
   id: string;
@@ -158,13 +159,16 @@ export const WorldClock = () => {
 
   // Load settings and time zones from database
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const loadData = async () => {
       setIsLoading(true);
       setError(null);
 
       if (!session) {
         // Check localStorage for saved cities
-        const savedCities = localStorage.getItem('worldClockCities');
+        const savedCities = safeGetItem('worldClockCities');
         if (savedCities) {
           try {
             const cityIds: string[] = JSON.parse(savedCities);
@@ -193,7 +197,8 @@ export const WorldClock = () => {
 
       try {
         // Load settings
-        const settingsResponse = await fetch('/api/settings');
+        const settingsResponse = await fetch('/api/settings', { signal });
+        if (signal.aborted) return;
         if (settingsResponse.ok) {
           const settings = await settingsResponse.json();
           setFormat24Hour(settings.format24Hour ?? false);
@@ -202,7 +207,8 @@ export const WorldClock = () => {
         }
 
         // Load time zones
-        const timeZonesResponse = await fetch('/api/time-zones');
+        const timeZonesResponse = await fetch('/api/time-zones', { signal });
+        if (signal.aborted) return;
         if (timeZonesResponse.ok) {
           const timeZones = await timeZonesResponse.json();
           if (Array.isArray(timeZones) && timeZones.length > 0) {
@@ -238,12 +244,14 @@ export const WorldClock = () => {
                   offset: zone.offset,
                   region: zone.region,
                   order: index
-                })
+                }),
+                signal
               })
             ));
           }
         }
       } catch (error) {
+        if (signal.aborted) return;
         console.error('Failed to load data:', error);
         setError('Failed to load world clock data. Please try again.');
         const defaultZones = WORLD_TIMEZONES.filter(zone =>
@@ -251,18 +259,24 @@ export const WorldClock = () => {
         );
         setSelectedZones(defaultZones);
       } finally {
-        setIsLoading(false);
-        setMounted(true);
+        if (!signal.aborted) {
+          setIsLoading(false);
+          setMounted(true);
+        }
       }
     };
 
     loadData();
+
+    return () => {
+      controller.abort();
+    };
   }, [session]);
 
   // Merge localStorage cities into database on sign-in
   useEffect(() => {
     if (!session || !mounted) return;
-    const savedCities = localStorage.getItem('worldClockCities');
+    const savedCities = safeGetItem('worldClockCities');
     if (!savedCities) return;
 
     try {
@@ -271,7 +285,7 @@ export const WorldClock = () => {
       const newCityIds = cityIds.filter(id => !existingIds.includes(id));
 
       if (newCityIds.length === 0) {
-        localStorage.removeItem('worldClockCities');
+        safeRemoveItem('worldClockCities');
         return;
       }
 
@@ -295,11 +309,11 @@ export const WorldClock = () => {
         })
       )).then(() => {
         setSelectedZones(prev => [...prev, ...newZones]);
-        localStorage.removeItem('worldClockCities');
+        safeRemoveItem('worldClockCities');
       }).catch(e => console.error('Failed to merge cities:', e));
     } catch (e) {
       console.error('Failed to parse saved cities for merge:', e);
-      localStorage.removeItem('worldClockCities');
+      safeRemoveItem('worldClockCities');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session, mounted]);
@@ -331,7 +345,7 @@ export const WorldClock = () => {
       // Save to localStorage for anonymous users
       setSelectedZones(prev => [...prev, zone]);
       const cityIds = [...selectedZones, zone].map(z => z.id);
-      localStorage.setItem('worldClockCities', JSON.stringify(cityIds));
+      safeSetItem('worldClockCities', JSON.stringify(cityIds));
       setShowAddZone(false);
       return;
     }
@@ -390,9 +404,9 @@ export const WorldClock = () => {
         const updated = prev.filter(zone => zone.id !== zoneId);
         const cityIds = updated.map(z => z.id);
         if (cityIds.length > 0) {
-          localStorage.setItem('worldClockCities', JSON.stringify(cityIds));
+          safeSetItem('worldClockCities', JSON.stringify(cityIds));
         } else {
-          localStorage.removeItem('worldClockCities');
+          safeRemoveItem('worldClockCities');
         }
         return updated;
       });

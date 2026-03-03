@@ -36,6 +36,37 @@ export async function POST(req: Request) {
     const data = await req.json();
     const { hours, minutes, label, sound, isEnabled = true, repeatDays, timezone } = data;
 
+    // Validate hours
+    if (!Number.isInteger(hours) || hours < 0 || hours > 23) {
+      return NextResponse.json({ error: 'hours must be an integer between 0 and 23' }, { status: 400 });
+    }
+
+    // Validate minutes
+    if (!Number.isInteger(minutes) || minutes < 0 || minutes > 59) {
+      return NextResponse.json({ error: 'minutes must be an integer between 0 and 59' }, { status: 400 });
+    }
+
+    // Validate sound
+    if (typeof sound !== 'string' || sound.trim().length === 0) {
+      return NextResponse.json({ error: 'sound must be a non-empty string' }, { status: 400 });
+    }
+
+    // Validate repeatDays
+    if (repeatDays !== undefined && repeatDays !== null) {
+      if (!Array.isArray(repeatDays) || !repeatDays.every((d: unknown) => Number.isInteger(d) && (d as number) >= 0 && (d as number) <= 6)) {
+        return NextResponse.json({ error: 'repeatDays must be an array of integers between 0 and 6' }, { status: 400 });
+      }
+    }
+
+    // Validate timezone (if provided)
+    if (timezone !== undefined && timezone !== null) {
+      try {
+        Intl.DateTimeFormat(undefined, { timeZone: timezone });
+      } catch {
+        return NextResponse.json({ error: 'timezone must be a valid IANA timezone' }, { status: 400 });
+      }
+    }
+
     const alarm = await prisma.alarm.create({
       data: {
         userId: session.user.id,
@@ -69,7 +100,21 @@ export async function PATCH(req: Request) {
 
   try {
     const data = await req.json();
-    const { id, ...updateData } = data;
+    const { id } = data;
+
+    // Validate id
+    if (!id || typeof id !== 'string') {
+      return NextResponse.json({ error: 'Missing or invalid alarm id' }, { status: 400 });
+    }
+
+    // Build update payload from explicit allowlist only
+    const ALLOWED_FIELDS = ['hours', 'minutes', 'label', 'sound', 'isEnabled', 'repeatDays', 'timezone', 'snoozeUntil'] as const;
+    const updateData: Record<string, unknown> = {};
+    for (const field of ALLOWED_FIELDS) {
+      if (field in data) {
+        updateData[field] = data[field];
+      }
+    }
 
     // Verify the alarm belongs to the user
     const existingAlarm = await prisma.alarm.findFirst({

@@ -83,6 +83,10 @@ model Alarm {
   updatedAt     DateTime  @updatedAt
   lastTriggered DateTime?
   snoozeUntil   DateTime?
+
+  @@index([userId])
+  @@index([isEnabled])
+  @@index([snoozeUntil])
 }
 
 model PushSubscription {
@@ -111,6 +115,8 @@ model ArchivedAlarm {
   archivedAt    DateTime  @default(now())
   lastTriggered DateTime?
   reason        String    // Why the alarm was archived (e.g., "deleted", "replaced")
+
+  @@index([userId])
 }
 
 model UserTimeZone {

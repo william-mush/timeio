@@ -3,6 +3,7 @@
 import { Navigation } from "@/components/Navigation";
 import { Footer } from "@/components/Footer";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +17,9 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
           className="flex-1 pt-20"
           style={{ backgroundColor: 'rgb(var(--bg-primary))' }}
         >
-          {children}
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
         </main>
         <Footer />
       </div>

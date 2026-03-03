@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
+import { safeGetItem, safeSetItem } from '@/lib/storage';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -45,7 +46,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const setTheme = (newTheme: Theme) => {
         setThemeState(newTheme);
         if (typeof window !== 'undefined') {
-            localStorage.setItem('theme', newTheme);
+            safeSetItem('theme', newTheme);
         }
 
         if (newTheme === 'system') {
@@ -58,7 +59,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Initialize on mount
     useEffect(() => {
         setMounted(true);
-        const savedTheme = localStorage.getItem('theme') as Theme | null;
+        const savedTheme = safeGetItem('theme') as Theme | null;
         const initialTheme = savedTheme || 'system';
         setThemeState(initialTheme);
 
@@ -71,7 +72,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         // Listen for system theme changes
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         const handleChange = (e: MediaQueryListEvent) => {
-            const currentTheme = localStorage.getItem('theme') as Theme | null || 'system';
+            const currentTheme = safeGetItem('theme') as Theme | null || 'system';
             if (currentTheme === 'system') {
                 applyTheme(e.matches ? 'dark' : 'light');
             }
